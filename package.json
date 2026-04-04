@@ -1,0 +1,45 @@
+{
+  "name": "saas-platform",
+  "version": "1.0.0",
+  "description": "Modular SaaS Platform — Multi-tenant, multi-app, production-ready",
+  "private": true,
+  "workspaces": [
+    "gateway",
+    "apps/app1-dashboard",
+    "apps/app2-urlshortener",
+    "apps/app2-urlshortener/client"
+  ],
+  "scripts": {
+    "install:all": "npm install && npm run install:gateway && npm run install:app1 && npm run install:app2",
+    "install:gateway": "cd gateway && npm install",
+    "install:app1":    "cd apps/app1-dashboard && npm install",
+    "install:app2":    "cd apps/app2-urlshortener && npm install && cd client && npm install",
+
+    "dev":          "concurrently -n gateway,app1,app2 -c cyan,magenta,yellow \"npm run dev:gateway\" \"npm run dev:app1\" \"npm run dev:app2\"",
+    "dev:gateway":  "cd gateway && npm run dev",
+    "dev:app1":     "cd apps/app1-dashboard && npm run dev",
+    "dev:app2":     "cd apps/app2-urlshortener && npm run dev",
+    "dev:app2:client": "cd apps/app2-urlshortener/client && npm run dev",
+
+    "build":         "npm run build:gateway && npm run build:app1 && npm run build:app2",
+    "build:gateway": "cd gateway && npm run build",
+    "build:app1":    "cd apps/app1-dashboard && npm run build",
+    "build:app2":    "cd apps/app2-urlshortener && npm run build",
+
+    "docker:up":     "docker compose up -d",
+    "docker:down":   "docker compose down",
+    "docker:logs":   "docker compose logs -f",
+    "docker:build":  "docker compose build",
+    "docker:reset":  "docker compose down -v && docker compose up -d",
+
+    "lint":          "npm run lint:gateway",
+    "lint:gateway":  "cd gateway && npm run lint"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  }
+}

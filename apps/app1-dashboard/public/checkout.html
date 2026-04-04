@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comprar Licença</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0a0a0f;
+      --surface: #111118;
+      --surface2:#1a1a24;
+      --border:  #2a2a38;
+      --border2: #3a3a4e;
+      --text:    #e8e8f0;
+      --muted:   #8888a8;
+      --accent:  #6c63ff;
+      --success: #00d4aa;
+      --danger:  #ff4d6a;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+    .container { width: 100%; max-width: 520px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; }
+    input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.625rem 0.875rem; font-size: 0.875rem; font-family: inherit; transition: border-color .15s, box-shadow .15s; outline: none; }
+    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,.2); }
+    input::placeholder { color: var(--muted); }
+    label { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: .375rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .75rem 1.5rem; border-radius: 10px; font-weight: 600; font-size: .875rem; cursor: pointer; border: none; transition: opacity .15s, transform .1s; width: 100%; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .alert { padding: .75rem 1rem; border-radius: 8px; font-size: .875rem; margin-bottom: 1rem; }
+    .alert-error { background: rgba(255,77,106,.1); border: 1px solid rgba(255,77,106,.3); color: var(--danger); }
+    .alert-success { background: rgba(0,212,170,.1); border: 1px solid rgba(0,212,170,.3); color: var(--success); }
+    .step { display: none; }
+    .step.active { display: block; }
+    .code { font-family: 'JetBrains Mono', monospace; font-size: .875rem; color: var(--accent); letter-spacing: .08em; font-weight: 500; }
+    .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn .4s ease both; }
+    .pulse { animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Logo -->
+  <div style="text-align:center; margin-bottom:2rem;">
+    <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#6c63ff,#00d4aa);display:inline-flex;align-items:center;justify-content:center;margin-bottom:.875rem;box-shadow:0 0 20px rgba(108,99,255,.3);">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <h1 style="font-size:1.375rem;font-weight:700;margin-bottom:.25rem" id="page-title">Obter Licença</h1>
+    <p style="color:var(--muted);font-size:.875rem" id="page-sub">Pagamento seguro via PIX</p>
+  </div>
+
+  <!-- STEP 1: Product selection + Customer info -->
+  <div class="step active fade-in" id="step-1">
+    <div class="card" style="padding:2rem">
+      <div id="error-1" class="alert alert-error" style="display:none"></div>
+
+      <!-- Product selector -->
+      <div style="margin-bottom:1.25rem">
+        <label>Produto *</label>
+        <select id="product-select">
+          <option value="">Carregando produtos...</option>
+        </select>
+      </div>
+
+      <!-- Product detail card -->
+      <div id="product-detail" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <p style="font-weight:600;font-size:.9rem" id="detail-name"></p>
+            <p style="font-size:.8rem;color:var(--muted);margin-top:.25rem" id="detail-desc"></p>
+          </div>
+          <div style="text-align:right;flex-shrink:0;margin-left:1rem">
+            <p style="font-size:1.375rem;font-weight:800" id="detail-price"></p>
+            <p style="font-size:.72rem;color:var(--muted)" id="detail-type"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer info -->
+      <div style="display:grid;gap:1rem">
+        <div>
+          <label>Seu nome completo *</label>
+          <input type="text" id="cname" placeholder="João Silva" autocomplete="name" />
+        </div>
+        <div>
+          <label>Seu email *</label>
+          <input type="email" id="cemail" placeholder="joao@email.com" autocomplete="email" />
+        </div>
+        <div>
+          <label>CPF (opcional)</label>
+          <input type="text" id="cdoc" placeholder="000.000.000-00" />
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-checkout" style="margin-top:1.5rem" onclick="startCheckout()">
+        Gerar QR Code PIX →
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: PIX QR Code + polling -->
+  <div class="step" id="step-2">
+    <div class="card fade-in" style="padding:2rem;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.3);border-radius:20px;color:#ffb347;font-size:.8rem;font-weight:600;margin-bottom:1.5rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Aguardando pagamento
+      </div>
+
+      <p style="font-weight:600;font-size:1rem;margin-bottom:.5rem">Escaneie o QR Code com seu banco</p>
+      <p style="color:var(--muted);font-size:.825rem;margin-bottom:1.5rem">O pagamento é processado instantaneamente. A licença será ativada automaticamente.</p>
+
+      <div style="display:flex;justify-content:center;margin-bottom:1.25rem">
+        <div style="padding:.75rem;background:#fff;border-radius:12px;box-shadow:0 0 0 4px rgba(108,99,255,.15)">
+          <img id="qr-img" src="" alt="PIX QR Code" style="width:220px;height:220px;display:block" />
+        </div>
+      </div>
+
+      <p style="font-size:.72rem;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">Ou use o Pix Copia e Cola</p>
+      <div style="position:relative;margin-bottom:1.5rem">
+        <textarea id="pix-text" readonly style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:.75rem;font-size:.7rem;font-family:'JetBrains Mono',monospace;resize:none;height:80px;cursor:text;outline:none"></textarea>
+        <button onclick="copyPix()" id="copy-btn" style="position:absolute;right:.5rem;top:.5rem;background:var(--accent);border:none;border-radius:6px;color:#fff;padding:.3rem .6rem;cursor:pointer;font-size:.72rem;font-weight:600">
+          Copiar
+        </button>
+      </div>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:.825rem;color:var(--muted)">Valor</span>
+          <span style="font-weight:700" id="pay-amount"></span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
+          <span style="font-size:.825rem;color:var(--muted)">Sua chave de licença</span>
+          <span class="code" id="license-key-preview"></span>
+        </div>
+      </div>
+
+      <div id="checking-status" style="display:flex;align-items:center;justify-content:center;gap:.625rem;color:var(--muted);font-size:.825rem" class="pulse">
+        <div class="spinner"></div>
+        Verificando pagamento...
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Success -->
+  <div class="step" id="step-3">
+    <div class="card fade-in" style="padding:2.5rem;text-align:center">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,212,170,.15);border:2px solid var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h2 style="font-size:1.375rem;font-weight:700;margin-bottom:.5rem">Pagamento confirmado! 🎉</h2>
+      <p style="color:var(--muted);font-size:.875rem;margin-bottom:2rem">Sua licença foi ativada com sucesso. Guarde sua chave em um local seguro.</p>
+
+      <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+        <p style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.625rem">Sua chave de licença</p>
+        <p class="code" id="final-key" style="font-size:1.375rem;letter-spacing:.12em"></p>
+      </div>
+
+      <button class="btn" onclick="copyFinalKey()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);max-width:280px;margin:0 auto .75rem">
+        📋 Copiar Chave
+      </button>
+      <p style="font-size:.8rem;color:var(--muted);margin-top:.75rem">
+        Um email com sua licença foi enviado para <strong id="final-email"></strong>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const BASE_URL = '';  // set to your gateway URL in production e.g. 'https://yourdomain.com'
+  let state = { licenseId: null, licenseKey: null, pollInterval: null, customerEmail: '' };
+  let products = [];
+
+  // ── Load products ──────────────────────────────────────────
+  async function loadProducts() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/licenses/products`);
+      const data = await res.json();
+      products = data.data || [];
+
+      const sel = document.getElementById('product-select');
+      sel.innerHTML = '<option value="">Selecione um produto</option>';
+      products.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.name} — ${formatBRL(p.price_cents)}`;
+        sel.appendChild(opt);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  document.getElementById('product-select').addEventListener('change', function() {
+    const p = products.find(x => x.id === this.value);
+    const detail = document.getElementById('product-detail');
+    if (p) {
+      document.getElementById('detail-name').textContent = p.name;
+      document.getElementById('detail-desc').textContent = p.description || '';
+      document.getElementById('detail-price').textContent = formatBRL(p.price_cents);
+      const typeMap = { perpetual: 'Licença Vitalícia', yearly: 'Licença Anual', monthly: 'Licença Mensal' };
+      document.getElementById('detail-type').textContent = `${typeMap[p.license_type] || p.license_type} · ${p.max_activations} máquina(s)`;
+      detail.style.display = 'block';
+    } else {
+      detail.style.display = 'none';
+    }
+  });
+
+  // ── Start checkout ─────────────────────────────────────────
+  async function startCheckout() {
+    const productId = document.getElementById('product-select').value;
+    const name  = document.getElementById('cname').value.trim();
+    const email = document.getElementById('cemail').value.trim();
+    const doc   = document.getElementById('cdoc').value.trim();
+    const errEl = document.getElementById('error-1');
+    errEl.style.display = 'none';
+
+    if (!productId) return showError('Selecione um produto');
+    if (!name)      return showError('Informe seu nome');
+    if (!email || !email.includes('@')) return showError('Informe um email válido');
+
+    const btn = document.getElementById('btn-checkout');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Gerando QR Code...';
+
+    try {
+      const res = await fetch(`${BASE_URL}/api/licenses/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_id: productId, customer_name: name, customer_email: email, customer_doc: doc || undefined }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || 'Erro ao criar cobrança');
+
+      state.licenseId   = data.data.license_id;
+      state.licenseKey  = data.data.license_key;
+      state.customerEmail = email;
+
+      // Show QR code
+      document.getElementById('qr-img').src = data.data.pix.qrcode_base64;
+      document.getElementById('pix-text').value = data.data.pix.qrcode_text;
+      document.getElementById('pay-amount').textContent = formatBRL(data.data.amount_cents);
+      document.getElementById('license-key-preview').textContent = data.data.license_key;
+
+      goToStep(2);
+      startPolling();
+    } catch (e) {
+      showError(e.message);
+      btn.disabled = false;
+      btn.innerHTML = 'Gerar QR Code PIX →';
+    }
+  }
+
+  // ── Poll payment status ────────────────────────────────────
+  function startPolling() {
+    state.pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/licenses/status/${state.licenseId}`);
+        const data = await res.json();
+        if (data.data.status === 'active') {
+          clearInterval(state.pollInterval);
+          showSuccess();
+        }
+      } catch (e) { /* retry */ }
+    }, 3000); // poll every 3 seconds
+
+    // Stop polling after 30min
+    setTimeout(() => clearInterval(state.pollInterval), 30 * 60 * 1000);
+  }
+
+  function showSuccess() {
+    document.getElementById('final-key').textContent = state.licenseKey;
+    document.getElementById('final-email').textContent = state.customerEmail;
+    goToStep(3);
+  }
+
+  function copyPix() {
+    const text = document.getElementById('pix-text').value;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Copiado!';
+      btn.style.background = '#00d4aa';
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = ''; }, 2000);
+    });
+  }
+
+  function copyFinalKey() {
+    navigator.clipboard.writeText(state.licenseKey).then(() => alert('Chave copiada!'));
+  }
+
+  function goToStep(n) {
+    document.querySelectorAll('.step').forEach((s, i) => {
+      s.classList.toggle('active', i + 1 === n);
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-1');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function formatBRL(cents) {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100);
+  }
+
+  // Init
+  loadProducts();
+</script>
+</body>
+</html>

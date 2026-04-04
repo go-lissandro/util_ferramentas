@@ -1,0 +1,107 @@
+########################################################################
+# docker-compose.yml — Local Development Environment
+# Usage: docker compose up -d
+########################################################################
+
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: saas-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: saas_platform
+      POSTGRES_USER: saas_user
+      POSTGRES_PASSWORD: saas_password
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U saas_user -d saas_platform']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis (rate limiting, sessions) ───────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: saas-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Gateway ────────────────────────────────────────────
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: saas-gateway
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://saas_user:saas_password@postgres:5432/saas_platform
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-secret-change-in-production
+      JWT_EXPIRES_IN: 7d
+      APP1_DASHBOARD_URL: http://app1:5173
+      APP2_URLSHORTENER_URL: http://app2:4001
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      LOG_LEVEL: debug
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./gateway/src:/app/src   # hot reload in dev
+
+  # ── App1 Dashboard ─────────────────────────────────────
+  app1:
+    build:
+      context: ./apps/app1-dashboard
+      dockerfile: Dockerfile
+    container_name: saas-app1
+    restart: unless-stopped
+    ports:
+      - '5173:5173'
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./apps/app1-dashboard/src:/app/src
+
+  # ── App2 URL Shortener ─────────────────────────────────
+  app2:
+    build:
+      context: ./apps/app2-urlshortener
+      dockerfile: Dockerfile
+    container_name: saas-app2
+    restart: unless-stopped
+    ports:
+      - '4001:4001'
+    environment:
+      NODE_ENV: development
+      PORT: 4001
+      DATABASE_URL: postgresql://saas_user:saas_password@postgres:5432/saas_platform
+      BASE_URL: http://localhost:3000/app2
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
