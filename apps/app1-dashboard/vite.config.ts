@@ -32,5 +32,4 @@ export default defineConfig({
       },
     },
   },
-  base: '/app1/',  // Serve from /app1 path when proxied via gateway
 });
