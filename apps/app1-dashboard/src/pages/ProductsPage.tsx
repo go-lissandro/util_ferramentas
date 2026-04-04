@@ -79,7 +79,7 @@ function ProductForm({
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
         <div>
           <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.375rem', fontWeight: 500 }}>Tipo de licença</label>
-          <select className="input-field" value={form.license_type} onChange={e => setForm({ ...form, license_type: e.target.value })}>
+          <select className="input-field" value={form.license_type} onChange={e => setForm({ ...form, license_type: e.target.value as 'perpetual' | 'yearly' | 'monthly' })}>
             <option value="perpetual">Vitalícia</option>
             <option value="yearly">Anual</option>
             <option value="monthly">Mensal</option>

@@ -278,7 +278,7 @@ function CreateLicenseModal({ products, onClose }: { products: Product[]; onClos
                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.375rem', fontWeight: 500 }}>{f.label}</label>
                 <input
                   type={f.type}
-                  value={(form as Record<string, string>)[f.key]}
+                  value={(form as unknown as Record<string, string>)[f.key]}
                   onChange={e => setForm({ ...form, [f.key]: e.target.value })}
                   className="input-field"
                   placeholder={f.placeholder}
