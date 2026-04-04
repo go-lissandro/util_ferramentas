@@ -9,10 +9,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // base /app1/ garante que os assets ficam em /app1/assets/
+  // necessário porque o gateway serve o React em /app1
+  base: '/app1/',
   server: {
     port: 5173,
     proxy: {
-      // During dev, proxy API calls to gateway
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,

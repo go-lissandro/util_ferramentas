@@ -14,14 +14,8 @@ interface AppConfig {
   description: string;
 }
 
+// App1 foi removido daqui — agora é servido como static no server.ts
 export const APP_REGISTRY: AppConfig[] = [
-  {
-    key: 'app1',
-    pathPrefix: '/app1',
-    target: process.env.APP1_DASHBOARD_URL || 'http://localhost:5173',
-    protected: false,
-    description: 'Admin Dashboard',
-  },
   {
     key: 'app2',
     pathPrefix: '/app2',
@@ -54,7 +48,6 @@ function buildProxyOptions(appConfig: AppConfig): Options {
       },
       error: (err: Error, _req: IncomingMessage, res: ServerResponse | Socket) => {
         logger.error('Proxy error for ' + appConfig.key + ': ' + err.message);
-        // Socket is used for WebSocket upgrades — only write HTTP response on ServerResponse
         if (res instanceof ServerResponse && !res.headersSent) {
           res.writeHead(502, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({
