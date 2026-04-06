@@ -162,12 +162,12 @@ export function FieldBuilder({ onSave, onClose, isSaving, initial }: FieldBuilde
           {/* Flags */}
           <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: '1rem', marginBottom: '1.5rem' }}>
             {[
-              { key: 'required',     label: 'Campo obrigatório'     },
-              { key: 'is_searchable', label: 'Pesquisável'           },
-              { key: 'show_in_list', label: 'Mostrar na listagem'    },
+              { key: 'required',      label: 'Campo obrigatório'  },
+              { key: 'is_searchable', label: 'Pesquisável'         },
+              { key: 'show_in_list',  label: 'Mostrar na listagem' },
             ].map(({ key, label }) => (
               <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '.5rem', cursor: 'pointer', fontSize: '.875rem', color: 'var(--muted)' }}>
-                <input type="checkbox" {...register(key as keyof typeof errors)} style={{ accentColor: 'var(--accent)', width: 14, height: 14 }} />
+                <input type="checkbox" {...register(key as 'required' | 'is_searchable' | 'show_in_list')} style={{ accentColor: 'var(--accent)', width: 14, height: 14 }} />
                 {label}
               </label>
             ))}

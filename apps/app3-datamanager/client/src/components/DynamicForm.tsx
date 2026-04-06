@@ -132,7 +132,7 @@ export function DynamicForm({
         {(field.field_type === 'file' || field.field_type === 'image') && (
           <div>
             {/* Show existing file */}
-            {defaultValues[field.field_key] && typeof defaultValues[field.field_key] === 'object' && (
+            {!!defaultValues[field.field_key] && typeof defaultValues[field.field_key] === 'object' && (
               <div style={{
                 display: 'flex', alignItems: 'center', gap: '.625rem',
                 padding: '.5rem .875rem', background: 'var(--surface2)',
