@@ -7,13 +7,13 @@ export const api = axios.create({
 });
 
 // ── Attach JWT token from App1's auth store ───────────────────
-// App1 persists auth in localStorage under 'auth-store'
+// App1 persists auth in localStorage under 'saas-auth', field: accessToken
 api.interceptors.request.use((config) => {
   try {
-    const raw = localStorage.getItem('auth-store');
+    const raw = localStorage.getItem('saas-auth');
     if (raw) {
       const store = JSON.parse(raw);
-      const token = store?.state?.token || store?.token;
+      const token = store?.state?.accessToken || store?.accessToken;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -96,14 +96,13 @@ export const recordsApi = {
 export const exportApi = {
   download: (entityId: string, format: 'xlsx' | 'csv', fields?: string[], search?: string) => {
     try {
-      const raw = localStorage.getItem('auth-store');
+      const raw = localStorage.getItem('saas-auth');
       const store = raw ? JSON.parse(raw) : null;
-      const token = store?.state?.token || store?.token || '';
+      const token = store?.state?.accessToken || store?.accessToken || '';
       const params = new URLSearchParams({ format });
       if (fields?.length) params.set('fields', fields.join(','));
       if (search) params.set('search', search);
       if (token) params.set('token', token);
-      // Use /api/ddm/entities path (correct gateway mount)
       window.open(`/api/ddm/entities/${entityId}/export?${params}`, '_blank');
     } catch {
       window.open(`/api/ddm/entities/${entityId}/export?format=${format}`, '_blank');

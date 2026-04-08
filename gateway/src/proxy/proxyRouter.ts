@@ -14,7 +14,7 @@ interface AppConfig {
   description: string;
 }
 
-// App1 servido como static — App3 (DDM) servido como static + rotas internas
+// App1 servido como static — App3 (DDM) e App4 servidos como static + rotas internas
 export const APP_REGISTRY: AppConfig[] = [
   {
     key: 'app2',
@@ -23,6 +23,20 @@ export const APP_REGISTRY: AppConfig[] = [
     protected: true,
     requiredPlan: ['free', 'pro'],
     description: 'URL Shortener',
+  },
+  {
+    key: 'app3',
+    pathPrefix: '/app3',
+    target: 'internal', // served as static by gateway
+    protected: false,   // auth handled inside app3 itself via interceptor
+    description: 'Gerenciador de Dados',
+  },
+  {
+    key: 'app4',
+    pathPrefix: '/app4',
+    target: 'internal', // served as static by gateway
+    protected: false,   // public app
+    description: 'Video Downloader',
   },
 ];
 
@@ -63,6 +77,12 @@ function buildProxyOptions(appConfig: AppConfig): Options {
 
 export function setupProxy(app: Express): void {
   for (const appConfig of APP_REGISTRY) {
+    // Skip internal apps — served as static files directly by server.ts
+    if (appConfig.target === 'internal') {
+      logger.info('📂 Static: ' + appConfig.pathPrefix + ' [internal]');
+      continue;
+    }
+
     const middlewares: Array<(req: Request, res: Response, next: NextFunction) => void> = [];
 
     if (appConfig.protected) {

@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 const APP_ICONS: Record<string, string> = {
   app1: '🎛️',
   app2: '🔗',
+  app3: '🗃️',
+  app4: '⬇️',
 };
 
 const APP_DESCRIPTIONS: Record<string, { tagline: string; features: string[] }> = {
@@ -17,6 +19,14 @@ const APP_DESCRIPTIONS: Record<string, { tagline: string; features: string[] }> 
   app2: {
     tagline: 'URL Shortener — Create short links with analytics',
     features: ['Branded short links', 'Click analytics', 'QR code generation', 'Link expiration'],
+  },
+  app3: {
+    tagline: 'Gerenciador de Dados — Crie estruturas e gerencie qualquer dado',
+    features: ['Estruturas dinâmicas', 'Campos personalizados', 'Upload de arquivos', 'Exportar Excel/CSV'],
+  },
+  app4: {
+    tagline: 'Video Downloader — Baixe vídeos de mais de 1000 sites',
+    features: ['YouTube, Instagram, TikTok', 'Escolha a qualidade', 'Download de áudio', 'Sem limite de uso'],
   },
 };
 
