@@ -106,14 +106,19 @@ function App() {
   const startDownload = () => {
     if (!info || !selectedFormat) return;
     setState('downloading');
-    const params = new URLSearchParams({ url, format: selectedFormat.id, ext: selectedFormat.ext });
+    const params = new URLSearchParams({
+      url,
+      format: selectedFormat.id,
+      audio:  selectedFormat.is_audio_only ? 'true' : 'false',
+    });
     const a = document.createElement('a');
     a.href = `/api/video/download?${params}`;
     a.download = '';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(() => setState('done'), 2000);
+    // Wait longer — server needs to download to temp file first
+    setTimeout(() => setState('done'), 5000);
   };
 
   const reset = () => {
