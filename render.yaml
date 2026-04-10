@@ -1,104 +1,39 @@
-########################################################################
-# render.yaml — SaaS Platform Multi-Service Deploy
-# Docs: https://render.com/docs/yaml-spec
-########################################################################
+###############################################################
+# render.yaml — Deploy em INSTÂNCIA ÚNICA
+# URL: https://util-ferramentas.onrender.com
+###############################################################
 
 services:
-
-  # ──────────────────────────────────────────────────────
-  # 1. GATEWAY — Core routing, auth, proxy
-  # ──────────────────────────────────────────────────────
   - type: web
-    name: saas-gateway
+    name: util-ferramentas
     runtime: node
     rootDir: gateway
-    buildCommand: npm install && npm run build
+    buildCommand: >
+      pip install yt-dlp --break-system-packages &&
+      cd ../apps/app1-dashboard && npm install && npm run build &&
+      cd ../app2-urlshortener/client && npm install && npm run build &&
+      cd ../app3-datamanager/client && npm install && npm run build &&
+      cd ../../../apps/app4-videodownloader/client && npm install && npm run build &&
+      cd ../../gateway && npm install --include=dev && npm run build
     startCommand: npm start
-    plan: free               # change to 'starter' for production
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 3000
+        value: 10000
       - key: JWT_SECRET
-        generateValue: true  # Render auto-generates a secure value
-      - key: JWT_EXPIRES_IN
-        value: 7d
+        generateValue: true
       - key: DATABASE_URL
-        fromDatabase:
-          name: saas-postgres
-          property: connectionString
-      - key: APP1_DASHBOARD_URL
-        fromService:
-          name: saas-app1-dashboard
-          type: web
-          property: host
-      - key: APP2_URLSHORTENER_URL
-        fromService:
-          name: saas-app2-urlshortener
-          type: web
-          property: host
-      - key: ALLOWED_ORIGINS
-        value: https://saas-gateway.onrender.com
-      - key: RATE_LIMIT_WINDOW_MS
-        value: 900000
-      - key: RATE_LIMIT_MAX_REQUESTS
-        value: 100
-      - key: STRIPE_SECRET_KEY
-        sync: false          # Set manually in Render dashboard
-      - key: STRIPE_WEBHOOK_SECRET
         sync: false
-      - key: STRIPE_PRO_PRICE_ID
+      - key: ALLOWED_ORIGINS
+        value: https://util-ferramentas.onrender.com
+      - key: PIX_KEY
+        sync: false
+      - key: PIX_MERCHANT_NAME
+        sync: false
+      - key: PIX_MERCHANT_CITY
         sync: false
       - key: LOG_LEVEL
         value: info
-
-  # ──────────────────────────────────────────────────────
-  # 2. APP1 — Admin Dashboard (React SPA served by Vite)
-  # ──────────────────────────────────────────────────────
-  - type: web
-    name: saas-app1-dashboard
-    runtime: node
-    rootDir: apps/app1-dashboard
-    buildCommand: npm install && npm run build
-    startCommand: npx serve dist -s -l 5173
-    plan: free
-    envVars:
-      - key: NODE_ENV
-        value: production
-
-  # ──────────────────────────────────────────────────────
-  # 3. APP2 — URL Shortener (Node API + React client)
-  # ──────────────────────────────────────────────────────
-  - type: web
-    name: saas-app2-urlshortener
-    runtime: node
-    rootDir: apps/app2-urlshortener
-    buildCommand: npm install && npm run build && cd client && npm install && npm run build
-    startCommand: npm start
-    plan: free
-    healthCheckPath: /health
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 4001
-      - key: DATABASE_URL
-        fromDatabase:
-          name: saas-postgres
-          property: connectionString
-      - key: BASE_URL
-        fromService:
-          name: saas-gateway
-          type: web
-          property: host
-
-# ──────────────────────────────────────────────────────
-# DATABASE — Shared PostgreSQL instance
-# ──────────────────────────────────────────────────────
-databases:
-  - name: saas-postgres
-    plan: free
-    databaseName: saas_platform
-    user: saas_user
