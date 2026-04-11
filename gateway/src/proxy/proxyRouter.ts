@@ -37,6 +37,13 @@ export const APP_REGISTRY: AppConfig[] = [
     protected: false,   // public app
     description: 'Video Downloader',
   },
+  {
+    key: 'app5',
+    pathPrefix: '/app5',
+    target: 'internal',
+    protected: false,
+    description: 'Conversor JSON ↔ Excel/CSV',
+  },
 ];
 
 function buildProxyOptions(appConfig: AppConfig): Options {

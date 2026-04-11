@@ -25,6 +25,9 @@ import { videoRouter } from './app4/video.routes';
 // ── App2 (URL Shortener) routes ────────────────────────────────
 import { urlShortenerRouter, redirectRouter, migrateUrlShortener } from './app2/urlshortener.routes';
 
+// ── App5 (Converter) routes ────────────────────────────────────
+import { converterRouter } from './app5/converter.routes';
+
 const app = express();
 const server = createServer(app);
 
@@ -74,6 +77,16 @@ async function bootstrap() {
 
   // ── Public short link redirects /r/:slug ───────────────────
   app.use(redirectRouter);
+
+  // ── Mount App5 (Converter) API routes ─────────────────────
+  app.use('/api/converter', converterRouter);
+
+  // ── Serve App5 (Converter) static files at /app5 ──────────
+  const app5Dist = path.join(__dirname, '../../apps/app5-converter/client/dist');
+  app.use('/app5', express.static(app5Dist));
+  app.get('/app5/*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(app5Dist, 'index.html'));
+  });
 
   // ── Mount App2 (URL Shortener) API routes ─────────────────
   app.use('/api/app2', authenticate, urlShortenerRouter);

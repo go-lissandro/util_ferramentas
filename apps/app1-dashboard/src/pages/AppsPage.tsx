@@ -9,6 +9,7 @@ const APP_ICONS: Record<string, string> = {
   app2: '🔗',
   app3: '🗃️',
   app4: '⬇️',
+  app5: '🔄',
 };
 
 const APP_DESCRIPTIONS: Record<string, { tagline: string; features: string[] }> = {
@@ -27,6 +28,10 @@ const APP_DESCRIPTIONS: Record<string, { tagline: string; features: string[] }> 
   app4: {
     tagline: 'Video Downloader — Baixe vídeos de mais de 1000 sites',
     features: ['YouTube, Instagram, TikTok', 'Escolha a qualidade', 'Download de áudio', 'Sem limite de uso'],
+  },
+  app5: {
+    tagline: 'Conversor — Transforme JSON em Excel e vice-versa',
+    features: ['JSON → Excel com múltiplas abas', 'Excel/CSV → JSON', 'Mapeamento de campos', 'Preview antes de exportar'],
   },
 };
 

@@ -59,15 +59,16 @@ seoRouter.get('/sitemap.xml', (_req: Request, res: Response) => {
 
 // ── Landing page / ─────────────────────────────────────────
 seoRouter.get('/', (_req: Request, res: Response) => {
-    const ADSENSE_ID = process.env.GOOGLE_ADSENSE_ID || '';
-  const adsenseScript = 
-     `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}"
-     crossorigin="anonymous"></script>`
+  const ADSENSE_ID = process.env.GOOGLE_ADSENSE_ID || '';
+  const adsenseScript = ADSENSE_ID
+    ? `<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_ID}" crossorigin="anonymous"></script>`
+    : '';
 
-     const SEARCH_CONSOLE_TOKEN = process.env.GOOGLE_SEARCH_CONSOLE || '';
   // Verification file for Google Search Console
-  const verificationMeta = `<meta name="google-site-verification" content="${SEARCH_CONSOLE_TOKEN}" />`
-
+  const SEARCH_CONSOLE_TOKEN = process.env.GOOGLE_SEARCH_CONSOLE || '';
+  const verificationMeta = SEARCH_CONSOLE_TOKEN
+    ? `<meta name="google-site-verification" content="${SEARCH_CONSOLE_TOKEN}" />`
+    : '';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.send(`<!DOCTYPE html>
@@ -110,8 +111,7 @@ seoRouter.get('/', (_req: Request, res: Response) => {
   }
   </script>
 
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2434617497884125"
-     crossorigin="anonymous"></script>
+  <!-- Google AdSense -->
   ${adsenseScript}
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
