@@ -1,19 +1,18 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Boxes, Users, CreditCard,
-  Settings, LogOut, Zap, Key, Package
+  Settings, LogOut, Zap, Key, Package, ShoppingBag, ToggleLeft
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../services/api';
 
 const NAV_ITEMS = [
-  { to: '/',          icon: LayoutDashboard, label: 'Overview',      end: true },
-  { to: '/apps',      icon: Boxes,           label: 'Apps'                },
-  { to: '/products',  icon: Package,         label: 'Produtos'            },
-  { to: '/licenses',  icon: Key,             label: 'Licenças'            },
-  { to: '/users',     icon: Users,           label: 'Equipe'              },
-  { to: '/billing',   icon: CreditCard,      label: 'Planos'              },
-  { to: '/settings',  icon: Settings,        label: 'Configurações'       },
+  { to: '/',                    icon: LayoutDashboard, label: 'Overview',         end: true },
+  { to: '/apps',                icon: Boxes,           label: 'Apps'                        },
+  { to: '/purchase-requests',   icon: ShoppingBag,     label: 'Compras PIX'                 },
+  { to: '/plans',               icon: ToggleLeft,      label: 'Planos & Acesso'             },
+  { to: '/users',               icon: Users,           label: 'Usuários'                    },
+  { to: '/settings',            icon: Settings,        label: 'Configurações'               },
 ];
 
 export function DashboardLayout() {

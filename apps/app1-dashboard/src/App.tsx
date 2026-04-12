@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { AppsPage } from './pages/AppsPage';
 import { UsersPage } from './pages/UsersPage';
@@ -10,6 +9,8 @@ import { BillingPage } from './pages/BillingPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { LicensesPage } from './pages/LicensesPage';
 import { ProductsPage } from './pages/ProductsPage';
+import { PurchaseRequestsPage } from './pages/PurchaseRequestsPage';
+import { PlansPage } from './pages/PlansPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
@@ -26,11 +27,8 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <Routes>
-      {/* Public routes */}
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-      <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
-      {/* Protected dashboard routes */}
       <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
         <Route index element={<DashboardPage />} />
         <Route path="apps" element={<AppsPage />} />
@@ -39,6 +37,8 @@ export default function App() {
         <Route path="licenses" element={<LicensesPage />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="purchase-requests" element={<PurchaseRequestsPage />} />
+        <Route path="plans" element={<PlansPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

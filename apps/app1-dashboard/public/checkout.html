@@ -3,319 +3,320 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Comprar Licença</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <title>Assinar Plano Pro — Util Ferramentas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:      #0a0a0f;
-      --surface: #111118;
-      --surface2:#1a1a24;
-      --border:  #2a2a38;
-      --border2: #3a3a4e;
-      --text:    #e8e8f0;
-      --muted:   #8888a8;
-      --accent:  #6c63ff;
-      --success: #00d4aa;
-      --danger:  #ff4d6a;
+      --bg: #0a0a0f; --sur: #111118; --sur2: #1a1a24; --brd: #2a2a38;
+      --txt: #e8e8f0; --mut: #8888a8; --acc: #6c63ff; --ok: #00d4aa; --err: #ff4d6a;
     }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
-    .container { width: 100%; max-width: 520px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; }
-    input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.625rem 0.875rem; font-size: 0.875rem; font-family: inherit; transition: border-color .15s, box-shadow .15s; outline: none; }
-    input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,.2); }
-    input::placeholder { color: var(--muted); }
-    label { display: block; font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: .375rem; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; padding: .75rem 1.5rem; border-radius: 10px; font-weight: 600; font-size: .875rem; cursor: pointer; border: none; transition: opacity .15s, transform .1s; width: 100%; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
-    .btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .alert { padding: .75rem 1rem; border-radius: 8px; font-size: .875rem; margin-bottom: 1rem; }
-    .alert-error { background: rgba(255,77,106,.1); border: 1px solid rgba(255,77,106,.3); color: var(--danger); }
-    .alert-success { background: rgba(0,212,170,.1); border: 1px solid rgba(0,212,170,.3); color: var(--success); }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; padding: 2rem 1rem; }
+    .wrap { max-width: 560px; margin: 0 auto; }
+    .logo { text-align: center; margin-bottom: 2rem; }
+    .logo span { font-size: 1.5rem; font-weight: 700; }
+    .logo span em { color: var(--acc); font-style: normal; }
+    .card { background: var(--sur); border: 1px solid var(--brd); border-radius: 16px; padding: 2rem; margin-bottom: 1.25rem; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+    .plan-box { background: linear-gradient(135deg, rgba(108,99,255,.1), rgba(0,212,170,.05)); border: 1px solid rgba(108,99,255,.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .plan-price { font-size: 2rem; font-weight: 700; color: var(--acc); }
+    .plan-price small { font-size: 1rem; color: var(--mut); }
+    .features { list-style: none; margin: .875rem 0 0; }
+    .features li { display: flex; align-items: center; gap: .5rem; font-size: .875rem; color: var(--mut); margin-bottom: .375rem; }
+    .features li::before { content: '✓'; color: var(--ok); font-weight: 700; }
+    label { display: block; font-size: .8rem; color: var(--mut); font-weight: 500; margin-bottom: .375rem; }
+    input { width: 100%; background: var(--sur2); border: 1px solid var(--brd); border-radius: 8px; color: var(--txt); padding: .625rem .875rem; font-size: .875rem; font-family: inherit; outline: none; margin-bottom: .875rem; }
+    input:focus { border-color: var(--acc); box-shadow: 0 0 0 3px rgba(108,99,255,.2); }
+    .btn { width: 100%; padding: .875rem; border-radius: 10px; font-weight: 600; font-size: .9rem; cursor: pointer; border: none; transition: opacity .15s; }
+    .btn-primary { background: var(--acc); color: #fff; }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary { background: transparent; border: 1px solid var(--brd); color: var(--mut); margin-top: .625rem; }
+    .btn-ok { background: var(--ok); color: #0a0a0f; margin-top: .625rem; }
+    .alert { padding: .875rem 1rem; border-radius: 10px; font-size: .875rem; margin-bottom: 1rem; }
+    .alert-err { background: rgba(255,77,106,.08); border: 1px solid rgba(255,77,106,.3); color: var(--err); }
+    .alert-ok  { background: rgba(0,212,170,.08);  border: 1px solid rgba(0,212,170,.3);  color: var(--ok); }
+    .alert-info { background: rgba(108,99,255,.08); border: 1px solid rgba(108,99,255,.3); color: #a89ff0; }
     .step { display: none; }
     .step.active { display: block; }
-    .code { font-family: 'JetBrains Mono', monospace; font-size: .875rem; color: var(--accent); letter-spacing: .08em; font-weight: 500; }
-    .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .fade-in { animation: fadeIn .4s ease both; }
-    .pulse { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
+    /* PIX area */
+    .pix-area { text-align: center; padding: 1rem 0; }
+    .pix-qr { width: 200px; height: 200px; border-radius: 12px; border: 3px solid var(--ok); margin: 0 auto 1rem; display: block; background: var(--sur2); object-fit: contain; }
+    .pix-qr-placeholder { width: 200px; height: 200px; border-radius: 12px; border: 2px dashed var(--brd); margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; color: var(--mut); font-size: .8rem; text-align: center; padding: 1rem; }
+    .pix-key { font-family: monospace; font-size: .9rem; background: var(--sur2); border: 1px solid var(--brd); border-radius: 8px; padding: .75rem 1rem; word-break: break-all; margin-bottom: .75rem; color: var(--txt); }
+    .copy-btn { background: none; border: 1px solid var(--brd); border-radius: 8px; color: var(--mut); padding: .4rem .875rem; font-size: .8rem; cursor: pointer; margin-bottom: 1rem; }
+    .copy-btn:hover { border-color: var(--acc); color: var(--acc); }
+    .txid { font-family: monospace; font-size: 1.2rem; font-weight: 700; color: var(--acc); background: rgba(108,99,255,.1); border: 1px solid rgba(108,99,255,.3); padding: .5rem 1rem; border-radius: 8px; display: inline-block; margin: .75rem 0; letter-spacing: .08em; }
+    .steps-indicator { display: flex; gap: 0; margin-bottom: 2rem; }
+    .step-dot { flex: 1; text-align: center; position: relative; }
+    .step-dot::before { content: attr(data-n); display: block; width: 28px; height: 28px; border-radius: 50%; background: var(--sur2); border: 2px solid var(--brd); font-size: .8rem; font-weight: 600; line-height: 24px; margin: 0 auto .375rem; color: var(--mut); }
+    .step-dot.active::before { background: var(--acc); border-color: var(--acc); color: #fff; }
+    .step-dot.done::before { background: var(--ok); border-color: var(--ok); content: '✓'; color: var(--bg); }
+    .step-dot span { font-size: .72rem; color: var(--mut); }
+    .step-dot.active span { color: var(--txt); }
+    @media (max-width:480px) { .pix-qr,.pix-qr-placeholder { width: 160px; height: 160px; } }
   </style>
 </head>
 <body>
-<div class="container">
-
-  <!-- Logo -->
-  <div style="text-align:center; margin-bottom:2rem;">
-    <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#6c63ff,#00d4aa);display:inline-flex;align-items:center;justify-content:center;margin-bottom:.875rem;box-shadow:0 0 20px rgba(108,99,255,.3);">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    </div>
-    <h1 style="font-size:1.375rem;font-weight:700;margin-bottom:.25rem" id="page-title">Obter Licença</h1>
-    <p style="color:var(--muted);font-size:.875rem" id="page-sub">Pagamento seguro via PIX</p>
+<div class="wrap">
+  <div class="logo">
+    <a href="/" style="text-decoration:none;color:inherit"><span>Util <em>Ferramentas</em></span></a>
   </div>
 
-  <!-- STEP 1: Product selection + Customer info -->
-  <div class="step active fade-in" id="step-1">
-    <div class="card" style="padding:2rem">
-      <div id="error-1" class="alert alert-error" style="display:none"></div>
+  <!-- Steps indicator -->
+  <div class="steps-indicator">
+    <div class="step-dot active" data-n="1" id="dot1"><span>Dados</span></div>
+    <div class="step-dot" data-n="2" id="dot2"><span>Pagamento</span></div>
+    <div class="step-dot" data-n="3" id="dot3"><span>Confirmação</span></div>
+  </div>
 
-      <!-- Product selector -->
-      <div style="margin-bottom:1.25rem">
-        <label>Produto *</label>
-        <select id="product-select">
-          <option value="">Carregando produtos...</option>
-        </select>
-      </div>
-
-      <!-- Product detail card -->
-      <div id="product-detail" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
-        <div style="display:flex;align-items:center;justify-content:space-between">
+  <!-- Step 1: Form -->
+  <div class="step active" id="step1">
+    <div class="card">
+      <!-- Plan summary -->
+      <div class="plan-box">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
           <div>
-            <p style="font-weight:600;font-size:.9rem" id="detail-name"></p>
-            <p style="font-size:.8rem;color:var(--muted);margin-top:.25rem" id="detail-desc"></p>
+            <div style="font-size:.75rem;color:var(--mut);margin-bottom:.375rem;text-transform:uppercase;letter-spacing:.06em">Plano selecionado</div>
+            <div style="font-weight:700;font-size:1.1rem">Pro — Acesso Completo</div>
           </div>
-          <div style="text-align:right;flex-shrink:0;margin-left:1rem">
-            <p style="font-size:1.375rem;font-weight:800" id="detail-price"></p>
-            <p style="font-size:.72rem;color:var(--muted)" id="detail-type"></p>
-          </div>
+          <div class="plan-price">R$ <span id="price-display">29,90</span><small>/mês</small></div>
         </div>
+        <ul class="features">
+          <li>Encurtador de Links com analytics (App2)</li>
+          <li>Gerenciador de Dados Dinâmicos (App3)</li>
+          <li>Download de Vídeos ilimitado (App4)</li>
+          <li>Conversor JSON↔Excel/CSV (App5)</li>
+        </ul>
       </div>
 
-      <!-- Customer info -->
-      <div style="display:grid;gap:1rem">
-        <div>
-          <label>Seu nome completo *</label>
-          <input type="text" id="cname" placeholder="João Silva" autocomplete="name" />
-        </div>
-        <div>
-          <label>Seu email *</label>
-          <input type="email" id="cemail" placeholder="joao@email.com" autocomplete="email" />
-        </div>
-        <div>
-          <label>CPF (opcional)</label>
-          <input type="text" id="cdoc" placeholder="000.000.000-00" />
-        </div>
-      </div>
+      <h2>Seus dados</h2>
+      <div id="alert1"></div>
 
-      <button class="btn btn-primary" id="btn-checkout" style="margin-top:1.5rem" onclick="startCheckout()">
-        Gerar QR Code PIX →
-      </button>
+      <label>Nome completo</label>
+      <input type="text" id="name" placeholder="Seu nome" />
+
+      <label>Email</label>
+      <input type="email" id="email" placeholder="seu@email.com" />
+
+      <button class="btn btn-primary" onclick="submitForm()">Continuar para pagamento →</button>
+      <p style="margin-top:1rem;text-align:center;font-size:.8rem;color:var(--mut)">Já tem conta? <a href="/app1" style="color:var(--acc)">Fazer login</a></p>
     </div>
   </div>
 
-  <!-- STEP 2: PIX QR Code + polling -->
-  <div class="step" id="step-2">
-    <div class="card fade-in" style="padding:2rem;text-align:center">
-      <div style="display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1rem;background:rgba(255,179,71,.1);border:1px solid rgba(255,179,71,.3);border-radius:20px;color:#ffb347;font-size:.8rem;font-weight:600;margin-bottom:1.5rem">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Aguardando pagamento
-      </div>
+  <!-- Step 2: PIX payment -->
+  <div class="step" id="step2">
+    <div class="card">
+      <h2>Pagamento via PIX</h2>
+      <div id="alert2"></div>
 
-      <p style="font-weight:600;font-size:1rem;margin-bottom:.5rem">Escaneie o QR Code com seu banco</p>
-      <p style="color:var(--muted);font-size:.825rem;margin-bottom:1.5rem">O pagamento é processado instantaneamente. A licença será ativada automaticamente.</p>
+      <div class="pix-area">
+        <!-- Static QR code image — set PIX_QR_IMAGE_URL env var -->
+        <div id="qr-container">
+          <div class="pix-qr-placeholder" id="qr-placeholder">
+            📷<br/>Configure <code>PIX_QR_IMAGE_URL</code> para exibir seu QR Code
+          </div>
+          <img id="qr-img" class="pix-qr" style="display:none" alt="QR Code PIX" />
+        </div>
 
-      <div style="display:flex;justify-content:center;margin-bottom:1.25rem">
-        <div style="padding:.75rem;background:#fff;border-radius:12px;box-shadow:0 0 0 4px rgba(108,99,255,.15)">
-          <img id="qr-img" src="" alt="PIX QR Code" style="width:220px;height:220px;display:block" />
+        <p style="font-size:.8rem;color:var(--mut);margin-bottom:.5rem">Chave PIX</p>
+        <div class="pix-key" id="pix-key-display">—</div>
+        <button class="copy-btn" onclick="copyPixKey()">📋 Copiar chave PIX</button>
+
+        <p style="font-size:.8rem;color:var(--mut);margin-bottom:.375rem">Use esta referência na descrição do PIX:</p>
+        <div class="txid" id="txid-display">—</div>
+        <p style="font-size:.78rem;color:var(--mut);max-width:360px;margin:0 auto .75rem">
+          Isso ajuda a identificar seu pagamento e agiliza a aprovação.
+        </p>
+
+        <div class="alert alert-info" id="amount-info" style="text-align:left;margin-bottom:1rem">
+          Valor: <strong id="amount-display">—</strong>
         </div>
       </div>
 
-      <p style="font-size:.72rem;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">Ou use o Pix Copia e Cola</p>
-      <div style="position:relative;margin-bottom:1.5rem">
-        <textarea id="pix-text" readonly style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:.75rem;font-size:.7rem;font-family:'JetBrains Mono',monospace;resize:none;height:80px;cursor:text;outline:none"></textarea>
-        <button onclick="copyPix()" id="copy-btn" style="position:absolute;right:.5rem;top:.5rem;background:var(--accent);border:none;border-radius:6px;color:#fff;padding:.3rem .6rem;cursor:pointer;font-size:.72rem;font-weight:600">
-          Copiar
-        </button>
+      <div style="background:var(--sur2);border-radius:10px;padding:1rem;font-size:.82rem;color:var(--mut);margin-bottom:1.25rem;line-height:1.6">
+        <strong style="color:var(--txt)">Como pagar:</strong><br/>
+        1. Abra o app do seu banco<br/>
+        2. Acesse PIX → Pagar<br/>
+        3. Escaneie o QR Code ou cole a chave PIX<br/>
+        4. Coloque o ID <strong style="color:var(--acc)" id="txid-inline">—</strong> na descrição<br/>
+        5. Confirme e volte aqui para clicar em "Já paguei"
       </div>
 
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1.25rem">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:.825rem;color:var(--muted)">Valor</span>
-          <span style="font-weight:700" id="pay-amount"></span>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.5rem">
-          <span style="font-size:.825rem;color:var(--muted)">Sua chave de licença</span>
-          <span class="code" id="license-key-preview"></span>
-        </div>
-      </div>
-
-      <div id="checking-status" style="display:flex;align-items:center;justify-content:center;gap:.625rem;color:var(--muted);font-size:.825rem" class="pulse">
-        <div class="spinner"></div>
-        Verificando pagamento...
-      </div>
+      <button class="btn btn-ok" onclick="confirmPayment()">✓ Já fiz o pagamento</button>
+      <button class="btn btn-secondary" onclick="goBack()">← Voltar</button>
     </div>
   </div>
 
-  <!-- STEP 3: Success -->
-  <div class="step" id="step-3">
-    <div class="card fade-in" style="padding:2.5rem;text-align:center">
-      <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,212,170,.15);border:2px solid var(--success);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00d4aa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <h2 style="font-size:1.375rem;font-weight:700;margin-bottom:.5rem">Pagamento confirmado! 🎉</h2>
-      <p style="color:var(--muted);font-size:.875rem;margin-bottom:2rem">Sua licença foi ativada com sucesso. Guarde sua chave em um local seguro.</p>
-
-      <div style="background:linear-gradient(135deg,rgba(108,99,255,.1),rgba(0,212,170,.05));border:1px solid rgba(108,99,255,.3);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
-        <p style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.625rem">Sua chave de licença</p>
-        <p class="code" id="final-key" style="font-size:1.375rem;letter-spacing:.12em"></p>
-      </div>
-
-      <button class="btn" onclick="copyFinalKey()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);max-width:280px;margin:0 auto .75rem">
-        📋 Copiar Chave
-      </button>
-      <p style="font-size:.8rem;color:var(--muted);margin-top:.75rem">
-        Um email com sua licença foi enviado para <strong id="final-email"></strong>
+  <!-- Step 3: Confirmation -->
+  <div class="step" id="step3">
+    <div class="card" style="text-align:center;padding:3rem 2rem">
+      <div style="font-size:3rem;margin-bottom:1rem">🎉</div>
+      <h2 style="margin-bottom:.75rem">Pagamento Registrado!</h2>
+      <p style="color:var(--mut);margin-bottom:1.5rem;line-height:1.6">
+        Recebemos a confirmação do seu pagamento.<br/>
+        O admin irá verificar e <strong style="color:var(--txt)">liberar seu acesso em até 24h</strong>.<br/>
+        Você receberá as credenciais de acesso por email.
       </p>
+      <div class="alert alert-info" style="text-align:left;margin-bottom:1.5rem">
+        <strong>Número de referência:</strong><br/>
+        <span class="txid" id="txid-final" style="font-size:1rem">—</span>
+      </div>
+      <p style="font-size:.82rem;color:var(--mut)">
+        Dúvidas? Entre em contato informando o número acima.
+      </p>
+      <a href="/" style="display:inline-block;margin-top:1.5rem;color:var(--acc);font-size:.875rem">← Voltar para o início</a>
     </div>
   </div>
 
+  <!-- Status checker -->
+  <div class="card" style="margin-top:1.25rem">
+    <h2 style="font-size:.9rem;margin-bottom:.75rem;color:var(--mut)">Verificar status do pedido</h2>
+    <div style="display:flex;gap:.625rem">
+      <input type="email" id="status-email" placeholder="seu@email.com" style="margin:0;flex:1" />
+      <button onclick="checkStatus()" style="background:var(--sur2);border:1px solid var(--brd);border-radius:8px;color:var(--txt);padding:.625rem 1rem;cursor:pointer;font-size:.875rem;white-space:nowrap">Verificar</button>
+    </div>
+    <div id="status-result" style="margin-top:.75rem"></div>
+  </div>
 </div>
 
 <script>
-  const BASE_URL = '';  // set to your gateway URL in production e.g. 'https://yourdomain.com'
-  let state = { licenseId: null, licenseKey: null, pollInterval: null, customerEmail: '' };
-  let products = [];
+  let currentTxid = '';
+  let currentEmail = '';
+  let pixKey = '';
 
-  // ── Load products ──────────────────────────────────────────
-  async function loadProducts() {
+  // Load config from API
+  async function loadConfig() {
     try {
-      const res = await fetch(`${BASE_URL}/api/licenses/products`);
-      const data = await res.json();
-      products = data.data || [];
+      const r = await fetch('/api/checkout/plans');
+      const j = await r.json();
+      const pro = j.data?.find(p => p.key === 'pro');
+      if (pro) {
+        document.getElementById('price-display').textContent =
+          (pro.price_cents / 100).toFixed(2).replace('.', ',');
+      }
+    } catch(e) {}
+  }
+  loadConfig();
 
-      const sel = document.getElementById('product-select');
-      sel.innerHTML = '<option value="">Selecione um produto</option>';
-      products.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.name} — ${formatBRL(p.price_cents)}`;
-        sel.appendChild(opt);
-      });
-    } catch (e) {
-      console.error(e);
-    }
+  function showAlert(id, msg, type = 'err') {
+    const el = document.getElementById(id);
+    el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  }
+  function clearAlert(id) { document.getElementById(id).innerHTML = ''; }
+
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      document.getElementById('step' + i).classList.toggle('active', i === n);
+      const dot = document.getElementById('dot' + i);
+      dot.classList.toggle('active', i === n);
+      dot.classList.toggle('done', i < n);
+    });
   }
 
-  document.getElementById('product-select').addEventListener('change', function() {
-    const p = products.find(x => x.id === this.value);
-    const detail = document.getElementById('product-detail');
-    if (p) {
-      document.getElementById('detail-name').textContent = p.name;
-      document.getElementById('detail-desc').textContent = p.description || '';
-      document.getElementById('detail-price').textContent = formatBRL(p.price_cents);
-      const typeMap = { perpetual: 'Licença Vitalícia', yearly: 'Licença Anual', monthly: 'Licença Mensal' };
-      document.getElementById('detail-type').textContent = `${typeMap[p.license_type] || p.license_type} · ${p.max_activations} máquina(s)`;
-      detail.style.display = 'block';
-    } else {
-      detail.style.display = 'none';
-    }
-  });
+  async function submitForm() {
+    const name  = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
 
-  // ── Start checkout ─────────────────────────────────────────
-  async function startCheckout() {
-    const productId = document.getElementById('product-select').value;
-    const name  = document.getElementById('cname').value.trim();
-    const email = document.getElementById('cemail').value.trim();
-    const doc   = document.getElementById('cdoc').value.trim();
-    const errEl = document.getElementById('error-1');
-    errEl.style.display = 'none';
+    if (!name || name.length < 2) { showAlert('alert1', 'Informe seu nome completo'); return; }
+    if (!email || !email.includes('@')) { showAlert('alert1', 'Informe um email válido'); return; }
 
-    if (!productId) return showError('Selecione um produto');
-    if (!name)      return showError('Informe seu nome');
-    if (!email || !email.includes('@')) return showError('Informe um email válido');
-
-    const btn = document.getElementById('btn-checkout');
-    btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div> Gerando QR Code...';
+    clearAlert('alert1');
+    currentEmail = email;
 
     try {
-      const res = await fetch(`${BASE_URL}/api/licenses/checkout`, {
+      const r = await fetch('/api/checkout/request', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product_id: productId, customer_name: name, customer_email: email, customer_doc: doc || undefined }),
+        body: JSON.stringify({ name, email, plan: 'pro' }),
       });
-      const data = await res.json();
+      const j = await r.json();
 
-      if (!res.ok) throw new Error(data.error || 'Erro ao criar cobrança');
+      if (!j.success) {
+        showAlert('alert1', j.error || 'Erro ao processar. Tente novamente.');
+        return;
+      }
 
-      state.licenseId   = data.data.license_id;
-      state.licenseKey  = data.data.license_key;
-      state.customerEmail = email;
+      currentTxid = j.data.txid;
+      pixKey = j.data.pix_key;
 
-      // Show QR code
-      document.getElementById('qr-img').src = data.data.pix.qrcode_base64;
-      document.getElementById('pix-text').value = data.data.pix.qrcode_text;
-      document.getElementById('pay-amount').textContent = formatBRL(data.data.amount_cents);
-      document.getElementById('license-key-preview').textContent = data.data.license_key;
+      // Populate step 2
+      document.getElementById('pix-key-display').textContent = pixKey || 'Configure PIX_KEY no servidor';
+      document.getElementById('txid-display').textContent = currentTxid;
+      document.getElementById('txid-inline').textContent = currentTxid;
+      document.getElementById('amount-display').textContent =
+        'R$ ' + parseFloat(j.data.amount_brl).toFixed(2).replace('.', ',');
 
-      goToStep(2);
-      startPolling();
-    } catch (e) {
-      showError(e.message);
-      btn.disabled = false;
-      btn.innerHTML = 'Gerar QR Code PIX →';
+      // Show QR image if available
+      const imgUrl = j.data.pix_static_image;
+      if (imgUrl) {
+        document.getElementById('qr-placeholder').style.display = 'none';
+        const img = document.getElementById('qr-img');
+        img.src = imgUrl;
+        img.style.display = 'block';
+      }
+
+      setStep(2);
+    } catch(e) {
+      showAlert('alert1', 'Erro de conexão. Tente novamente.');
     }
   }
 
-  // ── Poll payment status ────────────────────────────────────
-  function startPolling() {
-    state.pollInterval = setInterval(async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/licenses/status/${state.licenseId}`);
-        const data = await res.json();
-        if (data.data.status === 'active') {
-          clearInterval(state.pollInterval);
-          showSuccess();
-        }
-      } catch (e) { /* retry */ }
-    }, 3000); // poll every 3 seconds
+  function goBack() { setStep(1); }
 
-    // Stop polling after 30min
-    setTimeout(() => clearInterval(state.pollInterval), 30 * 60 * 1000);
-  }
-
-  function showSuccess() {
-    document.getElementById('final-key').textContent = state.licenseKey;
-    document.getElementById('final-email').textContent = state.customerEmail;
-    goToStep(3);
-  }
-
-  function copyPix() {
-    const text = document.getElementById('pix-text').value;
-    navigator.clipboard.writeText(text).then(() => {
-      const btn = document.getElementById('copy-btn');
+  function copyPixKey() {
+    navigator.clipboard.writeText(pixKey).then(() => {
+      const btn = document.querySelector('.copy-btn');
       btn.textContent = '✓ Copiado!';
-      btn.style.background = '#00d4aa';
-      setTimeout(() => { btn.textContent = 'Copiar'; btn.style.background = ''; }, 2000);
+      setTimeout(() => btn.textContent = '📋 Copiar chave PIX', 2000);
+    }).catch(() => {
+      prompt('Copie a chave PIX:', pixKey);
     });
   }
 
-  function copyFinalKey() {
-    navigator.clipboard.writeText(state.licenseKey).then(() => alert('Chave copiada!'));
+  async function confirmPayment() {
+    clearAlert('alert2');
+    try {
+      const r = await fetch('/api/checkout/confirm-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ txid: currentTxid, email: currentEmail }),
+      });
+      const j = await r.json();
+
+      if (!j.success) { showAlert('alert2', j.error || 'Erro'); return; }
+
+      document.getElementById('txid-final').textContent = currentTxid;
+      setStep(3);
+    } catch(e) {
+      showAlert('alert2', 'Erro de conexão. Tente novamente.');
+    }
   }
 
-  function goToStep(n) {
-    document.querySelectorAll('.step').forEach((s, i) => {
-      s.classList.toggle('active', i + 1 === n);
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  async function checkStatus() {
+    const email = document.getElementById('status-email').value.trim();
+    if (!email) return;
 
-  function showError(msg) {
-    const el = document.getElementById('error-1');
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
+    const el = document.getElementById('status-result');
+    el.innerHTML = '<div style="color:var(--mut);font-size:.85rem">Verificando...</div>';
 
-  function formatBRL(cents) {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cents / 100);
-  }
+    try {
+      const r = await fetch('/api/checkout/status?email=' + encodeURIComponent(email));
+      const j = await r.json();
+      const d = j.data;
 
-  // Init
-  loadProducts();
+      const colors = {
+        none:            'var(--mut)',
+        pending_payment: 'var(--mut)',
+        payment_sent:    'var(--acc)',
+        approved:        'var(--ok)',
+        rejected:        'var(--err)',
+      };
+      const color = colors[d.status] || 'var(--mut)';
+      el.innerHTML = `<div style="font-size:.85rem;color:${color};padding:.625rem .875rem;background:var(--sur2);border-radius:8px;border:1px solid var(--brd)">${d.message}</div>`;
+    } catch(e) {
+      el.innerHTML = '<div style="color:var(--err);font-size:.85rem">Erro de conexão</div>';
+    }
+  }
 </script>
 </body>
 </html>
