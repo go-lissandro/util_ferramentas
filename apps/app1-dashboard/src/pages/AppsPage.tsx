@@ -110,15 +110,15 @@ export function AppsPage() {
 
                 {/* CTA */}
                 {isLocked ? (
-                  <Link to="/billing" style={{ textDecoration: 'none' }}>
+                  <Link to="/plans" style={{ textDecoration: 'none' }}>
                     <button className="btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>
-                      <Zap size={14} /> Upgrade to unlock
+                      <Zap size={14} /> Fazer upgrade
                     </button>
                   </Link>
                 ) : (
                   <a href={app.path} style={{ textDecoration: 'none' }}>
                     <button className="btn-primary" style={{ width: '100%', justifyContent: 'center' }}>
-                      Open app <ExternalLink size={13} />
+                      Abrir app <ExternalLink size={13} />
                     </button>
                   </a>
                 )}

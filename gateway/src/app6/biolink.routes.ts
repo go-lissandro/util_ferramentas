@@ -323,7 +323,7 @@ bioPublicRouter.get('/:username', async (req: Request, res: Response) => {
     : `<div class="avatar-placeholder">${escHtml(page.title.charAt(0).toUpperCase())}</div>`;
 
   const linksHtml = links.map(l => `
-  <a href="${SITE_URL}/bio-click/${l.id}" class="link-btn" target="_blank" rel="noopener noreferrer" data-id="${l.id}">
+  <a href="${SITE_URL}/bio/click/${l.id}" class="link-btn" target="_blank" rel="noopener noreferrer" data-id="${l.id}">
     <span class="link-icon">${escHtml(l.icon || '🔗')}</span>
     <span class="link-title">${escHtml(l.title)}</span>
     <span class="link-arrow">↗</span>
@@ -377,7 +377,7 @@ h1{font-size:1.3rem;font-weight:700;color:${t.text};margin-bottom:.375rem;text-a
 });
 
 // GET /bio-click/:linkId — record click and redirect
-bioPublicRouter.get('/bio-click/:linkId', async (req: Request, res: Response) => {
+bioPublicRouter.get('/click/:linkId', async (req: Request, res: Response) => {
   const link = await db.queryOne<{ url: string; page_id: string }>(
     'SELECT url, page_id FROM bio_links WHERE id = $1 AND is_active = true', [req.params.linkId]
   );

@@ -43,9 +43,6 @@ export const authApi = {
   login: (email: string, password: string) =>
     api.post<{ success: boolean; data: { user: unknown; tenant: unknown; accessToken: string; refreshToken: string } }>('/auth/login', { email, password }),
 
-  register: (data: { name: string; email: string; password: string; tenantName?: string }) =>
-    api.post('/auth/register', data),
-
   me: () => api.get('/auth/me'),
 
   logout: () => api.post('/auth/logout'),
