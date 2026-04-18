@@ -103,18 +103,10 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
 checkoutRouter.post('/confirm-payment', async (req: Request, res: Response) => {
   const { txid, email } = z.object({ txid: z.string(), email: z.string().email() }).parse(req.body);
 
-  const request = await db.queryOne<{ id: string; status: string }>(
-    'SELECT id, status FROM purchase_requests WHERE txid = $1 AND email = $2',
-    [txid, email]  // wait, column is pix_txid
-  );
-
-  // try with pix_txid
-  const req2 = await db.queryOne<{ id: string; status: string }>(
+  const found = await db.queryOne<{ id: string; status: string }>(
     'SELECT id, status FROM purchase_requests WHERE pix_txid = $1 AND email = $2',
     [txid, email]
   );
-
-  const found = req2;
   if (!found) throw new AppError('Solicitação não encontrada', 404, 'NOT_FOUND');
   if (found.status === 'approved') return res.json({ success: true, message: 'Conta já aprovada! Faça login.' });
   if (found.status === 'payment_sent') return res.json({ success: true, message: 'Pagamento já registrado. Aguarde aprovação.' });

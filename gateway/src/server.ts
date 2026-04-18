@@ -96,8 +96,7 @@ async function bootstrap() {
 
   // ── Mount App6 (Bio Link) API + public pages ───────────────
   app.use('/api/bio', bioRouter);
-  app.use('/bio', bioPublicRouter);        // public: /bio/:username
-  app.use('/bio-click', bioPublicRouter);  // click tracker: /bio-click/:id
+  app.use('/bio', bioPublicRouter);  // /bio/:username (HTML) + /bio-click/:linkId (redirect)
 
   // ── Serve App5 (Converter) static files at /app5 ──────────
   const app5Dist = path.join(__dirname, '../../apps/app5-converter/client/dist');

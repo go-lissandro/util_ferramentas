@@ -12,11 +12,11 @@ services:
       pip install yt-dlp --break-system-packages &&
       cd ../apps/app1-dashboard && npm install && npm run build &&
       cd ../app2-urlshortener/client && npm install && npm run build &&
-      cd ../app3-datamanager/client && npm install && npm run build &&
-      cd ../../../apps/app4-videodownloader/client && npm install && npm run build &&
-      cd ../app5-converter/client && npm install && npm run build &&
-      cd ../app6-biolink/client && npm install && npm run build &&
-      cd ../../gateway && npm install --include=dev && npm run build
+      cd ../../app3-datamanager/client && npm install && npm run build &&
+      cd ../../app4-videodownloader/client && npm install && npm run build &&
+      cd ../../app5-converter/client && npm install && npm run build &&
+      cd ../../app6-biolink/client && npm install && npm run build &&
+      cd ../../../gateway && npm install --include=dev && npm run build
     startCommand: npm start
     plan: free
     healthCheckPath: /health
@@ -32,10 +32,6 @@ services:
       - key: ALLOWED_ORIGINS
         value: https://util-ferramentas.onrender.com
       - key: PIX_KEY
-        sync: false
-      - key: PIX_MERCHANT_NAME
-        sync: false
-      - key: PIX_MERCHANT_CITY
         sync: false
       - key: PIX_QR_IMAGE_URL
         sync: false

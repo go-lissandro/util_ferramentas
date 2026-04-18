@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -64,10 +64,10 @@ export function LoginPage() {
             <Zap size={22} color="#fff" />
           </div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.375rem' }}>
-            Welcome back
+            Bem-vindo de volta
           </h1>
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
-            Sign in to your workspace
+            Entre no seu workspace
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, marginBottom: '0.375rem', color: 'var(--color-text-muted)' }}>
-                Email address
+                Email
               </label>
               <input
                 {...register('email')}
@@ -106,7 +106,7 @@ export function LoginPage() {
 
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, marginBottom: '0.375rem', color: 'var(--color-text-muted)' }}>
-                Password
+                Senha
               </label>
               <div style={{ position: 'relative' }}>
                 <input
@@ -139,15 +139,15 @@ export function LoginPage() {
             <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem' }} disabled={isSubmitting}>
               {isSubmitting ? (
                 <span className="animate-spin" style={{ display: 'inline-block', width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%' }} />
-              ) : 'Sign in'}
+              ) : 'Entrar'}
             </button>
           </form>
 
           <p style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-            No account?{' '}
-            <Link to="/register" style={{ color: 'var(--color-accent)', fontWeight: 600, textDecoration: 'none' }}>
-              Create workspace
-            </Link>
+            Não tem conta?{' '}
+            <a href="/checkout.html" style={{ color: 'var(--color-accent)', fontWeight: 600, textDecoration: 'none' }}>
+              Assinar agora
+            </a>
           </p>
         </div>
       </div>

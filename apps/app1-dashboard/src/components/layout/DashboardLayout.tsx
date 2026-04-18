@@ -1,7 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Boxes, Users, CreditCard,
-  Settings, LogOut, Zap, Key, Package, ShoppingBag, ToggleLeft
+  LayoutDashboard, Boxes, Users,
+  Settings, LogOut, Zap, ShoppingBag, ToggleLeft, Key, Package
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { authApi } from '../../services/api';
@@ -12,6 +12,8 @@ const NAV_ITEMS = [
   { to: '/purchase-requests',   icon: ShoppingBag,     label: 'Compras PIX'                 },
   { to: '/plans',               icon: ToggleLeft,      label: 'Planos & Acesso'             },
   { to: '/users',               icon: Users,           label: 'Usuários'                    },
+  { to: '/products',             icon: Package,         label: 'Produtos'                    },
+  { to: '/licenses',             icon: Key,             label: 'Licenças'                    },
   { to: '/settings',            icon: Settings,        label: 'Configurações'               },
 ];
 
@@ -117,7 +119,7 @@ export function DashboardLayout() {
           </div>
           <button onClick={handleLogout} className="btn-ghost" style={{ width: '100%', justifyContent: 'center' }}>
             <LogOut size={14} />
-            Sign out
+            Sair
           </button>
         </div>
       </aside>
