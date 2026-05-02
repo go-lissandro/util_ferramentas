@@ -110,12 +110,15 @@
       <div id="alert2"></div>
 
       <div class="pix-area">
-        <!-- Static QR code image — set PIX_QR_IMAGE_URL env var -->
+        <!-- QR Code PIX — image served from /pix-qrcode.png (gateway/public/) -->
         <div id="qr-container">
-          <div class="pix-qr-placeholder" id="qr-placeholder">
-            📷<br/>Configure <code>PIX_QR_IMAGE_URL</code> para exibir seu QR Code
+          <img id="qr-img" src="/pix-qrcode.png" class="pix-qr" alt="QR Code PIX"
+            onerror="this.style.display='none';document.getElementById('qr-placeholder').style.display='flex'"
+            onload="document.getElementById('qr-placeholder').style.display='none'" />
+          <div class="pix-qr-placeholder" id="qr-placeholder" style="display:none">
+            📷<br/><strong>Adicione seu QR Code</strong><br/>
+            <small>Coloque <code>pix-qrcode.png</code><br/>na pasta <code>gateway/public/</code></small>
           </div>
-          <img id="qr-img" class="pix-qr" style="display:none" alt="QR Code PIX" />
         </div>
 
         <p style="font-size:.8rem;color:var(--mut);margin-bottom:.5rem">Chave PIX</p>
@@ -247,13 +250,8 @@
         'R$ ' + parseFloat(j.data.amount_brl).toFixed(2).replace('.', ',');
 
       // Show QR image if available
-      const imgUrl = j.data.pix_static_image;
-      if (imgUrl) {
-        document.getElementById('qr-placeholder').style.display = 'none';
-        const img = document.getElementById('qr-img');
-        img.src = imgUrl;
-        img.style.display = 'block';
-      }
+      // QR image is loaded directly from /pix-qrcode.png on page load
+      // No need to update it here
 
       setStep(2);
     } catch(e) {

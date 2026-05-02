@@ -28,6 +28,9 @@ import { urlShortenerRouter, redirectRouter, migrateUrlShortener } from './app2/
 // ── App5 (Converter) routes ────────────────────────────────────
 import { converterRouter } from './app5/converter.routes';
 
+// ── App7 (Habits) routes ───────────────────────────────────────
+import { habitsRouter, migrateHabits } from './app7/habits.routes';
+
 // ── App6 (Bio Link) routes ─────────────────────────────────────
 import { bioRouter, bioPublicRouter, migrateBioLink } from './app6/biolink.routes';
 
@@ -40,12 +43,29 @@ async function bootstrap() {
 
   // Run App2 migrations
   await migrateUrlShortener();
+  await migrateHabits();
 
   // Run App6 migrations
   await migrateBioLink();
 
   setupMiddleware(app);
   setupRoutes(app);
+
+  // ── Serve public static assets (QR code, images, etc.) ───────
+  const publicDir = path.join(__dirname, '../public');
+  app.use(express.static(publicDir));
+
+  // ── Fallback: serve placeholder SVG as pix-qrcode.png if PNG not present ──
+  app.get('/pix-qrcode.png', (_req: Request, res: Response) => {
+    const { existsSync } = require('fs');
+    const pngPath = path.join(__dirname, '../public/pix-qrcode.png');
+    const svgPath = path.join(__dirname, '../public/pix-qrcode-placeholder.svg');
+    if (existsSync(pngPath)) {
+      return res.sendFile(pngPath);
+    }
+    res.setHeader('Content-Type', 'image/svg+xml');
+    return res.sendFile(svgPath);
+  });
 
   // ── Serve App1 (dashboard) static files at /app1 ──────────
   const app1Dist = path.join(__dirname, '../../apps/app1-dashboard/dist');
@@ -105,7 +125,32 @@ async function bootstrap() {
     res.sendFile(path.join(app5Dist, 'index.html'));
   });
 
-  // ── Mount App2 (URL Shortener) API routes ─────────────────
+  // ── Mount App7 (Habits) API routes ────────────────────────
+  app.use('/api/habits', authenticate, habitsRouter);
+
+  // ── Serve App7 (Habits) static files at /app7 ─────────────
+  const app7Dist = path.join(__dirname, '../../apps/app7-habits/client/dist');
+  app.use('/app7', express.static(app7Dist));
+  app.get('/app7/*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(app7Dist, 'index.html'));
+  });
+
+  // ── Serve App8 (QR Code) static files at /app8 ─────────────
+  const app8Dist = path.join(__dirname, '../../apps/app8-qrcode/client/dist');
+  app.use('/app8', express.static(app8Dist));
+  app.get('/app8/*', (_req: Request, res: Response) => { res.sendFile(path.join(app8Dist, 'index.html')); });
+
+  // ── Serve App9 (Image Tools) static files at /app9 ───────────
+  const app9Dist = path.join(__dirname, '../../apps/app9-imagetools/client/dist');
+  app.use('/app9', express.static(app9Dist));
+  app.get('/app9/*', (_req: Request, res: Response) => { res.sendFile(path.join(app9Dist, 'index.html')); });
+
+  // ── Serve App10 (Finance) static files at /app10 ─────────────
+  const app10Dist = path.join(__dirname, '../../apps/app10-finance/client/dist');
+  app.use('/app10', express.static(app10Dist));
+  app.get('/app10/*', (_req: Request, res: Response) => { res.sendFile(path.join(app10Dist, 'index.html')); });
+
+    // ── Mount App2 (URL Shortener) API routes ─────────────────
   app.use('/api/app2', authenticate, urlShortenerRouter);
 
   // ── Mount DDM API routes (protected by JWT) ────────────────

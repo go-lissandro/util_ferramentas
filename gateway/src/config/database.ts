@@ -106,6 +106,14 @@ async function runMigrations(pool: Pool): Promise<void> {
         ('pro',  'app4', true),
         ('pro',  'app5', true),
         ('pro',  'app6', true)
+        ('free', 'app7', true),
+        ('pro',  'app7', true)
+        ('free', 'app8', true),
+        ('pro',  'app8', true),
+        ('free', 'app9', true),
+        ('pro',  'app9', true),
+        ('free', 'app10', true),
+        ('pro',  'app10', true)
       ON CONFLICT (plan, app_key) DO NOTHING;
 
       -- ── Purchase requests (replaces complex license system) ──────

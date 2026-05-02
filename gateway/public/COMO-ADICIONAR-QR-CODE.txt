@@ -1,0 +1,21 @@
+===============================================
+ COMO ADICIONAR SEU QR CODE PIX
+===============================================
+
+1. Abra o app do seu banco (Nubank, Inter, C6, etc.)
+
+2. Gere seu QR Code estático:
+   - Nubank: Cobrar → QR Code estático → Salvar imagem
+   - Inter: PIX → Área PIX → Meu QR Code → Salvar
+   - Qualquer banco: procure "QR Code PIX" nas opções de recebimento
+
+3. Salve a imagem com o nome EXATO: pix-qrcode.png
+
+4. Substitua o arquivo placeholder por esta pasta:
+   gateway/public/pix-qrcode.png
+
+5. Faça o deploy — o QR vai aparecer automaticamente 
+   na página /checkout.html
+
+DICA: Use PNG de pelo menos 400x400px para boa qualidade.
+===============================================

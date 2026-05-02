@@ -189,6 +189,13 @@ ${ADSENSE_ID ? `<script async src="https://pagead2.googlesyndication.com/pagead/
       <a href="/encurtar-links">Links</a>
       <a href="/converter-json-excel">JSON↔Excel</a>
       <a href="/link-na-bio">Bio Link</a>
+      <a href="/rastreador-de-habitos">Hábitos</a>
+      <a href="/gerador-qr-code">QR Code</a>
+      <a href="/editor-imagens">Imagens</a>
+      <a href="/calculadora-financeira">Finanças</a>
+      <a href="/gerador-qr-code">QR Code</a>
+      <a href="/calculadora-financeira">Finanças</a>
+      <a href="/rastreador-de-habitos">Hábitos</a>
       <a href="/sobre">Sobre</a>
     </nav>
     <a href="/app4" class="btn-sm">Usar grátis →</a>
@@ -260,6 +267,10 @@ seoRouter.get('/sitemap.xml', (_req, res) => {
     ['/encurtar-links',        '0.8', 'monthly', today],
     ['/converter-json-excel',  '0.8', 'monthly', today],
     ['/link-na-bio',           '0.8', 'monthly', today],
+    ['/rastreador-de-habitos', '0.8', 'monthly', today],
+    ['/gerador-qr-code',        '0.8', 'monthly', today],
+    ['/editor-imagens',         '0.8', 'monthly', today],
+    ['/calculadora-financeira', '0.8', 'monthly', today],
     ['/sobre',                 '0.6', 'monthly', today],
     ['/privacidade',           '0.4', 'yearly',  today],
     ['/termos',                '0.4', 'yearly',  today],
@@ -267,6 +278,10 @@ seoRouter.get('/sitemap.xml', (_req, res) => {
     ['/app4',                  '0.8', 'weekly',  today],
     ['/app5',                  '0.7', 'weekly',  today],
     ['/app6',                  '0.7', 'weekly',  today],
+    ['/app7',                  '0.7', 'weekly',  today],
+    ['/app8',                  '0.7', 'weekly',  today],
+    ['/app9',                  '0.7', 'weekly',  today],
+    ['/app10',                 '0.7', 'weekly',  today],
   ];
 
   const items = urls.map(([loc, pri, freq, mod]) =>
@@ -1406,4 +1421,388 @@ seoRouter.get('/link-na-bio', (_req, res) => {
     schema,
     body,
   }));
+});
+
+// ──────────────────────────────────────────────────────────────────
+// RASTREADOR DE HÁBITOS — App7
+// ──────────────────────────────────────────────────────────────────
+seoRouter.get('/rastreador-de-habitos', (_req, res) => {
+  setHtmlHeaders(res);
+  const schema = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: 'Rastreador de Hábitos Online Gratuito — Construa Consistência',
+      author: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+      publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: OG_IMAGE } },
+      datePublished: '2024-01-01',
+      dateModified: new Date().toISOString().split('T')[0],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Início', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Rastreador de Hábitos', item: `${SITE_URL}/rastreador-de-habitos` },
+      ],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'Rastreador de Hábitos Online',
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+      description: 'Crie e acompanhe seus hábitos diários com streaks, histórico visual e progresso semanal.',
+      url: `${SITE_URL}/app7`,
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        { '@type': 'Question', name: 'O que é um rastreador de hábitos?', acceptedAnswer: { '@type': 'Answer', text: 'Um rastreador de hábitos é uma ferramenta que ajuda a monitorar atividades diárias, como beber água, exercitar ou ler, mostrando sua consistência ao longo do tempo.' } },
+        { '@type': 'Question', name: 'Como funcionam os streaks de hábitos?', acceptedAnswer: { '@type': 'Answer', text: 'Streak é o número de dias consecutivos em que você completou o hábito. Manter o streak cria motivação para não quebrar a sequência.' } },
+        { '@type': 'Question', name: 'Por que acompanhar hábitos ajuda?', acceptedAnswer: { '@type': 'Answer', text: 'Estudos mostram que registrar hábitos aumenta a consistência em até 3x. A visualização do progresso cria responsabilidade e motivação contínua.' } },
+      ],
+    },
+  ];
+
+  const body = `
+<nav aria-label="Breadcrumb" class="breadcrumb">
+  <a href="/">Início</a><span>›</span><span>Rastreador de Hábitos</span>
+</nav>
+<span class="tag">Gratuito</span><span class="tag">Produtividade</span>
+
+<h1>Rastreador de hábitos online — construa consistência com streaks</h1>
+<p class="lead">Crie seus hábitos diários, marque o que fez hoje e acompanhe sua sequência de dias. A ferramenta mais simples para transformar pequenas ações em resultados duradouros.</p>
+
+<div class="stats">
+  <div class="stat"><strong>🔥</strong><span>streaks diários</span></div>
+  <div class="stat"><strong>21</strong><span>dias de histórico</span></div>
+  <div class="stat"><strong>0</strong><span>custo</span></div>
+</div>
+
+<h2>O que é acompanhamento de hábitos?</h2>
+<p>Um rastreador de hábitos é uma ferramenta simples para registrar quais atividades você completou no dia. Parece básico, mas a ciência comportamental mostra que <strong>apenas o ato de marcar um hábito como feito aumenta significativamente a probabilidade de repetir no dia seguinte</strong>.</p>
+<p>O conceito foi popularizado pelo escritor James Clear no livro "Hábitos Atômicos": pequenas ações repetidas consistentemente geram mudanças extraordinárias. O truque é não quebrar a sequência — o famoso "não quebre o corrente".</p>
+
+<h2>Como usar o Rastreador de Hábitos</h2>
+<ol class="step-list">
+  <li><strong>Crie seus hábitos</strong> — escolha um ícone, nome e cor para cada hábito. Exemplos: 💧 Beber água, 🏃 Exercitar, 📚 Ler 10 páginas.</li>
+  <li><strong>Marque o que fez</strong> — todo dia, clique no botão de cada hábito que você completou. O card acende com a cor escolhida.</li>
+  <li><strong>Veja seu streak</strong> — o 🔥 aparece ao lado de cada hábito mostrando quantos dias seguidos você manteve. 14 dias vira 🔥🔥, 30 dias 🔥🔥🔥.</li>
+  <li><strong>Acompanhe o progresso</strong> — a tela "Progresso" mostra gráfico semanal, melhor streak e histórico de 21 dias de cada hábito.</li>
+</ol>
+
+<h2>Por que os streaks funcionam</h2>
+<p>O mecanismo por trás dos streaks é a aversão à perda — psicologicamente, <strong>dói mais perder algo que já temos do que ganhar algo novo</strong>. Quando você tem um streak de 15 dias, o custo percebido de "quebrar" a sequência é muito maior do que o esforço de manter.</p>
+<p>Além disso, o histórico visual de 21 dias cria um "tapete" de quadradinhos coloridos que representa seu esforço acumulado. Ver lacunas nesse tapete é desconfortável — e esse desconforto é produtivo.</p>
+
+<h2>Quais hábitos vale a pena rastrear?</h2>
+<div class="cards">
+  <div class="card"><div class="icon">💧</div><h3>Hidratação</h3><p>Beber 2 litros de água por dia. Um dos hábitos com maior impacto na energia e concentração.</p></div>
+  <div class="card"><div class="icon">🏃</div><h3>Movimento</h3><p>30 minutos de exercício. Não precisa ser academia — caminhada conta.</p></div>
+  <div class="card"><div class="icon">📚</div><h3>Leitura</h3><p>10 páginas por dia. 10 páginas × 365 dias = ~12 livros por ano.</p></div>
+  <div class="card"><div class="icon">🧘</div><h3>Meditação</h3><p>5 minutos de respiração consciente. Reduz ansiedade e melhora o foco.</p></div>
+  <div class="card"><div class="icon">🛏️</div><h3>Sono</h3><p>Dormir antes da meia-noite. A consistência do horário importa mais que a quantidade.</p></div>
+  <div class="card"><div class="icon">✍️</div><h3>Escrita</h3><p>Um parágrafo por dia. Diário, ideias, reflexões — qualquer coisa.</p></div>
+</div>
+
+<h2>A regra dos dois dias</h2>
+<p>Um dos princípios mais úteis para manutenção de hábitos: <strong>nunca falte dois dias seguidos</strong>. Falhar uma vez é humano; falhar duas vezes seguidas é o início de um novo hábito ruim.</p>
+<p>O Rastreador de Hábitos do Util Ferramentas foi desenhado pensando nisso: se você errar um dia, o histórico visual mostra claramente uma lacuna, criando urgência para voltar no dia seguinte.</p>
+
+<h2>Perguntas frequentes</h2>
+<div>
+  <div class="faq-item">
+    <h3>Quantos hábitos devo rastrear ao mesmo tempo?</h3>
+    <p>Para quem está começando, <strong>2 a 3 hábitos</strong> é o ideal. Muitos hábitos simultâneos dividem a atenção e tornam o sistema difícil de manter. Comece pequeno e adicione novos à medida que os atuais se tornam automáticos.</p>
+  </div>
+  <div class="faq-item">
+    <h3>O que fazer quando perder um dia?</h3>
+    <p>Não se puna — apenas marque o próximo dia. A pesquisa de Phillippa Lally mostrou que falhar ocasionalmente não interrompe a formação do hábito. O que importa é a consistência a longo prazo, não a perfeição.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Quanto tempo leva para formar um hábito?</h3>
+    <p>O famoso "21 dias" é um mito. Pesquisas reais indicam entre 18 e 254 dias dependendo do hábito e da pessoa, com média de 66 dias. Por isso o rastreador mostra 21 dias de histórico — para você ver o padrão crescendo.</p>
+  </div>
+  <div class="faq-item">
+    <h3>Preciso de cadastro para usar?</h3>
+    <p>Sim — o rastreador salva seus dados na nuvem, então requer uma conta no Util Ferramentas (disponível no plano gratuito). Isso garante que seu histórico não se perde se você trocar de dispositivo.</p>
+  </div>
+</div>
+
+<div class="hero-cta">
+  <a href="/app7" class="btn-primary">🔥 Começar a rastrear hábitos</a>
+  <a href="/checkout.html" class="btn-outline">Ver planos</a>
+</div>
+
+<div class="related">
+  <h2>Leia também</h2>
+  <div class="related-links">
+    <a href="/link-na-bio" class="related-link"><strong>🔗 Link na Bio</strong>Página com seus links</a>
+    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor gratuito</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube, Instagram</a>
+    <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
+  </div>
+</div>`;
+
+  res.send(page({
+    title: 'Rastreador de Hábitos Online Grátis — Streaks e Progresso Diário',
+    description: 'Crie hábitos diários, marque o que fez hoje e acompanhe streaks de dias seguidos. Rastreador de hábitos online gratuito com histórico visual e progresso semanal.',
+    canonical: `${SITE_URL}/rastreador-de-habitos`,
+    ogType: 'article',
+    schema,
+    body,
+  }));
+});
+
+// ──────────────────────────────────────────────────────────────────
+// GERADOR DE QR CODE — App8
+// ──────────────────────────────────────────────────────────────────
+seoRouter.get('/gerador-qr-code', (_req, res) => {
+  setHtmlHeaders(res);
+  const schema = [
+    { '@context':'https://schema.org','@type':'Article', headline:'Gerador de QR Code Online Grátis — URL, PIX, Wi-Fi e Contato', author:{name:SITE_NAME,url:SITE_URL}, publisher:{name:SITE_NAME,logo:{url:OG_IMAGE}}, datePublished:'2024-01-01', dateModified:new Date().toISOString().split('T')[0] },
+    { '@context':'https://schema.org','@type':'BreadcrumbList', itemListElement:[{position:1,name:'Início',item:SITE_URL},{position:2,name:'Gerador de QR Code',item:`${SITE_URL}/gerador-qr-code`}] },
+    { '@context':'https://schema.org','@type':'SoftwareApplication', name:'Gerador de QR Code Online', applicationCategory:'UtilitiesApplication', operatingSystem:'Web', offers:{price:'0',priceCurrency:'BRL'}, url:`${SITE_URL}/app8` },
+    { '@context':'https://schema.org','@type':'FAQPage', mainEntity:[
+      {name:'Como criar QR Code de um link?',acceptedAnswer:{text:'Acesse o gerador, selecione o tipo URL, cole seu link e o QR Code é gerado automaticamente. Faça o download em PNG ou SVG.'}},
+      {name:'Como criar QR Code do PIX?',acceptedAnswer:{text:'Selecione o tipo PIX, insira sua chave PIX, nome e cidade. O QR Code EMV é gerado automaticamente para compartilhar.'}},
+      {name:'Posso criar QR Code de rede Wi-Fi?',acceptedAnswer:{text:'Sim. Selecione o tipo Wi-Fi, informe o nome da rede (SSID), senha e segurança. Quem escanear se conecta automaticamente sem digitar senha.'}},
+    ]},
+  ];
+  const body = `
+<nav class="breadcrumb"><a href="/">Início</a><span>›</span><span>Gerador de QR Code</span></nav>
+<span class="tag">Gratuito</span><span class="tag">Download PNG e SVG</span>
+<h1>Gerador de QR Code online — URL, PIX, Wi-Fi, Contato e mais</h1>
+<p class="lead">Crie QR Codes de qualquer coisa em segundos: links, PIX, Wi-Fi, cartão de visitas digital, email ou número de telefone. Download grátis em PNG e SVG, sem cadastro.</p>
+
+<div class="stats">
+  <div class="stat"><strong>7</strong><span>tipos de QR</span></div>
+  <div class="stat"><strong>PNG+SVG</strong><span>formatos</span></div>
+  <div class="stat"><strong>100%</strong><span>gratuito</span></div>
+</div>
+
+<h2>Para que serve um QR Code?</h2>
+<p>QR Code (Quick Response Code) é um código bidimensional que qualquer smartphone consegue ler com a câmera. Ao escanear, o dispositivo executa uma ação: abre um link, conecta ao Wi-Fi, salva um contato, inicia um pagamento PIX ou redige um email.</p>
+<p>São usados em embalagens, cardápios, cartões de visita, materiais impressos, apresentações, etiquetas de produtos e muito mais.</p>
+
+<h2>Tipos de QR Code que você pode criar</h2>
+<div class="cards">
+  <div class="card"><div class="icon">🔗</div><h3>URL / Link</h3><p>Redireciona para qualquer site. O tipo mais comum — use em materiais impressos para enviar ao seu site.</p></div>
+  <div class="card"><div class="icon">💸</div><h3>PIX</h3><p>Pagamento PIX com sua chave e valor opcional. Perfeito para cobrança rápida ou em ponto de venda.</p></div>
+  <div class="card"><div class="icon">📶</div><h3>Wi-Fi</h3><p>Conecta automaticamente à rede sem digitar senha. Ideal para recepções, bares e espaços de trabalho.</p></div>
+  <div class="card"><div class="icon">👤</div><h3>Contato (vCard)</h3><p>Salva seus dados de contato direto na agenda do celular. Substitui o cartão de visita físico.</p></div>
+  <div class="card"><div class="icon">✉️</div><h3>E-mail</h3><p>Abre o app de email com destinatário, assunto e corpo preenchidos. Facilita contato imediato.</p></div>
+  <div class="card"><div class="icon">📝</div><h3>Texto livre</h3><p>Exibe qualquer texto ao escanear. Útil para instruções, senhas temporárias ou mensagens.</p></div>
+</div>
+
+<h2>Como criar um QR Code</h2>
+<ol class="step-list">
+  <li><strong>Acesse o Gerador de QR Code</strong> — abra <a href="/app8">o app8</a></li>
+  <li><strong>Escolha o tipo</strong> — URL, PIX, Wi-Fi, vCard, email ou texto</li>
+  <li><strong>Preencha os dados</strong> — o QR Code é gerado em tempo real enquanto você digita</li>
+  <li><strong>Personalize</strong> — escolha cores com preset ou color picker</li>
+  <li><strong>Baixe</strong> — PNG para uso digital, SVG para impressão em qualquer tamanho</li>
+</ol>
+
+<h2>PNG ou SVG: qual formato usar?</h2>
+<table>
+  <thead><tr><th>Formato</th><th>Uso ideal</th><th>Qualidade</th></tr></thead>
+  <tbody>
+    <tr><td><strong>PNG (400px+)</strong></td><td>Sites, redes sociais, apresentações, WhatsApp</td><td>Ótima para telas</td></tr>
+    <tr><td><strong>SVG</strong></td><td>Impressão, banners, camisetas, embalagens</td><td>Infinita — não pixeliza nunca</td></tr>
+  </tbody>
+</table>
+<div class="tip"><strong>Regra geral:</strong> Para impressão, sempre use SVG. Para web e digital, use PNG com pelo menos 400×400px.</div>
+
+<h2>QR Code para PIX: como funciona</h2>
+<p>O QR Code de PIX gerado segue o padrão EMV do Banco Central do Brasil. Ele contém sua chave PIX, nome e cidade. Quando escaneado pelo app do banco, os dados são preenchidos automaticamente — o pagador só precisa confirmar.</p>
+<p>Você pode incluir um valor fixo (ideal para cobranças com preço definido) ou deixar em aberto para o pagador definir o valor.</p>
+
+<h2>Perguntas frequentes</h2>
+<div>
+  <div class="faq-item"><h3>O QR Code expira?</h3><p>Não. QR Codes gerados com conteúdo fixo (URL, texto, vCard) não expiram. Se quiser QR Codes rastreáveis com analytics, use o <a href="/encurtar-links">Encurtador de Links</a> combinado com o QR Code gerado a partir do link curto.</p></div>
+  <div class="faq-item"><h3>Qual é o tamanho mínimo para impressão?</h3><p>Para garantir leitura confiável, use no mínimo 2×2cm em impressão. Quanto mais dados no QR, maior precisa ser. Para conteúdos longos, prefira links curtos para reduzir a densidade do código.</p></div>
+  <div class="faq-item"><h3>Preciso de cadastro?</h3><p>Não. O gerador é 100% gratuito e não requer conta.</p></div>
+</div>
+
+<div class="hero-cta"><a href="/app8" class="btn-primary">📱 Gerar meu QR Code</a><a href="/encurtar-links" class="btn-outline">🔗 Encurtar link</a></div>
+
+<div class="related"><h2>Leia também</h2><div class="related-links">
+  <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Links curtos com QR integrado</a>
+  <a href="/link-na-bio" class="related-link"><strong>📄 Link na Bio</strong>Página com seus links</a>
+  <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor de dados</a>
+  <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
+</div></div>`;
+  res.send(page({ title:'Gerador de QR Code Online Grátis — URL, PIX, Wi-Fi, Contato', description:'Crie QR Codes de links, PIX, Wi-Fi e contatos online, grátis. Download PNG e SVG sem cadastro. Personalize cores e tamanho.', canonical:`${SITE_URL}/gerador-qr-code`, ogType:'article', schema, body }));
+});
+
+// ──────────────────────────────────────────────────────────────────
+// EDITOR DE IMAGENS — App9
+// ──────────────────────────────────────────────────────────────────
+seoRouter.get('/editor-imagens', (_req, res) => {
+  setHtmlHeaders(res);
+  const schema = [
+    { '@context':'https://schema.org','@type':'Article', headline:'Editor de Imagens Online Grátis — Redimensionar, Comprimir e Converter', author:{name:SITE_NAME,url:SITE_URL}, publisher:{name:SITE_NAME,logo:{url:OG_IMAGE}}, datePublished:'2024-01-01', dateModified:new Date().toISOString().split('T')[0] },
+    { '@context':'https://schema.org','@type':'BreadcrumbList', itemListElement:[{position:1,name:'Início',item:SITE_URL},{position:2,name:'Editor de Imagens',item:`${SITE_URL}/editor-imagens`}] },
+    { '@context':'https://schema.org','@type':'SoftwareApplication', name:'Editor de Imagens Online', applicationCategory:'UtilitiesApplication', operatingSystem:'Web', offers:{price:'0',priceCurrency:'BRL'}, url:`${SITE_URL}/app9` },
+    { '@context':'https://schema.org','@type':'FAQPage', mainEntity:[
+      {name:'Como comprimir imagem sem perder qualidade?',acceptedAnswer:{text:'Use qualidade entre 75-85%. Nessa faixa a redução de tamanho é grande (50-70%) com diferença visual quase imperceptível.'}},
+      {name:'Como converter PNG para WebP?',acceptedAnswer:{text:'Faça upload da imagem PNG, selecione a ferramenta Converter, escolha WebP e clique em processar. WebP é 25-35% menor que PNG.'}},
+      {name:'Minha imagem fica no servidor?',acceptedAnswer:{text:'Não. Todo o processamento acontece no seu browser usando Canvas API. Sua imagem nunca é enviada para nenhum servidor.'}},
+    ]},
+  ];
+  const body = `
+<nav class="breadcrumb"><a href="/">Início</a><span>›</span><span>Editor de Imagens</span></nav>
+<span class="tag">Gratuito</span><span class="tag">Processamento local</span>
+<h1>Editor de imagens online — redimensione, comprima e converta</h1>
+<p class="lead">Redimensione, comprima, converta, recorte e adicione marca d'água em imagens diretamente no navegador. <strong>Sua imagem nunca sai do seu dispositivo</strong> — processamento 100% local.</p>
+
+<div class="stats">
+  <div class="stat"><strong>6</strong><span>ferramentas</span></div>
+  <div class="stat"><strong>Privado</strong><span>sem upload</span></div>
+  <div class="stat"><strong>30MB</strong><span>tamanho máximo</span></div>
+</div>
+
+<h2>Ferramentas disponíveis</h2>
+<div class="cards">
+  <div class="card"><div class="icon">📐</div><h3>Redimensionar</h3><p>Altere largura e altura com opção de manter proporção. Atalhos: FHD (1920×1080), HD (1280×720).</p></div>
+  <div class="card"><div class="icon">🗜️</div><h3>Comprimir</h3><p>Reduza o tamanho do arquivo com controle de qualidade. Ideal para otimizar imagens para web.</p></div>
+  <div class="card"><div class="icon">🔄</div><h3>Converter formato</h3><p>Transforme JPG em PNG, PNG em WebP, WebP em JPG. WebP é 25-35% menor que JPG na mesma qualidade.</p></div>
+  <div class="card"><div class="icon">✂️</div><h3>Recortar</h3><p>Corte uma região específica da imagem com coordenadas exatas em pixels.</p></div>
+  <div class="card"><div class="icon">🔏</div><h3>Marca d'água</h3><p>Adicione texto personalizado em 5 posições com controle de opacidade.</p></div>
+  <div class="card"><div class="icon">⬛</div><h3>Preto e branco</h3><p>Converta para escala de cinza com algoritmo de luminosidade profissional.</p></div>
+</div>
+
+<h2>Como comprimir imagem para web</h2>
+<p>Imagens pesadas são a principal causa de sites lentos. O Google PageSpeed penaliza páginas com imagens não otimizadas. A regra geral:</p>
+<ol class="step-list">
+  <li><strong>Redimensione primeiro</strong> — se sua imagem tem 4000px e vai aparecer em 800px, redimensione para 800px antes de comprimir</li>
+  <li><strong>Escolha o formato certo</strong> — fotos: JPG ou WebP; imagens com transparência: PNG; ícones e logos: SVG</li>
+  <li><strong>Ajuste a qualidade</strong> — 75-85% oferece excelente relação qualidade/tamanho</li>
+</ol>
+<div class="tip"><strong>Resultado típico:</strong> Uma foto de 3MB pode ser reduzida para 150-300KB com qualidade visual idêntica ao olho humano.</div>
+
+<h2>JPG vs PNG vs WebP: qual usar?</h2>
+<table>
+  <thead><tr><th>Formato</th><th>Melhor para</th><th>Suporte</th><th>Tamanho relativo</th></tr></thead>
+  <tbody>
+    <tr><td><strong>JPG</strong></td><td>Fotos, imagens coloridas</td><td>Universal</td><td>Médio</td></tr>
+    <tr><td><strong>PNG</strong></td><td>Logos, transparência, capturas de tela</td><td>Universal</td><td>Grande</td></tr>
+    <tr><td><strong>WebP</strong></td><td>Web em geral, substitui JPG e PNG</td><td>Todos os browsers modernos</td><td>25-35% menor</td></tr>
+  </tbody>
+</table>
+
+<h2>Privacidade: por que processar localmente?</h2>
+<p>A maioria dos editores de imagem online envia seu arquivo para um servidor remoto. O Util Ferramentas usa a <strong>Canvas API do navegador</strong> para processar tudo no seu próprio dispositivo. Isso significa que:</p>
+<ul>
+  <li>Suas imagens pessoais nunca saem do seu computador ou celular</li>
+  <li>Funciona offline após carregamento da página</li>
+  <li>Não há limite de uso imposto por servidor</li>
+  <li>Velocidade máxima — sem tempo de upload/download</li>
+</ul>
+
+<h2>Perguntas frequentes</h2>
+<div>
+  <div class="faq-item"><h3>Qual é o tamanho máximo de arquivo?</h3><p>30 MB. Para arquivos maiores, considere redimensionar primeiro em uma ferramenta dedicada.</p></div>
+  <div class="faq-item"><h3>Como adicionar marca d'água em todas as fotos?</h3><p>Processe uma por vez — cada imagem pode ter texto e posição diferentes. Para processamento em lote, entre em contato pelo suporte.</p></div>
+  <div class="faq-item"><h3>A qualidade WebP é melhor que JPG?</h3><p>WebP usa compressão mais moderna e gera arquivos menores com qualidade equivalente. A 80% de qualidade, WebP produz arquivo 25-35% menor que JPG equivalente.</p></div>
+</div>
+
+<div class="hero-cta"><a href="/app9" class="btn-primary">🖼️ Editar imagem agora</a><a href="/converter-json-excel" class="btn-outline">🔄 Converter dados</a></div>
+
+<div class="related"><h2>Leia também</h2><div class="related-links">
+  <a href="/gerador-qr-code" class="related-link"><strong>📱 Gerador de QR Code</strong>QR de URL, PIX e Wi-Fi</a>
+  <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube e Instagram</a>
+  <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor de dados</a>
+  <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
+</div></div>`;
+  res.send(page({ title:'Editor de Imagens Online Grátis — Comprimir, Redimensionar, Converter', description:'Edite imagens online sem enviar para servidor. Comprima, redimensione, converta JPG/PNG/WebP, adicione marca d\'água. Processamento 100% local e privado.', canonical:`${SITE_URL}/editor-imagens`, ogType:'article', schema, body }));
+});
+
+// ──────────────────────────────────────────────────────────────────
+// CALCULADORA FINANCEIRA — App10
+// ──────────────────────────────────────────────────────────────────
+seoRouter.get('/calculadora-financeira', (_req, res) => {
+  setHtmlHeaders(res);
+  const schema = [
+    { '@context':'https://schema.org','@type':'Article', headline:'Calculadora Financeira Online — Juros Compostos, Parcelas e Aposentadoria', author:{name:SITE_NAME,url:SITE_URL}, publisher:{name:SITE_NAME,logo:{url:OG_IMAGE}}, datePublished:'2024-01-01', dateModified:new Date().toISOString().split('T')[0] },
+    { '@context':'https://schema.org','@type':'BreadcrumbList', itemListElement:[{position:1,name:'Início',item:SITE_URL},{position:2,name:'Calculadora Financeira',item:`${SITE_URL}/calculadora-financeira`}] },
+    { '@context':'https://schema.org','@type':'SoftwareApplication', name:'Calculadora Financeira Online', applicationCategory:'FinanceApplication', operatingSystem:'Web', offers:{price:'0',priceCurrency:'BRL'}, url:`${SITE_URL}/app10` },
+    { '@context':'https://schema.org','@type':'FAQPage', mainEntity:[
+      {name:'Como calcular juros compostos?',acceptedAnswer:{text:'Insira o valor inicial, aporte mensal, taxa anual e prazo. A calculadora mostra o valor final, total investido e juros ganhos com gráfico de evolução.'}},
+      {name:'Como calcular a parcela de um empréstimo?',acceptedAnswer:{text:'Use o simulador de parcelas: informe o valor, taxa mensal e número de parcelas. O resultado mostra a parcela (tabela Price), total pago e custo total em juros.'}},
+      {name:'Quanto preciso guardar para me aposentar?',acceptedAnswer:{text:'A calculadora de aposentadoria usa a Regra dos 4%: você precisa de 25x a renda anual desejada investida. Informe sua idade, renda desejada e rentabilidade esperada para descobrir o aporte mensal necessário.'}},
+    ]},
+  ];
+  const body = `
+<nav class="breadcrumb"><a href="/">Início</a><span>›</span><span>Calculadora Financeira</span></nav>
+<span class="tag">Gratuito</span><span class="tag">6 simulações</span>
+<h1>Calculadora financeira online — juros compostos, parcelas e aposentadoria</h1>
+<p class="lead">6 simulações financeiras no mesmo lugar: juros compostos com gráfico, parcelas de empréstimo, planejamento de aposentadoria, reserva de emergência, meta de poupança e impacto da inflação.</p>
+
+<div class="stats">
+  <div class="stat"><strong>6</strong><span>simulações</span></div>
+  <div class="stat"><strong>Privado</strong><span>sem cadastro</span></div>
+  <div class="stat"><strong>100%</strong><span>gratuito</span></div>
+</div>
+
+<h2>Simulações disponíveis</h2>
+<div class="cards">
+  <div class="card"><div class="icon">📈</div><h3>Juros Compostos</h3><p>Veja seu patrimônio crescer com aportes mensais. Gráfico comparando valor investido vs total acumulado.</p></div>
+  <div class="card"><div class="icon">🏦</div><h3>Simulador de Parcelas</h3><p>Calcule parcelas de empréstimos e financiamentos (tabela Price) com total de juros pago.</p></div>
+  <div class="card"><div class="icon">🏖️</div><h3>Aposentadoria</h3><p>Quanto poupar por mês para se aposentar com a renda desejada, usando a Regra dos 4%.</p></div>
+  <div class="card"><div class="icon">🛡️</div><h3>Reserva de Emergência</h3><p>Calcule sua meta com barra de progresso e tempo para completar.</p></div>
+  <div class="card"><div class="icon">🎯</div><h3>Meta de Poupança</h3><p>Em quanto tempo você atinge seu objetivo com aportes mensais e rentabilidade.</p></div>
+  <div class="card"><div class="icon">📉</div><h3>Impacto da Inflação</h3><p>Veja como R$1.000 de hoje valerão menos no futuro com tabela histórica.</p></div>
+</div>
+
+<h2>Juros compostos: o poder do tempo</h2>
+<p>Albert Einstein teria chamado os juros compostos de "oitava maravilha do mundo". A fórmula é simples: os juros ganhos em um período são adicionados ao capital e passam a render juros também no período seguinte.</p>
+<p>O resultado é um crescimento exponencial que fica cada vez mais poderoso com o tempo. <strong>Quem começa cedo ganha muito mais</strong> do que quem investe mais dinheiro por menos tempo.</p>
+<div class="box">
+  <strong>Exemplo prático:</strong><br/>
+  Investir R$500/mês por 30 anos a 10% ao ano = <strong>R$1.130.243</strong><br/>
+  Total investido: R$180.000 — Juros ganhos: <strong>R$950.243</strong> (528% de retorno)
+</div>
+
+<h2>Como calcular parcelas de empréstimo</h2>
+<p>A calculadora usa o sistema Price (parcelas fixas), o mais comum em empréstimos pessoais e financiamentos no Brasil. A fórmula considera:</p>
+<ul>
+  <li><strong>Valor do empréstimo</strong> — quanto você está pegando</li>
+  <li><strong>Taxa de juros mensal</strong> — o banco cobra por mês sobre o saldo devedor</li>
+  <li><strong>Número de parcelas</strong> — prazo total do empréstimo</li>
+</ul>
+<div class="tip"><strong>Atenção às taxas:</strong> Banco tradicional cobra 2-4% ao mês. Crédito consignado fica entre 1.5-2%. Fintech pode oferecer taxas menores. Compare antes de contratar.</div>
+
+<h2>Planejamento de aposentadoria: Regra dos 4%</h2>
+<p>A Regra dos 4% diz que um portfólio bem diversificado pode sustentar retiradas anuais de 4% do patrimônio indefinidamente, sem esgotá-lo. Isso significa que para ter <strong>R$5.000/mês</strong> na aposentadoria você precisa de:</p>
+<p style="text-align:center;font-size:1.2rem;padding:1rem;background:var(--sur2);border-radius:8px;margin:1rem 0">R$5.000 × 12 meses × 25 = <strong style="color:var(--acc)">R$1.500.000</strong></p>
+<p>A calculadora mostra exatamente quanto você precisa poupar por mês para chegar lá, considerando o que já tem investido e a rentabilidade esperada.</p>
+
+<h2>Reserva de emergência: por onde começar</h2>
+<p>Antes de investir qualquer dinheiro, toda pessoa deve ter uma <strong>reserva de emergência</strong>: valor equivalente a 3-12 meses de gastos mensais, guardado em aplicações de alta liquidez (CDB com liquidez diária, Tesouro Selic).</p>
+<ul>
+  <li><strong>Empregado CLT com renda estável:</strong> 3-6 meses de gastos</li>
+  <li><strong>Autônomo ou renda variável:</strong> 6-12 meses de gastos</li>
+</ul>
+
+<h2>Perguntas frequentes</h2>
+<div>
+  <div class="faq-item"><h3>As simulações são precisas?</h3><p>As fórmulas utilizadas (Price para empréstimos, montante composto para investimentos) são matematicamente corretas. Porém, rentabilidades passadas não garantem retornos futuros, e a inflação pode afetar o poder de compra real.</p></div>
+  <div class="faq-item"><h3>Meus dados financeiros ficam salvos?</h3><p>Não. Todas as simulações acontecem no seu navegador e nenhum dado é enviado ou armazenado. A página pode ser usada completamente offline após o carregamento.</p></div>
+  <div class="faq-item"><h3>A calculadora substitui um consultor financeiro?</h3><p>Não. As simulações são educativas e ajudam a entender conceitos e cenários. Para decisões financeiras importantes, recomendamos consultar um planejador financeiro certificado (CFP).</p></div>
+</div>
+
+<div class="hero-cta"><a href="/app10" class="btn-primary">💰 Abrir Calculadora</a><a href="/rastreador-de-habitos" class="btn-outline">🔥 Rastreador de Hábitos</a></div>
+
+<div class="related"><h2>Leia também</h2><div class="related-links">
+  <a href="/gerador-qr-code" class="related-link"><strong>📱 Gerador de QR Code</strong>URL, PIX e Wi-Fi</a>
+  <a href="/editor-imagens" class="related-link"><strong>🖼️ Editor de Imagens</strong>Comprimir e converter</a>
+  <a href="/rastreador-de-habitos" class="related-link"><strong>🔥 Hábitos</strong>Construa consistência</a>
+  <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
+</div></div>`;
+  res.send(page({ title:'Calculadora Financeira Online — Juros Compostos, Parcelas, Aposentadoria', description:'Calcule juros compostos, parcelas de empréstimo, aposentadoria pela Regra dos 4%, reserva de emergência e impacto da inflação. Grátis, privado, sem cadastro.', canonical:`${SITE_URL}/calculadora-financeira`, ogType:'article', schema, body }));
 });
