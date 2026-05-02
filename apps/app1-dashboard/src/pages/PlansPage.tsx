@@ -9,6 +9,10 @@ const APP_META: Record<string, { name: string; icon: string; path: string }> = {
   app4: { name: 'Video Downloader', icon: '⬇️', path: '/app4' },
   app5: { name: 'Conversor JSON↔Excel', icon: '🔄', path: '/app5' },
   app6: { name: 'Bio Link', icon: '🔗', path: '/app6' },
+  app7: { name: 'Rastreador de Hábitos', icon: '🔥', path: '/app7' },
+  app8:  { name: 'Gerador de QR Code',    icon: '📱', path: '/app8' },
+  app9:  { name: 'Editor de Imagens',     icon: '🖼️', path: '/app9' },
+  app10: { name: 'Calculadora Financeira', icon: '💰', path: '/app10' },
 };
 
 const PLANS = ['free', 'pro'];

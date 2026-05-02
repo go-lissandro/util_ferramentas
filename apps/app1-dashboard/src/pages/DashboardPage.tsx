@@ -156,6 +156,10 @@ export function DashboardPage() {
               { label: 'Baixar um vídeo', sub: 'YouTube, TikTok, Instagram...', path: '/app4', icon: '⬇️' },
               { label: 'Converter JSON para Excel', sub: 'Transformar dados em planilha', path: '/app5', icon: '🔄' },
               { label: 'Criar página bio', sub: 'Link na bio para o Instagram', path: '/app6', icon: '📄' },
+              { label: 'Rastrear hábitos', sub: 'Marcar hábitos do dia', path: '/app7', icon: '🔥' },
+              { label: 'Gerar QR Code', sub: 'URL, PIX, Wi-Fi, Contato', path: '/app8', icon: '📱' },
+              { label: 'Editar imagem', sub: 'Comprimir, redimensionar, converter', path: '/app9', icon: '🖼️' },
+              { label: 'Calculadora Financeira', sub: 'Juros, parcelas, aposentadoria', path: '/app10', icon: '💰' },
               { label: 'Encurtar um link', sub: 'Com QR code e analytics', path: '/app2', icon: '🔗' },
             ].map(item => (
               <a key={item.path} href={item.path} style={{ textDecoration: 'none' }}>

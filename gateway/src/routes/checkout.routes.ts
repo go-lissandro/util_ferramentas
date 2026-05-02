@@ -83,7 +83,9 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   );
 
   const pix_key = process.env.PIX_KEY || '';
-  const pix_static_image = process.env.PIX_QR_IMAGE_URL || ''; // URL da imagem do QR code estático
+  // Always serve from /pix-qrcode.png in gateway/public/
+  // Just drop your bank's QR code image there with that filename
+  const pix_static_image = '/pix-qrcode.png';
 
   return res.json({
     success: true,

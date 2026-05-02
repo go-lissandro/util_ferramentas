@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+  <rect width="300" height="300" fill="#111118" rx="12"/>
+  
+  <!-- QR code pattern (decorative) -->
+  <rect x="20" y="20" width="80" height="80" fill="none" stroke="#6c63ff" stroke-width="6" rx="4"/>
+  <rect x="36" y="36" width="48" height="48" fill="#6c63ff" rx="2"/>
+  
+  <rect x="200" y="20" width="80" height="80" fill="none" stroke="#6c63ff" stroke-width="6" rx="4"/>
+  <rect x="216" y="36" width="48" height="48" fill="#6c63ff" rx="2"/>
+  
+  <rect x="20" y="200" width="80" height="80" fill="none" stroke="#6c63ff" stroke-width="6" rx="4"/>
+  <rect x="36" y="216" width="48" height="48" fill="#6c63ff" rx="2"/>
+  
+  <!-- Center modules (decorative pattern) -->
+  <rect x="120" y="20" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="140" y="20" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="120" y="40" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="160" y="40" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="140" y="60" width="12" height="12" fill="#6c63ff" rx="1"/>
+
+  <rect x="120" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="150" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="168" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="130" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="160" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="120" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="148" y="158" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="170" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+
+  <rect x="200" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="220" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="250" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="210" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="240" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="200" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="230" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="260" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+
+  <rect x="20" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="50" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="80" y="120" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="30" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="70" y="140" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="20" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+  <rect x="50" y="160" width="12" height="12" fill="#6c63ff" rx="1"/>
+
+  <!-- Instruction text -->
+  <rect x="40" y="220" width="220" height="60" fill="#1a1a24" rx="8"/>
+  <text x="150" y="244" font-family="monospace" font-size="11" fill="#8888a8" text-anchor="middle">Adicione seu QR Code:</text>
+  <text x="150" y="262" font-family="monospace" font-size="10" fill="#6c63ff" text-anchor="middle">gateway/public/pix-qrcode.png</text>
+
+  <!-- PIX label -->
+  <text x="150" y="295" font-family="Arial, sans-serif" font-size="10" fill="#8888a8" text-anchor="middle">PIX — Substitua esta imagem pelo QR do seu banco</text>
+</svg>

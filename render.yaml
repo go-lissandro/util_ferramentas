@@ -16,6 +16,10 @@ services:
       cd ../../app4-videodownloader/client && npm install && npm run build &&
       cd ../../app5-converter/client && npm install && npm run build &&
       cd ../../app6-biolink/client && npm install && npm run build &&
+      cd ../../app7-habits/client && npm install && npm run build &&
+      cd ../../app8-qrcode/client && npm install && npm run build &&
+      cd ../../app9-imagetools/client && npm install && npm run build &&
+      cd ../../app10-finance/client && npm install && npm run build &&
       cd ../../../gateway && npm install --include=dev && npm run build
     startCommand: npm start
     plan: free
