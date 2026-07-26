@@ -336,14 +336,8 @@ async function runMigrations(pool: Pool): Promise<void> {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_link_clicks_link_id  ON link_clicks(link_id)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_purchase_email      ON purchase_requests(email)`);
 
-    // ── Constraints (safe to re-run) ──────────────────────────
-    await client.query(`
-      DO $$ BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'uq_purchase_pix_txid') THEN
-          ALTER TABLE purchase_requests ADD CONSTRAINT uq_purchase_pix_txid UNIQUE (pix_txid);
-        END IF;
-      END $$;
-    `);
+    // ── Unique index on pix_txid (safe to re-run) ─────────────
+    await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS uq_purchase_pix_txid ON purchase_requests (pix_txid)`);
 
     await client.query('COMMIT');
     logger.info('✅ Migrations concluídas');
