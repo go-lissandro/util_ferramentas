@@ -151,24 +151,12 @@ async function bootstrap() {
   app.use('/app10', express.static(app10Dist));
   app.get('/app10/*', (_req: Request, res: Response) => { res.sendFile(path.join(app10Dist, 'index.html')); });
 
-  // ── Authenticated API rate limiter (runs after authenticate) ──
-  app.use('/api/', authenticate, rateLimiter);
-
-  // ── Mount App2 (URL Shortener) API routes ─────────────────
-  app.use('/api/app2', authenticate, urlShortenerRouter);
-
-  // ── Mount DDM API routes (protected by JWT) ────────────────
-  // Frontend baseURL = /api/ddm, then calls /entities, /entities/:id/fields etc.
-  app.use('/api/ddm/entities', authenticate, injectDdmTenant, entitiesRouter);
-  app.use('/api/ddm/entities/:entityId/fields',   authenticate, injectDdmTenant, fieldsRouter);
-  app.use('/api/ddm/entities/:entityId/records',  authenticate, injectDdmTenant, recordsRouter);
-  app.use('/api/ddm/entities/:entityId/export',   authenticate, injectDdmTenant, exportRouter);
-  app.use('/api/ddm/entities/:entityId/webhooks', authenticate, injectDdmTenant, webhooksRouter);
-  app.use('/api/ddm-files',  authenticate, injectDdmTenant, filesRouter);
-
   // ── Mount App4 (Video) API routes ─────────────────────────
   // Public — no auth required, rate limiting applied by service
   app.use('/api/video', videoRouter);
+
+  // ── Authenticated API rate limiter (runs after authenticate) ──
+  app.use('/api/', authenticate, rateLimiter);
 
   // ── Proxy reverso para App2 (/app2) ───────────────────────
   setupProxy(app);

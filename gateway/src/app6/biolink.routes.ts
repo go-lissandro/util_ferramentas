@@ -4,9 +4,23 @@ import { db } from '../config/database';
 import { authenticate } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
 import { logger } from '../utils/logger';
+import rateLimit from 'express-rate-limit';
 
 // ── Public router (bio pages) ─────────────────────────────
 export const bioPublicRouter = Router();
+
+// Rate limit public bio endpoints (100 req/15min per IP)
+const bioPublicLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => req.ip || 'anon',
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({ success: false, error: 'Muitas requisições. Tente novamente em alguns minutos.', code: 'RATE_LIMIT' });
+  },
+});
+bioPublicRouter.use(bioPublicLimiter);
 
 // ── Protected router (CRUD) ───────────────────────────────
 export const bioRouter = Router();
