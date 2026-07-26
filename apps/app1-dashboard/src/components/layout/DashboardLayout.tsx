@@ -23,7 +23,8 @@ export function DashboardLayout() {
   const { user, tenant, logout } = useAuthStore();
   const navigate = useNavigate();
 
-  // Poll pending purchases count every 30s
+  // Poll pending purchases count every 30s (admin only)
+  const isAdmin = user?.role === 'admin';
   const { data: pendingCount = 0 } = useQuery<number>({
     queryKey: ['pending-purchases-count'],
     queryFn: () =>
@@ -32,7 +33,8 @@ export function DashboardLayout() {
           .filter(p => p.status === 'payment_sent' || p.status === 'pending_payment').length
         )
         .catch(() => 0),
-    refetchInterval: 30_000,
+    refetchInterval: isAdmin ? 30_000 : false,
+    enabled: isAdmin,
   });
 
   const handleLogout = async () => {

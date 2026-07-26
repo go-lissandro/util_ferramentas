@@ -15,7 +15,7 @@ export async function migrateHabits(): Promise<void> {
       tenant_id   UUID NOT NULL,
       title       VARCHAR(120) NOT NULL,
       description TEXT,
-      icon        VARCHAR(10)  NOT NULL DEFAULT 'check',
+      icon        VARCHAR(10)  NOT NULL DEFAULT '✅',
       color       VARCHAR(20)  NOT NULL DEFAULT '#6c63ff',
       frequency   VARCHAR(20)  NOT NULL DEFAULT 'daily',
       target_days INTEGER[]    NOT NULL DEFAULT '{1,2,3,4,5,6,0}',

@@ -1,4 +1,15 @@
+import nodemailerLib from 'nodemailer';
 import { logger } from '../utils/logger';
+
+// ── HTML escape to prevent injection via user-supplied fields ──
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 // ── Email service (uses SMTP via Nodemailer if configured, else logs) ─
 // Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS env vars to activate
@@ -6,9 +17,7 @@ import { logger } from '../utils/logger';
 
 let transporter: unknown = null;
 
-import nodemailerLib from 'nodemailer';
-
-async function getTransporter() {
+function getTransporter() {
   if (transporter) return transporter;
   if (!process.env.SMTP_HOST) return null;
 
@@ -77,7 +86,7 @@ export async function sendWelcomeEmail(opts: {
 
     <!-- Body -->
     <div style="padding:2rem">
-      <p style="color:#374151;font-size:1rem;margin:0 0 1.25rem">Olá, <strong>${opts.name}</strong>!</p>
+      <p style="color:#374151;font-size:1rem;margin:0 0 1.25rem">Olá, <strong>${escapeHtml(opts.name)}</strong>!</p>
       <p style="color:#6b7280;line-height:1.7;margin:0 0 1.5rem">
         Seu pagamento foi confirmado e sua conta foi criada com sucesso. Abaixo estão suas credenciais de acesso:
       </p>
@@ -86,11 +95,11 @@ export async function sendWelcomeEmail(opts: {
       <div style="background:#f8f7ff;border:1px solid #e0dcff;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem">
         <div style="margin-bottom:.75rem">
           <span style="font-size:.75rem;font-weight:600;color:#8b5cf6;text-transform:uppercase;letter-spacing:.05em">Email</span><br/>
-          <span style="font-size:1rem;color:#111">${opts.to}</span>
+          <span style="font-size:1rem;color:#111">${escapeHtml(opts.to)}</span>
         </div>
         <div style="margin-bottom:.75rem">
           <span style="font-size:.75rem;font-weight:600;color:#8b5cf6;text-transform:uppercase;letter-spacing:.05em">Senha temporária</span><br/>
-          <span style="font-size:1.1rem;font-family:monospace;background:#fff;border:1px solid #ddd;padding:.25rem .5rem;border-radius:5px;color:#111">${opts.password}</span>
+          <span style="font-size:1.1rem;font-family:monospace;background:#fff;border:1px solid #ddd;padding:.25rem .5rem;border-radius:5px;color:#111">${escapeHtml(opts.password)}</span>
         </div>
         <div>
           <span style="font-size:.75rem;font-weight:600;color:#8b5cf6;text-transform:uppercase;letter-spacing:.05em">Plano</span><br/>
@@ -148,7 +157,7 @@ export async function sendPaymentConfirmedEmail(opts: {
       <h1 style="color:#e8e8f0;margin:.5rem 0 0;font-size:1.2rem">Pagamento registrado!</h1>
     </div>
     <div style="padding:1.75rem">
-      <p style="color:#374151">Olá, <strong>${opts.name}</strong>!</p>
+      <p style="color:#374151">Olá, <strong>${escapeHtml(opts.name)}</strong>!</p>
       <p style="color:#6b7280;line-height:1.7">
         Recebemos a confirmação do seu pagamento PIX. Nossa equipe irá verificar e ativar sua conta em até <strong>24 horas</strong>.
       </p>
