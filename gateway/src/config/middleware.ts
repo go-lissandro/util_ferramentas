@@ -18,6 +18,7 @@ export function setupMiddleware(app: Express): void {
         directives: {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          scriptSrcAttr: ["'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
           imgSrc: ["'self'", 'data:', 'blob:', 'https://api.qrserver.com'],
           connectSrc: ["'self'", 'https://api.qrserver.com'],
