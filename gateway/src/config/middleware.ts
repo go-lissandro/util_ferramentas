@@ -3,11 +3,14 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
-import { rateLimiter, authRateLimiter } from '../middleware/rateLimiter';
+import { authRateLimiter } from '../middleware/rateLimiter';
 import { requestLogger } from '../middleware/requestLogger';
 import { logger } from '../utils/logger';
 
 export function setupMiddleware(app: Express): void {
+  // ── Trust proxy (required for correct req.ip behind Render/Load Balancer) ─────────
+  app.set('trust proxy', true);
+
   // ── Security headers ───────────────────────────────────
   app.use(
     helmet({
@@ -60,10 +63,7 @@ export function setupMiddleware(app: Express): void {
   // ── Structured request logging ─────────────────────────
   app.use(requestLogger);
 
-  // ── Global rate limiter ────────────────────────────────
-  app.use('/api/', rateLimiter);
-
-  // ── Stricter rate limit for auth endpoints ─────────────
+  // ── Stricter rate limit for auth endpoints (public) ─────────────
   app.use('/api/auth/', authRateLimiter);
 
   // ── Health check (bypasses auth/proxy) ────────────────

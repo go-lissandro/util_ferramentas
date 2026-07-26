@@ -8,25 +8,6 @@ export const usersRouter = Router();
 
 usersRouter.use(authenticate);
 
-// ── GET /api/users — list tenant users (admin only) ───
-usersRouter.get('/', requireRole('admin'), async (req: Request, res: Response) => {
-  const users = await db.query(
-    `SELECT id, name, email, role, is_active, last_login_at, created_at
-     FROM users WHERE tenant_id = $1 ORDER BY created_at DESC`,
-    [req.user!.tenantId]
-  );
-  return res.json({ success: true, data: users });
-});
-
-// ── PATCH /api/users/:id/role ─────────────────────────
-usersRouter.patch('/:id/role', requireRole('admin'), async (req: Request, res: Response) => {
-  const { role } = req.body;
-  if (!['admin', 'member'].includes(role)) throw new AppError('Invalid role', 400, 'VALIDATION_ERROR');
-  await db.query(`UPDATE users SET role = $1 WHERE id = $2 AND tenant_id = $3`,
-    [role, req.params.id, req.user!.tenantId]);
-  return res.json({ success: true });
-});
-
 // ── GET /api/users/apps ───────────────────────────────
 usersRouter.get('/apps', async (req: Request, res: Response) => {
   const plan = req.user!.plan || 'free';

@@ -3,9 +3,10 @@ import { z } from 'zod';
 import { db } from '../config/database';
 import { authenticate, requireRole, generateTokens } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
-import bcrypt from 'bcryptjs';
 import { logger } from '../utils/logger';
 import { sendWelcomeEmail } from '../services/email.service';
+import { hashPassword } from '../utils/password';
+import crypto from 'crypto';
 
 export const checkoutRouter = Router();    // public
 export const adminCheckoutRouter = Router(); // admin only
@@ -73,7 +74,7 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   }
 
   // Generate a short txid for payment identification (e.g. "UTL-A3F2")
-  const txid = 'UTL-' + Math.random().toString(36).toUpperCase().slice(2, 6);
+  const txid = 'UTL-' + crypto.randomBytes(2).toString('hex').toUpperCase();
 
   // Upsert purchase request
   await db.query(
@@ -183,7 +184,7 @@ adminCheckoutRouter.post('/approve/:id', async (req: Request, res: Response) => 
   // Admin can optionally set a custom password, else auto-generate
   const customPassword = req.body.password as string | undefined;
   const password = customPassword || generatePassword();
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await hashPassword(password);
 
   await db.transaction(async (client) => {
     // Create tenant
@@ -284,7 +285,7 @@ adminCheckoutRouter.post('/create-user', async (req: Request, res: Response) => 
   if (existing) throw new AppError('Email já em uso', 409, 'EMAIL_CONFLICT');
 
   const password = body.password || generatePassword();
-  const passwordHash = await bcrypt.hash(password, 12);
+  const passwordHash = await hashPassword(password);
   const slug = body.email.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase() + '-' + Date.now().toString(36);
 
   await db.transaction(async (client) => {
@@ -305,5 +306,6 @@ adminCheckoutRouter.post('/create-user', async (req: Request, res: Response) => 
 // ── Helpers ───────────────────────────────────────────────
 function generatePassword(): string {
   const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#';
-  return Array.from({ length: 10 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  const bytes = crypto.randomBytes(10);
+  return Array.from(bytes, (byte) => chars[byte % chars.length]).join('');
 }

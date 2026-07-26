@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { db } from '../config/database';
 import { generateTokens, authenticate } from '../middleware/auth';
 import { AppError } from '../utils/AppError';
+import { verifyPassword } from '../utils/password';
 
 export const authRouter = Router();
 
@@ -25,7 +25,7 @@ authRouter.post('/login', async (req: Request, res: Response) => {
     role: string; is_active: boolean; tenant_id: string;
   }>('SELECT u.id, u.password_hash, u.name, u.role, u.is_active, u.tenant_id FROM users u WHERE u.email = $1', [email]);
 
-  if (!user || !await bcrypt.compare(password, user.password_hash)) {
+  if (!user || !await verifyPassword(password, user.password_hash)) {
     throw new AppError('Email ou senha incorretos', 401, 'INVALID_CREDENTIALS');
   }
 

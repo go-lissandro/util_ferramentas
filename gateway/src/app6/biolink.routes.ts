@@ -12,60 +12,10 @@ export const bioPublicRouter = Router();
 export const bioRouter = Router();
 bioRouter.use(authenticate);
 
-// ── DB migration ──────────────────────────────────────────
+// ── DB migration (tables now in database.ts) ────────────────────
 export async function migrateBioLink(): Promise<void> {
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS bio_pages (
-      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      tenant_id   UUID NOT NULL,
-      username    VARCHAR(50) UNIQUE NOT NULL,
-      title       VARCHAR(100) NOT NULL DEFAULT 'Minha Bio',
-      description TEXT,
-      avatar_url  TEXT,
-      theme       VARCHAR(30) NOT NULL DEFAULT 'dark',
-      bg_color    VARCHAR(20) DEFAULT '#0a0a0f',
-      accent_color VARCHAR(20) DEFAULT '#6c63ff',
-      is_active   BOOLEAN NOT NULL DEFAULT true,
-      total_views INTEGER NOT NULL DEFAULT 0,
-      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS bio_links (
-      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      page_id     UUID NOT NULL REFERENCES bio_pages(id) ON DELETE CASCADE,
-      title       VARCHAR(100) NOT NULL,
-      url         TEXT NOT NULL,
-      icon        VARCHAR(50) DEFAULT '🔗',
-      type        VARCHAR(30) DEFAULT 'link',
-      order_index INTEGER NOT NULL DEFAULT 0,
-      is_active   BOOLEAN NOT NULL DEFAULT true,
-      click_count INTEGER NOT NULL DEFAULT 0,
-      created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS bio_views (
-      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      page_id     UUID NOT NULL REFERENCES bio_pages(id) ON DELETE CASCADE,
-      referrer    TEXT,
-      user_agent  TEXT,
-      viewed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
-    CREATE TABLE IF NOT EXISTS bio_link_clicks (
-      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      link_id     UUID NOT NULL REFERENCES bio_links(id) ON DELETE CASCADE,
-      page_id     UUID NOT NULL,
-      referrer    TEXT,
-      clicked_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_bio_pages_username  ON bio_pages(username);
-    CREATE INDEX IF NOT EXISTS idx_bio_pages_tenant    ON bio_pages(tenant_id);
-    CREATE INDEX IF NOT EXISTS idx_bio_links_page      ON bio_links(page_id);
-    CREATE INDEX IF NOT EXISTS idx_bio_views_page      ON bio_views(page_id);
-  `);
-  logger.info('✅ Bio Link tables ready');
+  // Tables are now created in database.ts runMigrations()
+  logger.info('✅ Bio Link migration check (tables in database.ts)');
 }
 
 // ── Schemas ───────────────────────────────────────────────

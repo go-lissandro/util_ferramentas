@@ -143,8 +143,9 @@ export async function sendPaymentConfirmedEmail(opts: {
   name: string;
   txid: string;
 }): Promise<boolean> {
+  const { to, name, txid } = opts;
   return send({
-    to: opts.to,
+    to,
     subject: `Pagamento recebido! Aguarde a ativação — ${process.env.SITE_NAME || 'Util Ferramentas'}`,
     html: `
 <!DOCTYPE html>
@@ -157,13 +158,13 @@ export async function sendPaymentConfirmedEmail(opts: {
       <h1 style="color:#e8e8f0;margin:.5rem 0 0;font-size:1.2rem">Pagamento registrado!</h1>
     </div>
     <div style="padding:1.75rem">
-      <p style="color:#374151">Olá, <strong>${escapeHtml(opts.name)}</strong>!</p>
+      <p style="color:#374151">Olá, <strong>${escapeHtml(name)}</strong>!</p>
       <p style="color:#6b7280;line-height:1.7">
         Recebemos a confirmação do seu pagamento PIX. Nossa equipe irá verificar e ativar sua conta em até <strong>24 horas</strong>.
       </p>
       <div style="background:#f8f7ff;border:1px solid #e0dcff;border-radius:10px;padding:1rem;margin:1.25rem 0">
         <p style="font-size:.8rem;color:#8b5cf6;font-weight:600;margin:0 0 .25rem">SEU NÚMERO DE REFERÊNCIA</p>
-        <p style="font-size:1.3rem;font-family:monospace;font-weight:700;color:#6c63ff;margin:0">${opts.txid}</p>
+        <p style="font-size:1.3rem;font-family:monospace;font-weight:700;color:#6c63ff;margin:0">${txid}</p>
       </div>
       <p style="color:#6b7280;font-size:.875rem">
         Você receberá outro email com suas credenciais de acesso assim que a conta for ativada.

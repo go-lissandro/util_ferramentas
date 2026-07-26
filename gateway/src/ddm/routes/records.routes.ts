@@ -4,6 +4,7 @@ import { db } from '../../config/database';
 import { storage } from '../services/storage.service';
 import { validateRecord, buildSearchText } from '../services/validation.service';
 import { dispatchWebhook } from '../services/webhook.service';
+import { PAGINATION } from '../../config/pagination';
 
 export const recordsRouter = Router({ mergeParams: true });
 
@@ -57,8 +58,8 @@ recordsRouter.get('/', async (req: Request, res: Response) => {
   const ef = await getEntityWithFields(entityId, tenantId);
   if (!ef) return res.status(404).json({ error: 'Entity type not found' });
 
-  const pageNum  = Math.max(1, parseInt(page));
-  const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+  const pageNum  = Math.max(PAGINATION.DEFAULT_PAGE, parseInt(page));
+  const limitNum = Math.min(PAGINATION.MAX_LIMIT, Math.max(1, parseInt(limit)));
   const offset   = (pageNum - 1) * limitNum;
 
   const conditions: string[] = ['r.entity_type_id = $1', 'r.tenant_id = $2', 'r.deleted_at IS NULL'];
@@ -74,7 +75,17 @@ recordsRouter.get('/', async (req: Request, res: Response) => {
   for (const [key, value] of Object.entries(filters)) {
     if (key.startsWith('filter_')) {
       const fieldKey = key.replace('filter_', '');
+      // Validate fieldKey against allowed fields to prevent SQL injection
+      const allowedField = ef.fields.find(f => f.field_key === fieldKey);
+      if (!allowedField) {
+        return res.status(400).json({ error: `Invalid filter field: ${fieldKey}` });
+      }
+      // Additional validation: ensure fieldKey contains only safe characters
+      if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(fieldKey)) {
+        return res.status(400).json({ error: `Invalid filter field format: ${fieldKey}` });
+      }
       params.push(value);
+      // Use parameterized query with validated field key
       conditions.push(`r.data->>'${fieldKey}' = $${params.length}`);
     }
   }
@@ -84,6 +95,15 @@ recordsRouter.get('/', async (req: Request, res: Response) => {
   // Sort
   let orderBy = 'r.created_at DESC';
   if (sort_field) {
+    // Validate sort_field against allowed fields to prevent SQL injection
+    const allowedField = ef.fields.find(f => f.field_key === sort_field);
+    if (!allowedField) {
+      return res.status(400).json({ error: `Invalid sort field: ${sort_field}` });
+    }
+    // Additional validation: ensure sort_field contains only safe characters
+    if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(sort_field)) {
+      return res.status(400).json({ error: `Invalid sort field format: ${sort_field}` });
+    }
     const dir = sort_dir === 'asc' ? 'ASC' : 'DESC';
     orderBy = `r.data->>'${sort_field}' ${dir} NULLS LAST`;
   }

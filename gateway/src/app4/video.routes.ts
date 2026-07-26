@@ -6,8 +6,11 @@ import {
   hasCookies, saveCookies,
 } from './video.service';
 import { logger } from '../utils/logger';
+import { rateLimiter } from '../middleware/rateLimiter';
 
 export const videoRouter = Router();
+// Apply stricter rate limiting to video endpoints (compute-intensive)
+videoRouter.use(rateLimiter);
 const activeDownloads = new Map<string, number>();
 const cookiesUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
 

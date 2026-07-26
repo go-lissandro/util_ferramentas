@@ -4,14 +4,14 @@ import { Request, Response } from 'express';
 const windowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000; // 15 min
 const maxRequests = Number(process.env.RATE_LIMIT_MAX_REQUESTS) || 100;
 
-// ── General API rate limiter ────────────────────────────
+// ── General API rate limiter (for public/unauthenticated routes) ────────────────
 export const rateLimiter = rateLimit({
   windowMs,
   max: maxRequests,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) =>
-    req.user?.tenantId || req.ip || 'anonymous',
+    req.ip || 'anonymous',
   handler: (_req: Request, res: Response) => {
     res.status(429).json({
       success: false,
@@ -33,6 +33,24 @@ export const authRateLimiter = rateLimit({
       success: false,
       error: 'Muitas tentativas de login. Tente novamente em 15 minutos.',
       code: 'AUTH_RATE_LIMIT_EXCEEDED',
+    });
+  },
+});
+
+// ── Tenant-aware rate limiter (for authenticated routes) ──────────────────────
+// Must be applied AFTER authenticate middleware
+export const tenantRateLimiter = rateLimit({
+  windowMs,
+  max: maxRequests,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) =>
+    req.user?.tenantId || req.ip || 'anonymous',
+  handler: (_req: Request, res: Response) => {
+    res.status(429).json({
+      success: false,
+      error: 'Muitas requisições. Tente novamente em alguns minutos.',
+      code: 'RATE_LIMIT_EXCEEDED',
     });
   },
 });

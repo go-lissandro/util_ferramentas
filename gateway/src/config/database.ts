@@ -214,7 +214,9 @@ async function runMigrations(pool: Pool): Promise<void> {
         data           JSONB NOT NULL DEFAULT '{}',
         search_text    TEXT,
         created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        deleted_at     TIMESTAMPTZ,
+        created_by     UUID
       )
     `);
 
@@ -238,6 +240,100 @@ async function runMigrations(pool: Pool): Promise<void> {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_short_links_tenant  ON short_links(tenant_id)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_entity_types_tenant ON entity_types(tenant_id)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_entity_records_type ON entity_records(entity_type_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_entity_records_tenant ON entity_records(tenant_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_entity_records_type_tenant ON entity_records(entity_type_id, tenant_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_entity_records_deleted ON entity_records(deleted_at)`);
+
+    // ── Bio Link tables ──────────────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bio_pages (
+        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id   UUID NOT NULL,
+        username    VARCHAR(50) UNIQUE NOT NULL,
+        title       VARCHAR(100) NOT NULL DEFAULT 'Minha Bio',
+        description TEXT,
+        avatar_url  TEXT,
+        theme       VARCHAR(30) NOT NULL DEFAULT 'dark',
+        bg_color    VARCHAR(20) DEFAULT '#0a0a0f',
+        accent_color VARCHAR(20) DEFAULT '#6c63ff',
+        is_active   BOOLEAN NOT NULL DEFAULT true,
+        total_views INTEGER NOT NULL DEFAULT 0,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bio_links (
+        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        page_id     UUID NOT NULL REFERENCES bio_pages(id) ON DELETE CASCADE,
+        title       VARCHAR(100) NOT NULL,
+        url         TEXT NOT NULL,
+        icon        VARCHAR(50) DEFAULT '🔗',
+        type        VARCHAR(30) DEFAULT 'link',
+        order_index INTEGER NOT NULL DEFAULT 0,
+        is_active   BOOLEAN NOT NULL DEFAULT true,
+        click_count INTEGER NOT NULL DEFAULT 0,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bio_views (
+        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        page_id     UUID NOT NULL REFERENCES bio_pages(id) ON DELETE CASCADE,
+        referrer    TEXT,
+        user_agent  TEXT,
+        viewed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS bio_link_clicks (
+        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        link_id     UUID NOT NULL REFERENCES bio_links(id) ON DELETE CASCADE,
+        page_id     UUID NOT NULL,
+        referrer    TEXT,
+        clicked_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bio_pages_username  ON bio_pages(username)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bio_pages_tenant    ON bio_pages(tenant_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bio_links_page      ON bio_links(page_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_bio_views_page      ON bio_views(page_id)`);
+
+    // ── Habits tables ────────────────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS habits (
+        id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        tenant_id   UUID NOT NULL,
+        user_id     UUID NOT NULL,
+        title       VARCHAR(120) NOT NULL,
+        description TEXT,
+        icon        VARCHAR(10) NOT NULL DEFAULT '✅',
+        color       VARCHAR(20) NOT NULL DEFAULT '#6c63ff',
+        frequency   VARCHAR(20) NOT NULL DEFAULT 'daily',
+        target_days INTEGER[] NOT NULL DEFAULT '{1,2,3,4,5,6,0}',
+        is_active   BOOLEAN NOT NULL DEFAULT true,
+        order_index INTEGER NOT NULL DEFAULT 0,
+        created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        archived_at TIMESTAMPTZ
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS habit_completions (
+        id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        habit_id     UUID NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
+        user_id      UUID NOT NULL,
+        completed_on DATE NOT NULL,
+        note         TEXT,
+        created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE (habit_id, completed_on)
+      )
+    `);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_habits_user       ON habits(user_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_habits_tenant     ON habits(tenant_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_completions_habit ON habit_completions(habit_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_completions_user  ON habit_completions(user_id, completed_on)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_link_clicks_tenant   ON link_clicks(tenant_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_link_clicks_link_id  ON link_clicks(link_id)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_purchase_email      ON purchase_requests(email)`);
 
     await client.query('COMMIT');

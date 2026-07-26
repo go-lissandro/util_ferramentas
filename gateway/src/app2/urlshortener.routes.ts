@@ -1,17 +1,20 @@
 import { Router, Request, Response } from 'express';
 import QRCode from 'qrcode';
 import { z } from 'zod';
+import { randomBytes } from 'crypto';
 import { logger } from '../utils/logger';
+import { PAGINATION } from '../config/pagination';
 
 // ── Reuse gateway DB pool ──────────────────────────────────
 import { db } from '../config/database';
 
-// ── Nanoid for short slugs ─────────────────────────────────
+// ── Crypto-secure nanoid for short slugs ────────────────────
 function nanoid(size = 7): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const bytes = randomBytes(size);
   let result = '';
   for (let i = 0; i < size; i++) {
-    result += chars[Math.floor(Math.random() * chars.length)];
+    result += chars[bytes[i] % chars.length];
   }
   return result;
 }
@@ -37,8 +40,8 @@ urlShortenerRouter.get('/links', async (req: Request, res: Response) => {
   const tenantId = req.user?.tenantId;
   if (!tenantId) return res.status(401).json({ error: 'Not authenticated' });
 
-  const page   = Math.max(1, parseInt(req.query.page as string) || 1);
-  const limit  = Math.min(50, parseInt(req.query.limit as string) || 20);
+  const page   = Math.max(PAGINATION.DEFAULT_PAGE, parseInt(req.query.page as string) || 1);
+  const limit  = Math.min(PAGINATION.URL_SHORTENER_MAX_LIMIT, parseInt(req.query.limit as string) || PAGINATION.DEFAULT_LIMIT);
   const offset = (page - 1) * limit;
 
   const [links, total] = await Promise.all([
@@ -98,6 +101,7 @@ urlShortenerRouter.post('/links', async (req: Request, res: Response) => {
     if ((err as { code?: string }).code === '23505') {
       return res.status(409).json({ error: 'That custom slug is already taken' });
     }
+    logger.error('Error creating short link: ' + (err as Error).message);
     throw err;
   }
 });
@@ -143,41 +147,10 @@ urlShortenerRouter.delete('/links/:id', async (req: Request, res: Response) => {
   return res.json({ success: true });
 });
 
-// ── DB migrations (called once at startup) ─────────────────
+// ── DB migrations (tables now created in database.ts) ──────────────
 export async function migrateUrlShortener(): Promise<void> {
-  try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS short_links (
-        id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        tenant_id    UUID NOT NULL,
-        user_id      UUID,
-        slug         VARCHAR(20) UNIQUE NOT NULL,
-        original_url TEXT NOT NULL,
-        title        VARCHAR(255),
-        expires_at   TIMESTAMPTZ,
-        is_active    BOOLEAN NOT NULL DEFAULT true,
-        click_count  INTEGER NOT NULL DEFAULT 0,
-        created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      )
-    `);
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS link_clicks (
-        id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        link_id    UUID NOT NULL REFERENCES short_links(id) ON DELETE CASCADE,
-        tenant_id  UUID NOT NULL,
-        referrer   TEXT,
-        user_agent TEXT,
-        clicked_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      )
-    `);
-    await db.query(`CREATE INDEX IF NOT EXISTS idx_short_links_slug      ON short_links(slug)`);
-    await db.query(`CREATE INDEX IF NOT EXISTS idx_short_links_tenant_id ON short_links(tenant_id)`);
-    await db.query(`CREATE INDEX IF NOT EXISTS idx_link_clicks_link_id   ON link_clicks(link_id)`);
-    logger.info('✅ URL Shortener tables ready');
-  } catch (err) {
-    logger.error('migrateUrlShortener error: ' + (err as Error).message);
-    throw err;
-  }
+  // Tables are now created in database.ts runMigrations()
+  logger.info('✅ URL Shortener migration check (tables in database.ts)');
 }
 
 
@@ -192,12 +165,17 @@ redirectRouter.get('/r/:slug', async (req: Request, res: Response) => {
   if (!link || !link.is_active) return res.status(404).send('Link not found');
   if (link.expires_at && new Date(link.expires_at) < new Date()) return res.status(410).send('Link expired');
 
-  setImmediate(() => {
-    db.query('UPDATE short_links SET click_count = click_count + 1 WHERE id = $1', [link.id]).catch(() => {});
-    db.query(
-      'INSERT INTO link_clicks (link_id, tenant_id, referrer, user_agent) VALUES ($1, $2, $3, $4)',
-      [link.id, link.tenant_id, req.headers.referer || null, req.headers['user-agent'] || null]
-    ).catch(() => {});
+  // Track click asynchronously but with proper error logging
+  setImmediate(async () => {
+    try {
+      await db.query('UPDATE short_links SET click_count = click_count + 1 WHERE id = $1', [link.id]);
+      await db.query(
+        'INSERT INTO link_clicks (link_id, tenant_id, referrer, user_agent) VALUES ($1, $2, $3, $4)',
+        [link.id, link.tenant_id, req.headers.referer || null, req.headers['user-agent'] || null]
+      );
+    } catch (err) {
+      logger.error('Failed to track link click', { linkId: link.id, error: (err as Error).message });
+    }
   });
 
   return res.redirect(301, link.original_url);

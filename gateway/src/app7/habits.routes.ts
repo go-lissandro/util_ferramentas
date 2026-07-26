@@ -6,41 +6,10 @@ import { logger } from '../utils/logger';
 export const habitsRouter   = Router(); // auth required — mounted at /api/habits
 export const habitsPublicRouter = Router(); // no auth — public stats
 
-// ── DB Migration (called in bootstrapApp) ─────────────────
+// ── DB Migration (tables now in database.ts) ───────────────────
 export async function migrateHabits(): Promise<void> {
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS habits (
-      id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      user_id     UUID NOT NULL,
-      tenant_id   UUID NOT NULL,
-      title       VARCHAR(120) NOT NULL,
-      description TEXT,
-      icon        VARCHAR(10)  NOT NULL DEFAULT '✅',
-      color       VARCHAR(20)  NOT NULL DEFAULT '#6c63ff',
-      frequency   VARCHAR(20)  NOT NULL DEFAULT 'daily',
-      target_days INTEGER[]    NOT NULL DEFAULT '{1,2,3,4,5,6,0}',
-      is_active   BOOLEAN      NOT NULL DEFAULT true,
-      order_index INTEGER      NOT NULL DEFAULT 0,
-      created_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-      archived_at TIMESTAMPTZ
-    )
-  `);
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS habit_completions (
-      id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      habit_id     UUID        NOT NULL REFERENCES habits(id) ON DELETE CASCADE,
-      user_id      UUID        NOT NULL,
-      completed_on DATE        NOT NULL,
-      note         TEXT,
-      created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      UNIQUE (habit_id, completed_on)
-    )
-  `);
-  await db.query(`CREATE INDEX IF NOT EXISTS idx_habits_user       ON habits(user_id)`);
-  await db.query(`CREATE INDEX IF NOT EXISTS idx_habits_tenant     ON habits(tenant_id)`);
-  await db.query(`CREATE INDEX IF NOT EXISTS idx_completions_habit ON habit_completions(habit_id)`);
-  await db.query(`CREATE INDEX IF NOT EXISTS idx_completions_user  ON habit_completions(user_id, completed_on)`);
-  logger.info('✅ Habits tables ready');
+  // Tables are now created in database.ts runMigrations()
+  logger.info('✅ Habits migration check (tables in database.ts)');
 }
 
 // ── Helpers ────────────────────────────────────────────────
@@ -58,6 +27,7 @@ function dateRange(days: number): string[] {
   return dates;
 }
 
+// ── Current streak calculation (consecutive days up to today, allows today to be missed) ──────
 async function calcStreak(habitId: string, userId: string): Promise<number> {
   const rows = await db.query<{ completed_on: string }>(
     `SELECT completed_on FROM habit_completions
@@ -69,7 +39,7 @@ async function calcStreak(habitId: string, userId: string): Promise<number> {
 
   const dates = rows.map(r => r.completed_on.toString().split('T')[0]);
   let streak = 0;
-  const t = new Date(); t.setHours(0,0,0,0);
+  const t = new Date(); t.setHours(0, 0, 0, 0);
 
   for (let i = 0; i < 365; i++) {
     const check = new Date(t);
@@ -243,15 +213,19 @@ habitsRouter.get('/stats', async (req: Request, res: Response) => {
     db.queryOne<{ count: string }>('SELECT COUNT(*) as count FROM habits WHERE user_id = $1 AND is_active = true AND archived_at IS NULL', [userId]),
     db.queryOne<{ count: string }>(`SELECT COUNT(DISTINCT habit_id) as count FROM habit_completions WHERE user_id = $1 AND completed_on = $2`, [userId, t]),
     db.queryOne<{ count: string }>('SELECT COUNT(*) as count FROM habit_completions WHERE user_id = $1', [userId]),
+    // Best streak across all habits - uses SQL that handles year boundaries
     db.queryOne<{ max_streak: string }>(`
-      WITH streaks AS (
+      WITH habit_streaks AS (
         SELECT habit_id,
-          ROW_NUMBER() OVER (PARTITION BY habit_id ORDER BY completed_on) -
-          EXTRACT(DOY FROM completed_on::date)::integer as grp,
-          COUNT(*) OVER (PARTITION BY habit_id, ROW_NUMBER() OVER (PARTITION BY habit_id ORDER BY completed_on) - EXTRACT(DOY FROM completed_on::date)::integer) as streak_len
-        FROM habit_completions WHERE user_id = $1
+               COUNT(*) as streak_len
+        FROM (
+          SELECT habit_id, completed_on::date as d,
+                 ROW_NUMBER() OVER (PARTITION BY habit_id ORDER BY completed_on) as rn
+          FROM habit_completions WHERE user_id = $1
+        ) ordered
+        GROUP BY habit_id, d - (rn || ' days')::interval
       )
-      SELECT COALESCE(MAX(streak_len), 0)::text as max_streak FROM streaks
+      SELECT COALESCE(MAX(streak_len), 0)::text as max_streak FROM habit_streaks
     `, [userId]).catch(() => ({ max_streak: '0' })),
   ]);
 

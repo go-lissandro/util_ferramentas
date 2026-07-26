@@ -6,6 +6,7 @@ import { detectSchema, validateJsonInput } from './services/schema.service';
 import type { JsonToExcelOptions, MappingConfig, StyleConfig } from './types';
 import { logger } from '../utils/logger';
 import { createRateLimiter } from './utils/rate-limiter';
+import { PAGINATION } from '../config/pagination';
 
 export const converterRouter = Router();
 
@@ -173,7 +174,7 @@ converterRouter.post('/detect-schema', (req: Request, res: Response) => {
 // Returns first N rows for preview without full conversion
 converterRouter.post('/preview', upload.single('file'), async (req: Request, res: Response) => {
   try {
-    const limit = Math.min(parseInt(req.body.limit || '20'), 100);
+    const limit = Math.min(parseInt(req.body.limit || String(PAGINATION.DEFAULT_LIMIT)), PAGINATION.MAX_LIMIT);
 
     if (req.file) {
       const ext = req.file.originalname.split('.').pop()?.toLowerCase();

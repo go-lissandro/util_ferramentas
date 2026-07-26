@@ -11,6 +11,7 @@ import { setupProxy } from './proxy/proxyRouter';
 import { logger } from './utils/logger';
 import { db } from './config/database';
 import { AppError } from './utils/AppError';
+import { rateLimiter } from './middleware/rateLimiter';
 
 // ── DDM (App3) routes ──────────────────────────────────────────
 import { authenticate, injectDdmTenant } from './middleware/auth';
@@ -150,7 +151,10 @@ async function bootstrap() {
   app.use('/app10', express.static(app10Dist));
   app.get('/app10/*', (_req: Request, res: Response) => { res.sendFile(path.join(app10Dist, 'index.html')); });
 
-    // ── Mount App2 (URL Shortener) API routes ─────────────────
+  // ── Authenticated API rate limiter (runs after authenticate) ──
+  app.use('/api/', authenticate, rateLimiter);
+
+  // ── Mount App2 (URL Shortener) API routes ─────────────────
   app.use('/api/app2', authenticate, urlShortenerRouter);
 
   // ── Mount DDM API routes (protected by JWT) ────────────────

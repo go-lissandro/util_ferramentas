@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError } from '../utils/AppError';
 import { db } from '../config/database';
+import { logger } from '../utils/logger';
 
 export interface JwtPayload {
   sub: string;        // user ID
@@ -40,8 +41,15 @@ export function authenticate(
     throw new AppError('Missing Authorization token', 401, 'UNAUTHORIZED');
   }
 
+  // Validate JWT_SECRET is configured
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    logger.error('JWT_SECRET environment variable is not set');
+    throw new AppError('Server configuration error', 500, 'CONFIG_ERROR');
+  }
+
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+    const payload = jwt.verify(token, jwtSecret) as JwtPayload;
     req.user = payload;
     next();
   } catch (err) {
@@ -61,9 +69,14 @@ export function optionalAuthenticate(
   const authHeader = req.headers.authorization;
 
   if (authHeader?.startsWith('Bearer ')) {
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      logger.warn('JWT_SECRET not configured, skipping optional auth');
+      return next();
+    }
     try {
       const token = authHeader.slice(7);
-      req.user = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+      req.user = jwt.verify(token, jwtSecret) as JwtPayload;
     } catch {
       // token invalid — continue without user context
     }
@@ -143,15 +156,21 @@ export function requireAppAccess(appKey: string) {
 
 // ── Token generation utilities ─────────────────────────
 export function generateTokens(payload: Omit<JwtPayload, 'iat' | 'exp'>) {
+  const jwtSecret = process.env.JWT_SECRET;
+  if (!jwtSecret) {
+    logger.error('JWT_SECRET environment variable is not set');
+    throw new AppError('Server configuration error', 500, 'CONFIG_ERROR');
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const accessToken = jwt.sign(payload as any, process.env.JWT_SECRET!, {
+  const accessToken = jwt.sign(payload as any, jwtSecret, {
     expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as any,
   });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const refreshToken = jwt.sign(
     { sub: payload.sub },
-    process.env.JWT_SECRET!,
+    jwtSecret,
     { expiresIn: (process.env.JWT_REFRESH_EXPIRES_IN || '30d') as any }
   );
 
