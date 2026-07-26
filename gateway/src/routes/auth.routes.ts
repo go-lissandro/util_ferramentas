@@ -16,7 +16,7 @@ const LoginSchema = z.object({
 // Registration is CLOSED — accounts are created only after admin approval
 authRouter.post('/login', async (req: Request, res: Response) => {
   const body = LoginSchema.safeParse(req.body);
-  if (!body.success) throw new AppError(body.error.errors[0].message, 400, 'VALIDATION_ERROR');
+  if (!body.success) throw new AppError('Dados invalidos. Verifique email e senha.', 400, 'VALIDATION_ERROR');
 
   const { email, password } = body.data;
 

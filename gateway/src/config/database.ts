@@ -336,6 +336,9 @@ async function runMigrations(pool: Pool): Promise<void> {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_link_clicks_link_id  ON link_clicks(link_id)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_purchase_email      ON purchase_requests(email)`);
 
+    // ── Constraints (safe to re-run; IF NOT EXISTS prevents duplicate errors) ──
+    await client.query(`ALTER TABLE purchase_requests ADD CONSTRAINT IF NOT EXISTS uq_purchase_pix_txid UNIQUE (pix_txid)`);
+
     await client.query('COMMIT');
     logger.info('✅ Migrations concluídas');
   } catch (err) {

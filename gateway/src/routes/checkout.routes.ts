@@ -15,6 +15,16 @@ export const adminCheckoutRouter = Router(); // admin only
 adminCheckoutRouter.use(authenticate, requireRole('admin'));
 
 // ── Plans definition ──────────────────────────────────────
+function safeParseCents(envVar: string | undefined, fallback: number, name: string): number {
+  if (!envVar) return fallback;
+  const parsed = parseInt(envVar, 10);
+  if (isNaN(parsed) || parsed < 0) {
+    logger.warn(`${name} invalido: "${envVar}" — usando ${fallback}`);
+    return fallback;
+  }
+  return parsed;
+}
+
 export const PLANS = {
   free: {
     key: 'free',
@@ -31,7 +41,7 @@ export const PLANS = {
   pro: {
     key: 'pro',
     name: 'Pro',
-    price_cents: parseInt(process.env.PRO_PLAN_PRICE_CENTS || '2990'), // R$29,90
+    price_cents: safeParseCents(process.env.PRO_PLAN_PRICE_CENTS, 2990, 'PRO_PLAN_PRICE_CENTS'), // R$29,90
     description: 'Acesso completo',
     apps: ['app2', 'app3', 'app4', 'app5'],
     features: [
@@ -64,15 +74,17 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   const planDef = PLANS[plan];
 
   // Check if already has a pending/approved request
-  const existing = await db.queryOne<{ status: string }>(
-    `SELECT status FROM purchase_requests WHERE email = $1 AND status IN ('pending_payment','payment_sent','approved')`,
+  const existing = await db.queryOne<{ status: string; pix_txid: string }>(
+    `SELECT status, pix_txid FROM purchase_requests WHERE email = $1 AND status IN ('pending_payment','payment_sent','approved') ORDER BY created_at DESC LIMIT 1`,
     [email]
   );
-  if (existing?.status === 'approved') {
-    return res.status(409).json({ success: false, error: 'Este email já possui uma conta ativa. Faça login.' });
-  }
-  if (existing?.status === 'payment_sent') {
-    return res.status(409).json({ success: false, error: 'Você já enviou o pagamento. Aguarde a aprovação do admin.' });
+  if (existing) {
+    const msgs: Record<string, string> = {
+      approved:        'Este email já possui uma conta ativa. Faça login.',
+      payment_sent:    'Você já enviou o pagamento. Aguarde a aprovação do admin.',
+      pending_payment: 'Você já iniciou uma solicitação para este email. Complete o pagamento ou verifique o status abaixo.',
+    };
+    return res.status(409).json({ success: false, error: msgs[existing.status] || 'Solicitação já existente.' });
   }
 
   // Generate a short txid for payment identification (e.g. "UTL-A3F2")
@@ -82,7 +94,7 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   await db.query(
     `INSERT INTO purchase_requests (name, email, plan, amount_cents, status, pix_txid)
      VALUES ($1, $2, $3, $4, 'pending_payment', $5)
-     ON CONFLICT DO NOTHING`,
+     ON CONFLICT (pix_txid) DO NOTHING`,
     [name, email, plan, planDef.price_cents, txid]
   );
 

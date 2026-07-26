@@ -101,12 +101,12 @@ usersRouter.get('/stats', requireRole('admin'), async (req: Request, res: Respon
 // ── POST /api/users/apps/:appKey/permissions ──────────
 usersRouter.post('/apps/:appKey/permissions', requireRole('admin'), async (req: Request, res: Response) => {
   const { appKey } = req.params;
-  const { userId, canAccess } = req.body;
+  const { canAccess } = req.body;
   await db.query(
-    `INSERT INTO app_permissions (tenant_id, user_id, app_key, can_access)
-     VALUES ($1, $2, $3, $4)
-     ON CONFLICT (tenant_id, user_id, app_key) DO UPDATE SET can_access = $4`,
-    [req.user!.tenantId, userId, appKey, canAccess]
+    `INSERT INTO app_permissions (tenant_id, app_key, can_access)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (tenant_id, app_key) DO UPDATE SET can_access = $3`,
+    [req.user!.tenantId, appKey, canAccess]
   );
   return res.json({ success: true });
 });
