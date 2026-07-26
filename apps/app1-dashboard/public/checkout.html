@@ -202,7 +202,12 @@
 
   function showAlert(id, msg, type = 'err') {
     const el = document.getElementById(id);
-    el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+    const safeType = type.replace(/[^a-z-]/gi, '');
+    const div = document.createElement('div');
+    div.className = 'alert alert-' + safeType;
+    div.textContent = msg;
+    el.innerHTML = '';
+    el.appendChild(div);
   }
   function clearAlert(id) { document.getElementById(id).innerHTML = ''; }
 
@@ -310,6 +315,11 @@
       const j = await r.json();
       const d = j.data;
 
+      if (!d) {
+        el.innerHTML = '<div style="color:var(--err);font-size:.85rem">Erro ao consultar status</div>';
+        return;
+      }
+
       const colors = {
         none:            'var(--mut)',
         pending_payment: 'var(--mut)',
@@ -318,7 +328,11 @@
         rejected:        'var(--err)',
       };
       const color = colors[d.status] || 'var(--mut)';
-      el.innerHTML = `<div style="font-size:.85rem;color:${color};padding:.625rem .875rem;background:var(--sur2);border-radius:8px;border:1px solid var(--brd)">${d.message}</div>`;
+      const safeDiv = document.createElement('div');
+      safeDiv.style.cssText = 'font-size:.85rem;color:' + color + ';padding:.625rem .875rem;background:var(--sur2);border-radius:8px;border:1px solid var(--brd)';
+      safeDiv.textContent = d.message;
+      el.innerHTML = '';
+      el.appendChild(safeDiv);
     } catch(e) {
       el.innerHTML = '<div style="color:var(--err);font-size:.85rem">Erro de conexão</div>';
     }
