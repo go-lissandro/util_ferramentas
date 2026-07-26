@@ -110,14 +110,12 @@
       <div id="alert2"></div>
 
       <div class="pix-area">
-        <!-- QR Code PIX — image served from /pix-qrcode.png (gateway/public/) -->
+        <!-- QR Code PIX — dynamically updated by JavaScript -->
         <div id="qr-container">
-          <img id="qr-img" src="/pix-qrcode.png" class="pix-qr" alt="QR Code PIX"
-            onerror="this.style.display='none';document.getElementById('qr-placeholder').style.display='flex'"
-            onload="document.getElementById('qr-placeholder').style.display='none'" />
-          <div class="pix-qr-placeholder" id="qr-placeholder" style="display:none">
-            📷<br/><strong>Adicione seu QR Code</strong><br/>
-            <small>Coloque <code>pix-qrcode.png</code><br/>na pasta <code>gateway/public/</code></small>
+          <img id="qr-img" class="pix-qr" alt="QR Code PIX" style="display:none" />
+          <div class="pix-qr-placeholder" id="qr-placeholder" style="display:flex">
+            📷<br/><strong>Aguarde</strong><br/>
+            <small>Preenchendo os dados...</small>
           </div>
         </div>
 
