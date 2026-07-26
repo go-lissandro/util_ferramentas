@@ -52,28 +52,59 @@ function buildQRContent(cfg: QRConfig): string {
     case 'pix': {
       const amount = parseFloat(cfg.pixAmount || '0');
       const key = cfg.pixKey || '';
-      const name = (cfg.pixName || 'NOME').slice(0, 25).toUpperCase();
-      const city = (cfg.pixCity || 'CIDADE').slice(0, 15).toUpperCase();
-      // EMV PIX payload
-      const merchant = `0014BR.GOV.BCB.PIX01${key.length.toString().padStart(2,'0')}${key}`;
-      const payload = [
-        '000201',
-        '010212',
-        `26${merchant.length.toString().padStart(2,'0')}${merchant}`,
-        '52040000',
-        '5303986',
-        amount > 0 ? `54${amount.toFixed(2).length.toString().padStart(2,'0')}${amount.toFixed(2)}` : '',
-        '5802BR',
-        `59${name.length.toString().padStart(2,'0')}${name}`,
-        `60${city.length.toString().padStart(2,'0')}${city}`,
-        '62070503***',
-        '6304',
-      ].join('');
-      // CRC16 (simplified — real PIX needs proper CRC)
-      return payload + '0000';
+      const name = (cfg.pixName || 'NOME').replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 25).toUpperCase();
+      const city = (cfg.pixCity || 'CIDADE').replace(/[^a-zA-Z0-9 ]/g, '').slice(0, 15).toUpperCase();
+
+      // Merchant Account Information (field 26)
+      const guiField = buildField('00', 'BR.GOV.BCB.PIX');
+      const keyField = buildField('01', key);
+      const mai = buildField('26', guiField + keyField);
+
+      // Amount field (54) — optional for open amount
+      const amountField = amount > 0
+        ? buildField('54', amount.toFixed(2))
+        : '';
+
+      // Additional Data (field 62) — txid
+      const txidField = buildField('05', '***');
+      const additionalData = buildField('62', txidField);
+
+      // Assemble payload (without CRC)
+      const payload =
+        buildField('00', '01') +           // Payload format indicator
+        buildField('01', '12') +           // Point of initiation (12 = multiple use)
+        mai +
+        buildField('52', '0000') +         // MCC
+        buildField('53', '986') +          // Currency (BRL = 986)
+        amountField +
+        buildField('58', 'BR') +           // Country
+        buildField('59', name) +           // Merchant name
+        buildField('60', city) +           // Merchant city
+        additionalData +
+        '6304';                            // CRC placeholder
+
+      // CRC-16/CCITT-FALSE
+      const crc = crc16(payload);
+      return payload + crc;
     }
     default: return '';
   }
+}
+
+// ── CRC16/CCITT-FALSE for PIX EMV ──
+function crc16(str: string): string {
+  let crc = 0xFFFF;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      crc = crc & 0x8000 ? (crc << 1) ^ 0x1021 : crc << 1;
+    }
+  }
+  return ((crc & 0xFFFF).toString(16).toUpperCase().padStart(4, '0'));
+}
+
+function buildField(id: string, value: string): string {
+  return `${id}${value.length.toString().padStart(2, '0')}${value}`;
 }
 
 // ── Generate QR using Google Charts API (no npm needed) ──
