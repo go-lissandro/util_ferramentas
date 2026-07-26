@@ -249,9 +249,18 @@
       document.getElementById('amount-display').textContent =
         'R$ ' + parseFloat(j.data.amount_brl).toFixed(2).replace('.', ',');
 
-      // Show QR image if available
-      // QR image is loaded directly from /pix-qrcode.png on page load
-      // No need to update it here
+      // Show dynamic QR code from API response
+      const qrImg = document.getElementById('qr-img');
+      const qrPlaceholder = document.getElementById('qr-placeholder');
+      if (j.data.pix_qrcode_base64) {
+        qrImg.src = j.data.pix_qrcode_base64;
+        qrImg.style.display = 'block';
+        qrPlaceholder.style.display = 'none';
+      } else {
+        qrImg.style.display = 'none';
+        qrPlaceholder.style.display = 'flex';
+        qrPlaceholder.innerHTML = '📷<br/><strong>QR Code indisponível</strong><br/><small>Use a chave PIX abaixo</small>';
+      }
 
       setStep(2);
     } catch(e) {

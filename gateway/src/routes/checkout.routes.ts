@@ -6,6 +6,8 @@ import { AppError } from '../utils/AppError';
 import { logger } from '../utils/logger';
 import { sendWelcomeEmail } from '../services/email.service';
 import { hashPassword } from '../utils/password';
+import { buildPixPayload } from '../utils/licenseUtils';
+import QRCode from 'qrcode';
 import crypto from 'crypto';
 
 export const checkoutRouter = Router();    // public
@@ -84,19 +86,40 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
     [name, email, plan, planDef.price_cents, txid]
   );
 
-  const pix_key = process.env.PIX_KEY || '';
-  // Always serve from /pix-qrcode.png in gateway/public/
-  // Just drop your bank's QR code image there with that filename
-  const pix_static_image = '/pix-qrcode.png';
+  const pix_key = process.env.PIX_KEY;
+  if (!pix_key) {
+    throw new AppError('PIX não configurado. Entre em contato com o suporte.', 500, 'PIX_NOT_CONFIGURED');
+  }
+
+  const merchantName = process.env.PIX_MERCHANT_NAME || 'Util Ferramentas';
+  const merchantCity = process.env.PIX_MERCHANT_CITY || 'SAO PAULO';
+
+  // Generate dynamic PIX payload with QR code
+  const payload = buildPixPayload({
+    pixKey: pix_key,
+    merchantName,
+    merchantCity,
+    amount: planDef.price_cents,
+    txId: txid,
+    description: `Assinatura Pro - ${planDef.name}`,
+  });
+
+  const qrcode_base64 = await QRCode.toDataURL(payload, {
+    width: 300,
+    margin: 2,
+    color: { dark: '#000000', light: '#ffffff' },
+    errorCorrectionLevel: 'M',
+  });
 
   return res.json({
     success: true,
     data: {
       txid,
       amount_cents: planDef.price_cents,
-      amount_brl:   (planDef.price_cents / 100).toFixed(2),
+      amount_brl: (planDef.price_cents / 100).toFixed(2),
       pix_key,
-      pix_static_image,
+      pix_qrcode_base64: qrcode_base64,
+      pix_payload: payload,
       plan: planDef.name,
       instructions: `Faça o PIX de R$${(planDef.price_cents / 100).toFixed(2)} para a chave abaixo. Use "${txid}" como descrição/identificador. Após o pagamento clique em "Já paguei".`,
     },
