@@ -144,19 +144,34 @@ function App() {
   const [qrSrc, setQrSrc] = useState('');
   const [content, setContent] = useState('');
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
   const debounce = useRef<ReturnType<typeof setTimeout>>();
 
   const set = (patch: Partial<QRConfig>) => setCfg(prev => ({ ...prev, ...patch }));
 
   useEffect(() => {
     clearTimeout(debounce.current);
+    setLoading(true);
     debounce.current = setTimeout(() => {
       const c = buildQRContent(cfg);
       setContent(c);
       if (c.trim().length > 1) {
-        setQrSrc(getQRUrl(c, cfg.size || 300, cfg.fgColor || '#000000', cfg.bgColor || '#ffffff'));
+        const url = getQRUrl(c, cfg.size || 300, cfg.fgColor || '#000000', cfg.bgColor || '#ffffff');
+        // Preload image to ensure smooth transition
+        const img = new Image();
+        img.onload = () => {
+          setQrSrc(url);
+          setLoading(false);
+        };
+        img.onerror = () => {
+          setLoading(false);
+        };
+        img.src = url;
+      } else {
+        setQrSrc('');
+        setLoading(false);
       }
-    }, 400);
+    }, 300);
   }, [cfg]);
 
   const download = useCallback(async (format: 'png' | 'svg') => {
@@ -300,12 +315,21 @@ function App() {
           <div style={{ background: C.sur, border: `1px solid ${C.brd}`, borderRadius: 12, padding: '1.5rem', textAlign: 'center' as const }}>
             <p style={{ fontSize: '.78rem', color: C.mut, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '1.25rem' }}>Preview</p>
 
-            <div style={{ display: 'inline-flex', padding: 16, background: cfg.bgColor || '#fff', borderRadius: 12, marginBottom: '1.25rem', boxShadow: '0 8px 32px rgba(0,0,0,.3)' }}>
-              {qrSrc ? (
-                <img src={qrSrc} alt="QR Code" width={180} height={180} style={{ display: 'block', borderRadius: 4 }} />
+            <div style={{ display: 'inline-flex', padding: 16, background: cfg.bgColor || '#fff', borderRadius: 12, marginBottom: '1.25rem', boxShadow: '0 8px 32px rgba(0,0,0,.3)', transition: 'all 0.3s ease' }}>
+              {loading ? (
+                <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', gap: '.75rem' }}>
+                  <div style={{
+                    width: 40, height: 40, border: `3px solid ${C.brd}`, borderTopColor: C.acc,
+                    borderRadius: '50%', animation: 'spin 0.8s linear infinite',
+                  }} />
+                  <span style={{ fontSize: '.75rem', color: C.mut }}>Gerando QR Code...</span>
+                </div>
+              ) : qrSrc ? (
+                <img src={qrSrc} alt="QR Code" width={180} height={180} style={{ display: 'block', borderRadius: 4, animation: 'fadeIn 0.3s ease' }} />
               ) : (
-                <div style={{ width: 180, height: 180, display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.mut, fontSize: '.8rem' }}>
-                  Preencha os dados
+                <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', color: C.mut, fontSize: '.8rem', gap: '.5rem' }}>
+                  <span style={{ fontSize: '2rem' }}>📱</span>
+                  <span>Preencha os dados</span>
                 </div>
               )}
             </div>
@@ -353,7 +377,13 @@ function App() {
           </div>
         </div>
       </div>
-      <style>{`*{box-sizing:border-box;margin:0;padding:0}input:focus,select:focus,textarea:focus{border-color:${C.acc}!important;outline:none}button:hover:not(:disabled){opacity:.85}`}</style>
+      <style>{`
+        *{box-sizing:border-box;margin:0;padding:0}
+        input:focus,select:focus,textarea:focus{border-color:${C.acc}!important;outline:none}
+        button:hover:not(:disabled){opacity:.85}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+      `}</style>
     </div>
   );
 }
