@@ -73,18 +73,35 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   const { name, email, plan } = body.data;
   const planDef = PLANS[plan];
 
-  // Check if already has a pending/approved request
-  const existing = await db.queryOne<{ status: string; pix_txid: string }>(
-    `SELECT status, pix_txid FROM purchase_requests WHERE email = $1 AND status IN ('pending_payment','payment_sent','approved') ORDER BY created_at DESC LIMIT 1`,
+  // Check if already has a non-expired request
+  const existing = await db.queryOne<{ id: string; status: string; created_at: Date }>(
+    `SELECT id, status, created_at FROM purchase_requests
+     WHERE email = $1 AND status IN ('pending_payment','payment_sent','approved')
+     ORDER BY created_at DESC LIMIT 1`,
     [email]
   );
-  if (existing) {
-    const msgs: Record<string, string> = {
-      approved:        'Este email já possui uma conta ativa. Faça login.',
-      payment_sent:    'Você já enviou o pagamento. Aguarde a aprovação do admin.',
-      pending_payment: 'Você já iniciou uma solicitação para este email. Complete o pagamento ou verifique o status abaixo.',
-    };
-    return res.status(409).json({ success: false, error: msgs[existing.status] || 'Solicitação já existente.' });
+  if (existing && existing.status !== 'pending_payment') {
+    return res.status(409).json({
+      success: false,
+      error: existing.status === 'approved'
+        ? 'Este email já possui uma conta ativa. Faça login.'
+        : 'Você já enviou o pagamento. Aguarde a aprovação do admin.',
+    });
+  }
+  if (existing && existing.status === 'pending_payment') {
+    const ageMs  = Date.now() - existing.created_at.getTime();
+    const ageHrs = ageMs / 3_600_000;
+    if (ageHrs < 24) {
+      return res.status(409).json({
+        success: false,
+        error: 'Você já iniciou uma solicitação para este email.\nComplete o pagamento ou veja o status abaixo.',
+      });
+    }
+    // Pending older than 24h → mark as expired so user can retry
+    await db.query(
+      `UPDATE purchase_requests SET status = 'expired', updated_at = NOW() WHERE id = $1`,
+      [existing.id]
+    );
   }
 
   // Generate a short txid for payment identification (e.g. "UTL-A3F2")

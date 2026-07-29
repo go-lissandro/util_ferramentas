@@ -239,7 +239,21 @@
       const j = await r.json();
 
       if (!j.success) {
-        showAlert('alert1', j.error || 'Erro ao processar. Tente novamente.');
+        const isPending = r.status === 409 && j.error?.toLowerCase().includes('pending_payment');
+        if (isPending) {
+          showAlert('alert1',
+            '⚠️ Você já iniciou uma solicitação de pagamento para este email. ' +
+            'Veja o status abaixo ou tente novamente mais tarde.',
+            'info');
+          const stEl = document.getElementById('status-email');
+          if (stEl) {
+            stEl.value = email;
+            stEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => checkStatus(), 300);
+          }
+        } else {
+          showAlert('alert1', j.error || 'Erro ao processar. Tente novamente.');
+        }
         return;
       }
 
