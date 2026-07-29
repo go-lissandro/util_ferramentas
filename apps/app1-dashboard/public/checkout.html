@@ -99,7 +99,8 @@
       <label>Email</label>
       <input type="email" id="email" placeholder="seu@email.com" />
 
-      <button class="btn btn-primary" onclick="submitForm()">Continuar para pagamento →</button>
+      <button class="btn btn-primary" id="continue-btn" onclick="submitForm()">Continuar para pagamento →</button>
+      <div id="loading-spinner" style="display:none;margin-top:1rem;text-align:center;"><svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" stroke="#fff"><g fill="none" fill-rule="evenodd"><g transform="translate(2 2)" stroke-width="4"><circle stroke-opacity=".5" cx="18" cy="18" r="18"/><path d="M36 18c0-9.94-8.06-18-18-18"><animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/></path></g></g></svg></div>
       <p style="margin-top:1rem;text-align:center;font-size:.8rem;color:var(--mut)">Já tem conta? <a href="/app1" style="color:var(--acc)">Fazer login</a></p>
     </div>
   </div>
@@ -230,6 +231,13 @@
     clearAlert('alert1');
     currentEmail = email;
 
+    // UI loading state
+    const btn = document.getElementById('continue-btn');
+    const spinner = document.getElementById('loading-spinner');
+    btn.disabled = true;
+    btn.textContent = 'Gerando QR Code…';
+    spinner.style.display = 'block';
+
     try {
       const r = await fetch('/api/checkout/request', {
         method: 'POST',
@@ -283,6 +291,11 @@
       setStep(2);
     } catch(e) {
       showAlert('alert1', 'Erro de conexão. Tente novamente.');
+    } finally {
+      // Reset button state
+      btn.disabled = false;
+      btn.textContent = 'Continuar para pagamento →';
+      spinner.style.display = 'none';
     }
   }
 
