@@ -73,6 +73,12 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
   const { name, email, plan } = body.data;
   const planDef = PLANS[plan];
 
+  // Validate PIX config early so we don't insert a row we can't fulfill
+  const pix_key = process.env.PIX_KEY;
+  if (!pix_key) {
+    throw new AppError('PIX não configurado. Entre em contato com o suporte.', 500, 'PIX_NOT_CONFIGURED');
+  }
+
   // Check if already has a non-expired request
   const existing = await db.queryOne<{ id: string; status: string; created_at: Date }>(
     `SELECT id, status, created_at FROM purchase_requests
@@ -80,45 +86,55 @@ checkoutRouter.post('/request', async (req: Request, res: Response) => {
      ORDER BY created_at DESC LIMIT 1`,
     [email]
   );
-  if (existing && existing.status !== 'pending_payment') {
-    return res.status(409).json({
-      success: false,
-      error: existing.status === 'approved'
-        ? 'Este email já possui uma conta ativa. Faça login.'
-        : 'Você já enviou o pagamento. Aguarde a aprovação do admin.',
-    });
-  }
-  if (existing && existing.status === 'pending_payment') {
-    const ageMs  = Date.now() - existing.created_at.getTime();
-    const ageHrs = ageMs / 3_600_000;
-    if (ageHrs < 24) {
-      return res.status(409).json({
-        success: false,
-        error: 'Você já iniciou uma solicitação para este email.\nComplete o pagamento ou veja o status abaixo.',
-      });
+
+  if (existing) {
+    switch (existing.status) {
+      case 'approved':
+        return res.status(409).json({
+          success: false, code: 'ALREADY_APPROVED',
+          error: 'Este email já possui uma conta ativa. Faça login.',
+        });
+      case 'payment_sent':
+        return res.status(409).json({
+          success: false, code: 'PAYMENT_SENT',
+          error: 'Você já enviou o pagamento. Aguarde a aprovação do admin.',
+        });
+      case 'pending_payment': {
+        const createdAt = existing.created_at?.getTime();
+        // Defensive guard: if created_at is somehow null, treat as expired
+        if (createdAt == null || Date.now() - createdAt < 86_400_000) { // 24h
+          return res.status(409).json({
+            success: false, code: 'PENDING_PAYMENT',
+            error: 'Você já iniciou uma solicitação para este email.\nComplete o pagamento ou veja o status abaixo.',
+          });
+        }
+        // Pending older than 24h → mark expired inside a transaction,
+        // then fall through to create a new request below.
+        await db.transaction(async (client) => {
+          await client.query(
+            `UPDATE purchase_requests SET status = 'expired', updated_at = NOW() WHERE id = $1`,
+            [existing.id]
+          );
+        });
+        break; // fall through to insert new request
+      }
+      default:
+        return res.status(409).json({
+          success: false, code: 'EXISTING_REQUEST',
+          error: 'Solicitação já existente.',
+        });
     }
-    // Pending older than 24h → mark as expired so user can retry
-    await db.query(
-      `UPDATE purchase_requests SET status = 'expired', updated_at = NOW() WHERE id = $1`,
-      [existing.id]
-    );
   }
 
-  // Generate a short txid for payment identification (e.g. "UTL-A3F2")
-  const txid = 'UTL-' + crypto.randomBytes(2).toString('hex').toUpperCase();
+  // Generate txid for payment identification (e.g. "UTL-A3F2")
+  const txid = 'UTL-' + crypto.randomBytes(8).toString('hex').toUpperCase();
 
-  // Upsert purchase request
+  // Insert purchase request
   await db.query(
     `INSERT INTO purchase_requests (name, email, plan, amount_cents, status, pix_txid)
-     VALUES ($1, $2, $3, $4, 'pending_payment', $5)
-     ON CONFLICT (pix_txid) DO NOTHING`,
+     VALUES ($1, $2, $3, $4, 'pending_payment', $5)`,
     [name, email, plan, planDef.price_cents, txid]
   );
-
-  const pix_key = process.env.PIX_KEY;
-  if (!pix_key) {
-    throw new AppError('PIX não configurado. Entre em contato com o suporte.', 500, 'PIX_NOT_CONFIGURED');
-  }
 
   const merchantName = process.env.PIX_MERCHANT_NAME || 'Util Ferramentas';
   const merchantCity = process.env.PIX_MERCHANT_CITY || 'SAO PAULO';
@@ -197,6 +213,7 @@ checkoutRouter.get('/status', async (req: Request, res: Response) => {
         payment_sent:    'Pagamento enviado — aguardando aprovação do admin',
         approved:        'Aprovado! Faça login com as credenciais enviadas por email',
         rejected:        'Solicitação rejeitada. Entre em contato pelo suporte.',
+        expired:         'Solicitação expirada — faça uma nova solicitação.',
       }[request?.status || 'none'] || 'Status desconhecido',
     },
   });
@@ -217,6 +234,7 @@ adminCheckoutRouter.get('/requests', async (_req: Request, res: Response) => {
          WHEN 'pending_payment' THEN 2
          WHEN 'approved'        THEN 3
          WHEN 'rejected'        THEN 4
+         WHEN 'expired'         THEN 5
        END,
        created_at DESC`
   );

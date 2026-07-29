@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, XCircle, Clock, AlertCircle, User, Copy, Plus } from 'lucide-react';
 import { api } from '../services/api';
 
-type Status = 'pending_payment'|'payment_sent'|'approved'|'rejected';
+type Status = 'pending_payment'|'payment_sent'|'approved'|'rejected'|'expired';
 
 interface PurchaseRequest {
   id: string; name: string; email: string; plan: string;
@@ -17,6 +17,7 @@ const STATUS_META: Record<Status, { color: string; bg: string; label: string }> 
   payment_sent:    { color: '#a89ff0', bg: 'rgba(108,99,255,.12)', label: 'Pagamento enviado ⚡' },
   approved:        { color: '#00d4aa', bg: 'rgba(0,212,170,.1)',   label: 'Aprovado' },
   rejected:        { color: '#ff4d6a', bg: 'rgba(255,77,106,.1)', label: 'Rejeitado' },
+  expired:         { color: '#8888a8', bg: 'rgba(136,136,168,.1)', label: 'Expirada' },
 };
 
 const btnStyle = (bg: string, fg = '#fff'): React.CSSProperties => ({

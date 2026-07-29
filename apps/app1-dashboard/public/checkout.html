@@ -239,7 +239,7 @@
       const j = await r.json();
 
       if (!j.success) {
-        const isPending = r.status === 409 && j.error?.toLowerCase().includes('pending_payment');
+        const isPending = r.status === 409 && j.code === 'PENDING_PAYMENT';
         if (isPending) {
           showAlert('alert1',
             '⚠️ Você já iniciou uma solicitação de pagamento para este email. ' +
@@ -340,6 +340,7 @@
         payment_sent:    'var(--acc)',
         approved:        'var(--ok)',
         rejected:        'var(--err)',
+        expired:         'var(--mut)',
       };
       const color = colors[d.status] || 'var(--mut)';
       const safeDiv = document.createElement('div');
