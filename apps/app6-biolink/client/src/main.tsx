@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
+import { DS, glassCard } from '../../../../shared/design-system';
+import '../../../../shared/design-system/tokens.css';
+import '../../../../shared/design-system/glass.css';
 
 // ── Types ──────────────────────────────────────────────────
 interface BioLink { id: string; title: string; url: string; icon: string; type: string; is_active: boolean; click_count: number; order_index: number; }
@@ -75,7 +78,11 @@ function LivePreview({ page, links }: { page: Partial<BioPage>; links: BioLink[]
   return (
     <div style={{ width: 280, flexShrink: 0 }}>
       <p style={{ fontSize: '.75rem', color: C.mut, marginBottom: '.625rem', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 600 }}>Prévia ao vivo</p>
-      <div style={{ background: t.bg, borderRadius: 20, border: `1px solid ${C.brd}`, padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 420, maxHeight: 600, overflowY: 'auto' }}>
+      {/* Moldura de celular */}
+      <div style={{ background: 'var(--ds-glass-bg)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', borderRadius: 28, border: '1px solid var(--ds-glass-border)', padding: '.625rem', boxShadow: 'var(--ds-glass-shadow)', position: 'relative' }}>
+        {/* Notch */}
+        <div style={{ width: 100, height: 8, borderRadius: 20, background: C.brd2, margin: '0 auto .5rem', opacity: 0.5 }} />
+        <div style={{ background: t.bg, border: t.bg === 'linear-gradient(135deg,#1a1a2e,#0f3460)' ? 'none' : `1px solid ${C.brd}`, borderRadius: 20, padding: '1.25rem', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: 400, maxHeight: 560, overflowY: 'auto', transition: 'background .3s' }}>
         {page.avatar_url
           ? <img src={page.avatar_url} alt="" style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${acc}`, marginBottom: '.875rem' }} onError={e => { (e.target as HTMLImageElement).style.display='none'; }}/>
           : <div style={{ width: 72, height: 72, borderRadius: '50%', background: acc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '.875rem' }}>{(page.title || 'B').charAt(0)}</div>
@@ -96,6 +103,7 @@ function LivePreview({ page, links }: { page: Partial<BioPage>; links: BioLink[]
         </div>
         <p style={{ fontSize: '.65rem', color: t.sub, marginTop: '1.25rem', opacity: .5 }}>util-ferramentas.onrender.com</p>
       </div>
+      </div>{/* fecha moldura de celular */}
       {page.username && (
         <a href={`${SITE_URL}/bio/${page.username}`} target="_blank" rel="noopener noreferrer"
           style={{ display: 'block', marginTop: '.75rem', textAlign: 'center', fontSize: '.8rem', color: C.acc }}>
@@ -217,12 +225,12 @@ function App() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: '1rem', marginBottom: '2rem' }}>
             {[
-              { label: 'Total de Visitas', val: analytics.total_views },
-              { label: 'Visitas (30 dias)', val: analytics.views_by_day.reduce((a, d) => a + parseInt(d.views), 0) },
-              { label: 'Links Clicados', val: analytics.top_links.reduce((a, l) => a + parseInt(l.clicks), 0) },
+              { label: 'Total de Visitas', value: analytics.total_views },
+              { label: 'Visitas (30 dias)', value: analytics.views_by_day.reduce((a, d) => a + parseInt(d.views), 0) },
+              { label: 'Links Clicados', value: analytics.top_links.reduce((a, l) => a + parseInt(l.clicks), 0) },
             ].map(s => (
-              <div key={s.label} style={{ ...card, padding: '1.25rem', textAlign: 'center' }}>
-                <p style={{ fontSize: '1.75rem', fontWeight: 700, color: C.acc }}>{s.val.toLocaleString('pt-BR')}</p>
+              <div key={s.label} className="glass-card glass-card-hover" style={{ padding: '1.25rem', textAlign: 'center' }}>
+                <p className="ds-pop-in" style={{ fontSize: '1.75rem', fontWeight: 700, color: C.acc, textShadow: '0 0 20px rgba(108,99,255,.3)' }}>{s.value.toLocaleString('pt-BR')}</p>
                 <p style={{ fontSize: '.78rem', color: C.mut, marginTop: '.25rem' }}>{s.label}</p>
               </div>
             ))}
@@ -392,10 +400,12 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Header */}
-      <div style={{ background: C.sur, borderBottom: `1px solid ${C.brd}`, padding: '.875rem 2rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: `linear-gradient(135deg,${C.acc},${C.ok})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>🔗</div>
-        <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Bio Link</span>
-        <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: C.mut }}>/ app6</span>
+      <div className="ds-app-header" style={{ padding: '.875rem 2rem' }}>
+        <div className="ds-app-icon" style={{ fontSize: '1.1rem' }}>🔗</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <span className="ds-app-title">Bio Link</span>
+          <span className="ds-app-tag">/app6</span>
+        </div>
       </div>
 
       <div style={{ maxWidth: 860, margin: '0 auto', padding: '2rem 1.5rem' }}>
@@ -410,7 +420,7 @@ function App() {
         {error && <div style={{ padding: '.875rem', background: 'rgba(255,77,106,.08)', border: `1px solid rgba(255,77,106,.3)`, borderRadius: 10, color: C.err, marginBottom: '1.25rem', fontSize: '.875rem' }}>{error}</div>}
 
         {showCreate && (
-          <div style={{ ...card, padding: '1.5rem', marginBottom: '1.5rem' }}>
+          <div className="glass-strong ds-spring-in" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
             <h2 style={{ fontWeight: 700, marginBottom: '1.25rem', fontSize: '1rem' }}>Criar nova página</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: '.875rem', marginBottom: '1rem' }}>
               {[
@@ -437,16 +447,16 @@ function App() {
         {loading ? (
           <p style={{ color: C.mut }}>Carregando...</p>
         ) : pages.length === 0 && !showCreate ? (
-          <div style={{ ...card, padding: '3rem', textAlign: 'center' }}>
+          <div className="glass-card ds-fade-up" style={{ padding: '3rem', textAlign: 'center' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔗</div>
             <h2 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Crie sua primeira página Bio Link</h2>
-            <p style={{ color: C.mut, marginBottom: '1.5rem', maxWidth: 400, margin: '0 auto .875rem' }}>Uma página com todos os seus links importantes para colocar na bio do Instagram e TikTok.</p>
-            <button style={btn(C.acc)} onClick={() => setShowCreate(true)}>+ Criar página grátis</button>
+            <p style={{ color: C.mut, marginBottom: '1.5rem', maxWidth: 400, margin: '0 auto .875rem' }}>Uma página com todos seus links importantes para compartilhar na bio do Instagram e TikTok.</p>
+            <button style={{ ...btn(C.acc), boxShadow: '0 4px 16px rgba(108,99,255,.4)' }} onClick={() => setShowCreate(true)}>+ Criar página grátis</button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.25rem' }}>
+          <div className="ds-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: '1.25rem' }}>
             {pages.map(p => (
-              <div key={p.id} style={{ ...card, padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
+              <div key={p.id} className="glass-card glass-card-hover" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1rem' }}>
                   <div style={{ width: 44, height: 44, borderRadius: '50%', background: C.acc, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '1.1rem', color: '#fff', flexShrink: 0 }}>
                     {p.title.charAt(0)}

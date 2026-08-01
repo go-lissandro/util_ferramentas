@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import ReactDOM from 'react-dom/client';
+import { DS } from '../../../../shared/design-system';
+import '../../../../shared/design-system/tokens.css';
+import '../../../../shared/design-system/glass.css';
 
 const C = {
   bg: '#0a0a0f', sur: '#111118', sur2: '#1a1a24', brd: '#2a2a38', brd2: '#3a3a4e',
@@ -43,9 +46,15 @@ function Field({ label, children, hint }: { label: string; children: React.React
 
 function ResultCard({ label, value, highlight, sub }: { label: string; value: string; highlight?: boolean; sub?: string }) {
   return (
-    <div style={{ background: highlight ? 'rgba(108,99,255,.08)' : C.sur2, border: `1px solid ${highlight ? 'rgba(108,99,255,.3)' : C.brd}`, borderRadius: 10, padding: '1rem', textAlign: 'center' as const }}>
+    <div style={{
+      background: highlight ? 'rgba(108,99,255,.1)' : 'var(--ds-glass-bg)',
+      backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+      border: `1px solid ${highlight ? 'rgba(108,99,255,.3)' : 'var(--ds-glass-border)'}`,
+      borderRadius: 10, padding: '1rem', textAlign: 'center' as const,
+      boxShadow: highlight ? '0 0 24px rgba(108,99,255,.15)' : 'none',
+    }} className={highlight ? 'ds-pop-in' : ''}>
       <div style={{ fontSize: '.72rem', color: C.mut, textTransform: 'uppercase' as const, letterSpacing: '.05em', marginBottom: '.375rem' }}>{label}</div>
-      <div style={{ fontSize: highlight ? '1.5rem' : '1.25rem', fontWeight: 700, color: highlight ? C.acc : C.txt }}>{value}</div>
+      <div style={{ fontSize: highlight ? '1.5rem' : '1.25rem', fontWeight: 700, color: highlight ? C.acc : C.txt, textShadow: highlight ? '0 0 20px rgba(108,99,255,.3)' : 'none' }}>{value}</div>
       {sub && <div style={{ fontSize: '.72rem', color: C.mut, marginTop: '.2rem' }}>{sub}</div>}
     </div>
   );
@@ -160,7 +169,7 @@ function LoanCalc() {
         <ResultCard label="Total em juros" value={fmt(result.interest)} sub={`${Math.round(result.interest/amount*100)}% do empréstimo`} />
       </div>
 
-      <div style={{ background: 'rgba(255,77,106,.07)', border: `1px solid rgba(255,77,106,.2)`, borderRadius: 10, padding: '.875rem 1rem', fontSize: '.82rem', color: C.mut, lineHeight: 1.6 }}>
+      <div style={{ background: 'rgba(255,77,106,.07)', border: `1px solid rgba(255,77,106,.25)`, borderRadius: 10, padding: '.875rem 1rem', fontSize: '.82rem', color: C.mut, lineHeight: 1.6, animation: 'ds-warn-pulse 2.5s ease-in-out infinite' }}>
         ⚠️ Você pagará <strong style={{ color: C.err }}>{fmt(result.interest)}</strong> a mais do que pegou emprestado. Considere antecipar parcelas quando possível.
       </div>
     </div>
@@ -370,22 +379,22 @@ function App() {
 
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter,system-ui,sans-serif' }}>
-      <div style={{ background: C.sur, borderBottom: `1px solid ${C.brd}`, padding: '.875rem 1.5rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: 'linear-gradient(135deg,#00d4aa,#38ef7d)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>💰</div>
-        <div>
-          <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Calculadora Financeira</span>
-          <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: C.mut, marginLeft: 6 }}>/app10</span>
+      <div className="ds-app-header" style={{ padding: '.875rem 1.5rem' }}>
+        <div className="ds-app-icon" style={{ fontSize: '1rem', background: 'linear-gradient(135deg,#00d4aa,#38ef7d)' }}>💰</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+          <span className="ds-app-title">Calculadora Financeira</span>
+          <span className="ds-app-tag">/app10</span>
         </div>
         <span style={{ marginLeft: 'auto', fontSize: '.72rem', color: C.mut }}>⚠️ Simulações educativas — não constituem aconselhamento financeiro</span>
       </div>
 
       <div style={{ maxWidth: 960, margin: '0 auto', padding: '1.5rem 1rem', display: 'grid', gridTemplateColumns: '220px 1fr', gap: '1.25rem', alignItems: 'start' }}>
         {/* Sidebar */}
-        <div style={{ background: C.sur, border: `1px solid ${C.brd}`, borderRadius: 12, padding: '1rem' }}>
+        <div className="glass-card" style={{ padding: '1rem', position: 'sticky', top: '5.5rem' }}>
           <p style={{ fontSize: '.72rem', color: C.mut, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '.625rem' }}>Simulações</p>
           {CALCS.map(c => (
             <button key={c.key} onClick={() => setCalc(c.key)}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '.625rem', padding: '.625rem .75rem', borderRadius: 8, border: 'none', cursor: 'pointer', marginBottom: '.25rem', background: calc === c.key ? 'rgba(0,212,170,.1)' : 'transparent', color: calc === c.key ? C.ok : C.txt, textAlign: 'left' as const }}>
+              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '.625rem', padding: '.625rem .75rem', borderRadius: 8, border: 'none', cursor: 'pointer', marginBottom: '.25rem', background: calc === c.key ? 'rgba(0,212,170,.12)' : 'transparent', color: calc === c.key ? C.ok : C.txt, textAlign: 'left' as const, transition: 'all .2s var(--ds-ease-smooth)', borderLeft: calc === c.key ? `3px solid ${C.ok}` : '3px solid transparent' }}>
               <span style={{ fontSize: '1.05rem' }}>{c.icon}</span>
               <div>
                 <div style={{ fontWeight: calc === c.key ? 600 : 400, fontSize: '.85rem' }}>{c.label}</div>
@@ -396,7 +405,7 @@ function App() {
         </div>
 
         {/* Calculator */}
-        <div style={{ background: C.sur, border: `1px solid ${C.brd}`, borderRadius: 12, padding: '1.5rem' }}>
+        <div className="glass-card" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: `1px solid ${C.brd}` }}>
             <span style={{ fontSize: '1.5rem' }}>{CALCS.find(c => c.key === calc)?.icon}</span>
             <div>
@@ -407,7 +416,16 @@ function App() {
           {COMPONENTS[calc]}
         </div>
       </div>
-      <style>{`*{box-sizing:border-box;margin:0;padding:0}input[type="number"]:focus,input[type="range"]:focus,select:focus{border-color:${C.acc}!important;outline:none}button:hover{opacity:.85}input[type="range"]{-webkit-appearance:none;height:6px;border-radius:3px;background:${C.brd2};cursor:pointer}input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:${C.ok};cursor:pointer}`}</style>
+      <style>{`
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Inter',system-ui,sans-serif;background:${C.bg};color:${C.txt}}
+        input[type="number"]:focus,input[type="range"]:focus,select:focus{border-color:${C.acc}!important;outline:none;box-shadow:0 0 0 3px rgba(108,99,255,.2)}
+        button:hover{opacity:.85}
+        input[type="range"]{-webkit-appearance:none;height:6px;border-radius:3px;background:${C.brd2};cursor:pointer;transition:background .2s}
+        input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:${C.ok};cursor:pointer;box-shadow:0 0 8px rgba(0,212,170,.4);transition:transform .15s}
+        input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+        @keyframes ds-warn-pulse{0%,100%{border-color:rgba(255,77,106,.25)}50%{border-color:rgba(255,77,106,.6)}}
+      `}</style>
     </div>
   );
 }

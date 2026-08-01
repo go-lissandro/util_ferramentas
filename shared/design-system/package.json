@@ -1,0 +1,12 @@
+{
+  "name": "@util/design-system",
+  "version": "1.0.0",
+  "description": "Design system compartilhado — tokens, glassmorphism e animações para as apps",
+  "private": true,
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./tokens.css": "./tokens.css",
+    "./glass.css": "./glass.css"
+  }
+}

@@ -51,8 +51,10 @@ export function DashboardLayout() {
       {/* ── Sidebar ─────────────────────────────────── */}
       <aside style={{
         width: 240,
-        background: 'var(--color-surface)',
-        borderRight: '1px solid var(--color-border)',
+        background: 'rgba(17,17,24,.85)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderRight: '1px solid rgba(255,255,255,.06)',
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -126,8 +128,19 @@ export function DashboardLayout() {
                 color: isActive ? 'var(--color-text)' : 'var(--color-text-muted)',
                 background: isActive ? 'var(--color-accent-dim)' : 'transparent',
                 borderLeft: isActive ? '2px solid var(--color-accent)' : '2px solid transparent',
-                transition: 'all 0.15s',
+                boxShadow: isActive ? 'inset 0 0 20px rgba(108,99,255,.05)' : 'none',
+                transition: 'all 0.2s var(--ds-ease-smooth, cubic-bezier(.4,0,.2,1))',
               })}
+              onMouseEnter={(e) => {
+                if (!e.currentTarget.classList.contains('active')) {
+                  e.currentTarget.style.background = 'rgba(108,99,255,.06)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!e.currentTarget.classList.contains('active')) {
+                  e.currentTarget.style.background = 'transparent';
+                }
+              }}
             >
               <Icon size={15} />
               <span style={{ flex: 1 }}>{label}</span>

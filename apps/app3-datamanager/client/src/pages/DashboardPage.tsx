@@ -94,16 +94,16 @@ export function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="ds-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         {[
           { label: 'Estruturas criadas', value: entities.length, icon: <Database size={16} /> },
           { label: 'Total de registros', value: totalRecords.toLocaleString('pt-BR'), icon: <BarChart3 size={16} /> },
         ].map(({ label, value, icon }) => (
-          <div key={label} className="card" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '.875rem' }}>
-            <div style={{ color: 'var(--accent)' }}>{icon}</div>
+          <div key={label} className="card glass-card-hover" style={{ padding: '1.25rem', display: 'flex', alignItems: 'center', gap: '.875rem', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(108,99,255,.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>{icon}</div>
             <div>
-              <p style={{ fontSize: '.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>{label}</p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 700 }}>{value}</p>
+              <p className="ds-fade-up" style={{ fontSize: '.72rem', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>{label}</p>
+              <p className="ds-fade-up" style={{ fontSize: '1.5rem', fontWeight: 700 }}>{value}</p>
             </div>
           </div>
         ))}
@@ -111,29 +111,48 @@ export function DashboardPage() {
 
       {/* Entity cards */}
       {isLoading ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--muted)' }}>Carregando...</div>
+        <div className="ds-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          {[1,2,3].map(i => (
+            <div key={i} className="card" style={{ padding: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', marginBottom: '1rem' }}>
+                <div className="skeleton" style={{ width: 40, height: 40, borderRadius: 10, flexShrink: 0 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="skeleton" style={{ height: 14, width: '65%', marginBottom: 6 }} />
+                  <div className="skeleton" style={{ height: 10, width: '30%' }} />
+                </div>
+              </div>
+              <div className="skeleton" style={{ height: 10, width: '85%', marginBottom: 12 }} />
+              <div className="skeleton" style={{ height: 10, width: '50%' }} />
+            </div>
+          ))}
+        </div>
       ) : entities.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem', border: '1px dashed var(--border)', borderRadius: 'var(--radius-lg)', color: 'var(--muted)' }}>
+        <div className="card ds-fade-up" style={{ textAlign: 'center', padding: '4rem', border: '1px dashed var(--border2)', color: 'var(--muted)' }}>
           <Database size={40} style={{ marginBottom: '1rem', opacity: .3, display: 'block', margin: '0 auto 1rem' }} />
-          <p style={{ fontWeight: 500, marginBottom: '.5rem' }}>Nenhuma estrutura criada</p>
+          <p style={{ fontWeight: 500, marginBottom: '.5rem', color: 'var(--text)' }}>Nenhuma estrutura criada</p>
           <p style={{ fontSize: '.875rem', marginBottom: '1.5rem' }}>Crie sua primeira estrutura de dados para começar</p>
-          <button className="btn btn-primary" onClick={() => setShowCreate(true)}>
+          <button className="btn btn-primary" onClick={() => setShowCreate(true)} style={{ boxShadow: '0 4px 16px rgba(108,99,255,.4)' }}>
             <Plus size={15} /> Criar estrutura
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+        <div className="ds-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
           {entities.map((entity: EntityType) => (
-            <div key={entity.id} className="card" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+            <div key={entity.id} className="card glass-card-hover" style={{ padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+              {/* Glow background icon */}
+              <div style={{ position: 'absolute', top: '-20px', right: '-20px', fontSize: '6rem', opacity: 0.03, color: entity.color, transform: 'rotate(-15deg)', pointerEvents: 'none' }}>
+                <Database size={80} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem', position: 'relative' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem' }}>
                   <div style={{
                     width: 40, height: 40, borderRadius: 10,
-                    background: entity.color + '22',
+                    background: entity.color + '20',
                     border: `1px solid ${entity.color}44`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 0 16px ${entity.color}33`,
                   }}>
-                    <Database size={18} color={entity.color} />
+                    <Database size={17} color={entity.color} />
                   </div>
                   <div>
                     <p style={{ fontWeight: 600, fontSize: '.95rem' }}>{entity.name}</p>
@@ -144,8 +163,8 @@ export function DashboardPage() {
                 </div>
                 <button
                   className="btn-icon"
-                  onClick={() => window.confirm('Deletar esta estrutura e todos os registros?') && deleteMutation.mutate(entity.id)}
-                  style={{ color: 'var(--danger)', borderColor: 'rgba(255,77,106,.3)' }}
+                  onClick={() => window.confirm('Tem certeza que deseja excluir?') && deleteMutation.mutate(entity.id)}
+                  style={{ color: 'var(--danger)', borderColor: 'rgba(255,77,106,.3)', transition: 'all .2s' }}
                 >
                   <Trash2 size={13} />
                 </button>
@@ -157,7 +176,7 @@ export function DashboardPage() {
                 </p>
               )}
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '.875rem', borderTop: '1px solid var(--border)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '.875rem', borderTop: '1px solid var(--ds-glass-border)', position: 'relative' }}>
                 <span style={{ fontSize: '.8rem', color: 'var(--muted)' }}>
                   <strong style={{ color: 'var(--text)' }}>{entity.record_count.toLocaleString('pt-BR')}</strong> registros
                 </span>
@@ -166,7 +185,7 @@ export function DashboardPage() {
                     <button className="btn-icon"><Settings size={13} /></button>
                   </Link>
                   <Link to={`/entities/${entity.id}`}>
-                    <button className="btn btn-primary btn-sm">
+                    <button className="btn btn-primary btn-sm" style={{ boxShadow: '0 4px 12px rgba(108,99,255,.3)' }}>
                       Abrir <ChevronRight size={13} />
                     </button>
                   </Link>

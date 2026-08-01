@@ -163,7 +163,7 @@ export function DashboardPage() {
               { label: 'Encurtar um link', sub: 'Com QR code e analytics', path: '/app2', icon: '🔗' },
             ].map(item => (
               <a key={item.path} href={item.path} style={{ textDecoration: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem', borderRadius: 9, background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', cursor: 'pointer', transition: 'border-color .15s' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem', borderRadius: 9, background: 'rgba(26,26,36,.6)', backdropFilter: 'blur(8px)', border: '1px solid var(--glass-border, rgba(255,255,255,.06))', cursor: 'pointer', transition: 'border-color .2s, transform .2s, background .2s' }}>
                   <span style={{ fontSize: '1.25rem', width: 32, textAlign: 'center' }}>{item.icon}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: '.875rem', fontWeight: 500 }}>{item.label}</p>
@@ -190,7 +190,7 @@ export function DashboardPage() {
             const meta = APP_META[app.key] || { icon: '📦', color: '#8888a8' };
             return (
               <a key={app.key} href={app.hasAccess ? app.path : '/checkout.html'} style={{ textDecoration: 'none' }}>
-                <div style={{ padding: '1rem', borderRadius: 10, background: 'var(--color-surface-2)', border: `1px solid ${app.hasAccess ? 'var(--color-border)' : 'transparent'}`, opacity: app.hasAccess ? 1 : 0.55, cursor: 'pointer', textAlign: 'center', transition: 'border-color .15s' }}>
+                <div style={{ padding: '1rem', borderRadius: 10, background: 'rgba(26,26,36,.6)', backdropFilter: 'blur(8px)', border: `1px solid ${app.hasAccess ? 'var(--glass-border, rgba(255,255,255,.06))' : 'transparent'}`, opacity: app.hasAccess ? 1 : 0.55, cursor: 'pointer', textAlign: 'center', transition: 'border-color .2s, transform .2s, box-shadow .2s' }}>
                   <div style={{ fontSize: '1.5rem', marginBottom: '.375rem' }}>{meta.icon}</div>
                   <p style={{ fontSize: '.78rem', fontWeight: 500, lineHeight: 1.3 }}>{app.description}</p>
                   <p style={{ fontSize: '.68rem', color: 'var(--color-text-muted)', marginTop: '.25rem' }}>

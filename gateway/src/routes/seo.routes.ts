@@ -17,20 +17,22 @@ function setHtmlHeaders(res: Response, maxAge = 3600) {
 // ── Critical CSS (inlined for performance — zero render-block) ──
 const CRITICAL_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0a0a0f;--sur:#111118;--sur2:#1a1a24;--brd:#2a2a38;--txt:#e8e8f0;--mut:#8888a8;--acc:#6c63ff;--ok:#00d4aa}
+:root{--bg:#0a0a0f;--sur:#111118;--sur2:#1a1a24;--brd:#2a2a38;--txt:#e8e8f0;--mut:#8888a8;--acc:#6c63ff;--ok:#00d4aa;--glass:rgba(17,17,24,.65);--glass-brd:rgba(255,255,255,.06);--glass-shadow:0 8px 32px rgba(0,0,0,.35);--grad:linear-gradient(135deg,#6c63ff,#00d4aa);--glow:radial-gradient(circle at 50% 0%,rgba(108,99,255,.15),transparent 70%)}
 html{scroll-behavior:smooth}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;font-size:1rem;-webkit-text-size-adjust:100%}
 body.fonts-loaded{font-family:'Inter',system-ui,sans-serif}
 a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 img{max-width:100%;height:auto;display:block}
 .wrap{max-width:860px;margin:0 auto;padding:0 1.5rem}
-header{background:var(--sur);border-bottom:1px solid var(--brd);padding:.875rem 0;position:sticky;top:0;z-index:100;contain:layout}
+header{background:rgba(17,17,24,.8);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--glass-brd);padding:.875rem 0;position:sticky;top:0;z-index:100;contain:layout}
 .hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.625rem}
 .logo{font-weight:700;font-size:1.05rem;color:var(--txt)}
-.logo em{color:var(--acc);font-style:normal}
-nav{display:flex;gap:1rem;font-size:.85rem;flex-wrap:wrap}
-nav a{color:var(--mut)}nav a:hover{color:var(--txt);text-decoration:none}
-.btn-sm{background:var(--acc);color:#fff;padding:.4rem 1rem;border-radius:7px;font-size:.85rem;font-weight:600;white-space:nowrap}
+.logo em{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-style:normal}
+nav{display:flex;gap:.375rem;font-size:.82rem;flex-wrap:wrap}
+nav a{color:var(--mut);display:inline-flex;align-items:center;gap:.375rem;padding:.3rem .65rem;border-radius:8px;border:1px solid transparent;transition:all .2s var(--ease-smooth, cubic-bezier(.4,0,.2,1))}
+nav a:hover{color:var(--txt);background:rgba(108,99,255,.07);border-color:rgba(108,99,255,.2);text-decoration:none;transform:translateY(-1px)}
+.nav-ico{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.btn-sm{background:var(--acc);color:#fff;padding:.4rem 1rem;border-radius:7px;font-size:.85rem;font-weight:600;white-space:nowrap;box-shadow:0 4px 12px rgba(108,99,255,.3)}
 .btn-sm:hover{opacity:.88;text-decoration:none}
 main{padding:2.5rem 0 4rem}
 h1{font-size:clamp(1.6rem,4vw,2.4rem);font-weight:700;line-height:1.2;margin-bottom:.875rem;color:var(--txt)}
@@ -41,16 +43,17 @@ ul,ol{color:var(--mut);padding-left:1.5rem;margin-bottom:1rem;line-height:1.85}
 li{margin-bottom:.375rem}
 li strong,p strong{color:var(--txt)}
 .lead{font-size:1.05rem;color:var(--mut);margin-bottom:1.75rem;line-height:1.9;max-width:680px}
-.box{background:var(--sur);border:1px solid var(--brd);border-radius:12px;padding:1.375rem;margin:1.375rem 0}
+.box{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-brd);border-radius:12px;padding:1.375rem;margin:1.375rem 0;box-shadow:var(--glass-shadow)}
 .box p:last-child{margin:0}
 .tip{background:rgba(108,99,255,.07);border-left:3px solid var(--acc);border-radius:0 8px 8px 0;padding:.875rem 1.125rem;margin:1.25rem 0;color:var(--txt);font-size:.9rem;line-height:1.7}
 .tip strong{color:var(--acc)}
 .warning{background:rgba(255,179,71,.07);border-left:3px solid #ffb347;border-radius:0 8px 8px 0;padding:.875rem 1.125rem;margin:1.25rem 0;font-size:.9rem;line-height:1.7}
 .step-list{list-style:none;padding:0;counter-reset:steps;margin:1.25rem 0}
 .step-list li{counter-increment:steps;display:flex;gap:.75rem;margin-bottom:1.125rem}
-.step-list li::before{content:counter(steps);min-width:26px;height:26px;background:var(--acc);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0;margin-top:.25rem}
+.step-list li::before{content:counter(steps);min-width:26px;height:26px;background:var(--grad);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0;margin-top:.25rem;box-shadow:0 2px 8px rgba(108,99,255,.35)}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin:1.25rem 0}
-.card{background:var(--sur);border:1px solid var(--brd);border-radius:12px;padding:1.125rem}
+.card{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-brd);border-radius:12px;padding:1.125rem;box-shadow:var(--glass-shadow);transition:border-color .25s,box-shadow .25s,transform .25s}
+.card:hover{border-color:rgba(108,99,255,.2);box-shadow:0 12px 40px rgba(108,99,255,.12);transform:translateY(-2px)}
 .card h3{font-size:.9rem;margin:.375rem 0 .5rem;border:none;padding:0}
 .card p{font-size:.85rem;margin:0;line-height:1.6}
 .card .icon{font-size:1.5rem}
@@ -66,7 +69,7 @@ th{background:var(--sur);border:1px solid var(--brd);padding:.5rem .75rem;text-a
 td{border:1px solid var(--brd);padding:.5rem .75rem;color:var(--mut);vertical-align:top}
 tr:nth-child(even) td{background:rgba(255,255,255,.02)}
 code{font-family:'Fira Code',Consolas,monospace;font-size:.85em;background:var(--sur2);padding:1px 6px;border-radius:4px;color:var(--ok)}
-.toc{background:var(--sur);border:1px solid var(--brd);border-radius:10px;padding:1.125rem;margin:1.5rem 0}
+.toc{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-brd);border-radius:10px;padding:1.125rem;margin:1.5rem 0;box-shadow:var(--glass-shadow)}
 .toc strong{display:block;font-size:.85rem;color:var(--txt);margin-bottom:.625rem}
 .toc ol{font-size:.875rem;margin:0;padding-left:1.375rem}
 .toc a{color:var(--mut)}
@@ -76,26 +79,42 @@ code{font-family:'Fira Code',Consolas,monospace;font-size:.85em;background:var(-
 .faq-item h3{margin:.125rem 0 .5rem;font-size:1rem;border:none;padding:0;color:var(--txt)}
 .faq-item p{margin:0;font-size:.9rem}
 .hero-cta{display:flex;gap:.875rem;flex-wrap:wrap;margin-top:1.75rem}
-.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:var(--acc);color:#fff;padding:.75rem 1.5rem;border-radius:9px;font-weight:600;font-size:.95rem}
-.btn-primary:hover{opacity:.88;text-decoration:none}
-.btn-outline{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--brd);color:var(--mut);padding:.75rem 1.5rem;border-radius:9px;font-size:.95rem}
-.btn-outline:hover{border-color:var(--acc);color:var(--txt);text-decoration:none}
-.stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1.75rem 0;padding:1.375rem;background:var(--sur);border-radius:12px;border:1px solid var(--brd)}
+.btn-primary{display:inline-flex;align-items:center;gap:.5rem;background:var(--grad);color:#fff;padding:.75rem 1.5rem;border-radius:9px;font-weight:600;font-size:.95rem;box-shadow:0 4px 20px rgba(108,99,255,.35);transition:box-shadow .2s,transform .2s}
+.btn-primary:hover{box-shadow:0 6px 28px rgba(108,99,255,.5);transform:translateY(-1px);text-decoration:none;opacity:.95}
+.btn-outline{display:inline-flex;align-items:center;gap:.5rem;border:1px solid var(--brd);color:var(--mut);padding:.75rem 1.5rem;border-radius:9px;font-size:.95rem;transition:all .2s}
+.btn-outline:hover{border-color:var(--acc);color:var(--txt);text-decoration:none;background:rgba(108,99,255,.06)}
+.stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1.75rem 0;padding:1.375rem;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:12px;border:1px solid var(--glass-brd);box-shadow:var(--glass-shadow)}
 .stat{text-align:center;flex:1;min-width:80px}
-.stat strong{display:block;font-size:1.5rem;font-weight:700;color:var(--acc)}
+.stat strong{display:block;font-size:1.5rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .stat span{font-size:.8rem;color:var(--mut)}
 .related{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--brd)}
 .related h2{font-size:1rem;border:none;padding:0;margin:0 0 1rem}
 .related-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem}
-.related-link{background:var(--sur);border:1px solid var(--brd);border-radius:9px;padding:.875rem 1rem;font-size:.875rem;color:var(--mut);transition:border-color .15s}
-.related-link:hover{border-color:var(--acc);color:var(--txt);text-decoration:none}
+.related-link{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-brd);border-radius:9px;padding:.875rem 1rem;font-size:.875rem;color:var(--mut);transition:border-color .2s,transform .2s;box-shadow:var(--glass-shadow)}
+.related-link:hover{border-color:rgba(108,99,255,.2);color:var(--txt);text-decoration:none;transform:translateY(-1px)}
 .related-link strong{display:block;color:var(--txt);margin-bottom:.25rem;font-size:.9rem}
-footer{background:var(--sur);border-top:1px solid var(--brd);padding:2rem 0;margin-top:1rem}
+footer{background:rgba(17,17,24,.8);backdrop-filter:blur(12px);border-top:1px solid var(--glass-brd);padding:2rem 0;margin-top:1rem}
 .footer-inner{text-align:center}
 .footer-links{display:flex;flex-wrap:wrap;gap:.375rem 1rem;justify-content:center;margin-bottom:.875rem}
 footer a{color:var(--mut);font-size:.82rem}footer a:hover{color:var(--txt);text-decoration:none}
 footer p{font-size:.78rem;color:var(--mut);opacity:.7}
+.hero-glow{background:var(--glow)}
+.gradient-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.fade-up{animation:seoFadeUp .5s ease both}
+@keyframes seoFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stagger>*{animation:seoFadeUp .5s ease both}
+.stagger>*:nth-child(1){animation-delay:0ms}.stagger>*:nth-child(2){animation-delay:60ms}.stagger>*:nth-child(3){animation-delay:120ms}.stagger>*:nth-child(4){animation-delay:180ms}.stagger>*:nth-child(5){animation-delay:240ms}
 @media(max-width:640px){.hdr{gap:.5rem}nav{display:none}.hero-cta{flex-direction:column}.stats{gap:1rem}}
+.nav-mobile-toggle{display:none}
+@media(max-width:900px){
+  nav.desktop{display:none}
+  .nav-mobile-toggle{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);color:var(--acc);cursor:pointer;font-size:1.05rem}
+  .nav-mobile{display:none;position:fixed;top:56px;left:0;right:0;z-index:99;background:rgba(17,17,24,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-brd);padding:.75rem 1.5rem 1.25rem;flex-direction:column;gap:.375rem;box-shadow:var(--glass-shadow)}
+  .nav-mobile.open{display:flex;animation:seoFadeUp .25s ease both}
+  .nav-mobile a{color:var(--txt);padding:.55rem .75rem;border-radius:8px;font-size:.9rem}
+  .nav-mobile a:hover{background:rgba(108,99,255,.1)}
+}
+@media(max-width:640px){.hdr{gap:.5rem}.hero-cta{flex-direction:column}.stats{gap:1rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 `.trim();
 
@@ -183,23 +202,32 @@ ${ADSENSE_ID ? `<script async src="https://pagead2.googlesyndication.com/pagead/
 <header>
   <div class="wrap"><div class="hdr">
     <a href="/" class="logo" aria-label="${SITE_NAME} - Início"><em>Util</em> Ferramentas</a>
-    <nav aria-label="Menu principal">
-      <a href="/como-baixar-videos">Baixar Vídeos</a>
-      <a href="/converter-mp3">MP3</a>
-      <a href="/encurtar-links">Links</a>
-      <a href="/converter-json-excel">JSON↔Excel</a>
-      <a href="/link-na-bio">Bio Link</a>
-      <a href="/rastreador-de-habitos">Hábitos</a>
-      <a href="/gerador-qr-code">QR Code</a>
-      <a href="/editor-imagens">Imagens</a>
-      <a href="/calculadora-financeira">Finanças</a>
-      <a href="/gerador-qr-code">QR Code</a>
-      <a href="/calculadora-financeira">Finanças</a>
-      <a href="/rastreador-de-habitos">Hábitos</a>
-      <a href="/sobre">Sobre</a>
+    <nav class="desktop" aria-label="Menu principal">
+      <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">⬇️</span>Vídeos</a>
+      <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">🔄</span>JSON↔Excel</a>
+      <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">📱</span>QR Code</a>
+      <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">🔗</span>Links</a>
+      <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">📄</span>Bio Link</a>
+      <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">🔥</span>Hábitos</a>
+      <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">💰</span>Finanças</a>
+      <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">ℹ️</span>Sobre</a>
     </nav>
-    <a href="/app4" class="btn-sm">Usar grátis →</a>
+    <div style="display:flex;align-items:center;gap:.5rem">
+      <button class="nav-mobile-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
+      <a href="/app4" class="btn-sm">Usar grátis →</a>
+    </div>
   </div></div>
+
+  <nav class="nav-mobile" id="navMobile" aria-label="Menu móvel">
+    <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">⬇️</span>Vídeos</a>
+    <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">🔄</span>JSON↔Excel</a>
+    <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">📱</span>QR Code</a>
+    <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">🔗</span>Links</a>
+    <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">📄</span>Bio Link</a>
+    <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">🔥</span>Hábitos</a>
+    <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">💰</span>Finanças</a>
+    <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">ℹ️</span>Sobre</a>
+  </nav>
 </header>
 
 <main id="main-content">
@@ -231,6 +259,18 @@ ${ADSENSE_ID ? `<script async src="https://pagead2.googlesyndication.com/pagead/
 <!-- Font class after load (prevents FOUT) -->
 <script>
 (function(){var f=document.fonts;if(f&&f.ready)f.ready.then(function(){document.body.className+=' fonts-loaded';});})();
+// Mobile nav toggle
+(function(){
+  var t=document.getElementById('navToggle'),m=document.getElementById('navMobile');
+  if(!t||!m)return;
+  t.addEventListener('click',function(){
+    var open=m.classList.toggle('open');
+    t.setAttribute('aria-expanded',open?'true':'false');
+  });
+  document.addEventListener('click',function(e){
+    if(m.classList.contains('open')&&!m.contains(e.target)&&!t.contains(e.target)){m.classList.remove('open');t.setAttribute('aria-expanded','false');}
+  });
+})();
 </script>
 </body>
 </html>`;
@@ -344,24 +384,26 @@ seoRouter.get('/', (_req, res) => {
   ];
 
   const body = `
-<h1>Ferramentas online gratuitas para o seu dia a dia</h1>
-<p class="lead">Baixe vídeos do YouTube e Instagram, converta para MP3, transforme JSON em Excel, encurte links com analytics — tudo em um só lugar, sem instalar nada, sem cadastro obrigatório.</p>
+<section class="hero-glow">
+<h1 class="fade-up">Ferramentas online <span class="gradient-text">gratuitas</span> para o seu dia a dia</h1>
+<p class="lead fade-up">Baixe vídeos do YouTube e Instagram, converta para MP3, transforme JSON em Excel, encurte links com analytics — tudo em um só lugar, sem instalar nada, sem cadastro obrigatório.</p>
 
-<div class="stats">
+<div class="stats stagger">
   <div class="stat"><strong>1.000+</strong><span>sites suportados</span></div>
-  <div class="stat"><strong>5</strong><span>ferramentas</span></div>
+  <div class="stat"><strong>10</strong><span>ferramentas</span></div>
   <div class="stat"><strong>100%</strong><span>online</span></div>
   <div class="stat"><strong>0</strong><span>instalações</span></div>
 </div>
 
-<div class="hero-cta">
+<div class="hero-cta fade-up">
   <a href="/app4" class="btn-primary" aria-label="Abrir ferramenta de download de vídeos">⬇️ Baixar vídeo grátis</a>
   <a href="/app5" class="btn-outline" aria-label="Abrir conversor JSON para Excel">🔄 Converter JSON↔Excel</a>
   <a href="/checkout.html" class="btn-outline">Ver plano Pro</a>
 </div>
+</section>
 
 <h2>Ferramentas disponíveis</h2>
-<div class="cards">
+<div class="cards stagger">
   <div class="card">
     <div class="icon">⬇️</div>
     <h3><a href="/como-baixar-videos">Baixar Vídeos Online</a></h3>
@@ -376,6 +418,11 @@ seoRouter.get('/', (_req, res) => {
     <div class="icon">🔄</div>
     <h3><a href="/converter-json-excel">Conversor JSON↔Excel</a></h3>
     <p>Transforme JSON em planilha Excel formatada ou converta Excel/CSV para JSON. <span class="tag">Grátis</span></p>
+  </div>
+  <div class="card">
+    <div class="icon">📱</div>
+    <h3><a href="/gerador-qr-code">Gerador de QR Code</a></h3>
+    <p>URL, PIX, Wi-Fi, contato e mais — download em PNG e SVG. <span class="tag">Grátis</span></p>
   </div>
   <div class="card">
     <div class="icon">🔗</div>

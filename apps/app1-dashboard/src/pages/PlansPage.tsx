@@ -39,7 +39,7 @@ export function PlansPage() {
   };
 
   const s: Record<string, React.CSSProperties> = {
-    card: { background: '#111118', border: '1px solid #2a2a38', borderRadius: 12, padding: '1.5rem' },
+    card: { background: 'rgba(17,17,24,.65)', border: '1px solid rgba(255,255,255,.06)', borderRadius: 12, padding: '1.5rem', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', boxShadow: '0 8px 32px rgba(0,0,0,.35)' },
   };
 
   return (

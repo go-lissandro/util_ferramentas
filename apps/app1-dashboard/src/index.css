@@ -73,15 +73,33 @@ body {
   background-clip: text;
 }
 
+/* Glass tokens adicionais */
+:root {
+  --glass-bg: rgba(17,17,24,.65);
+  --glass-bg-strong: rgba(17,17,24,.85);
+  --glass-border: rgba(255,255,255,.06);
+  --glass-border-hover: rgba(108,99,255,.2);
+  --glass-blur: 16px;
+  --glass-shadow: 0 8px 32px rgba(0,0,0,.35);
+  --glass-shadow-hover: 0 12px 40px rgba(108,99,255,.12);
+  --gradient-primary: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+  --ease-spring: cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth: cubic-bezier(.4,0,.2,1);
+}
+
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: var(--glass-shadow);
+  transition: border-color 0.25s var(--ease-smooth), box-shadow 0.25s var(--ease-smooth), transform 0.25s var(--ease-spring);
 }
 .card:hover {
-  border-color: var(--color-border-2);
-  box-shadow: var(--shadow-glow);
+  border-color: var(--glass-border-hover);
+  box-shadow: var(--glass-shadow-hover);
+  transform: translateY(-2px);
 }
 
 .btn-primary {
@@ -162,3 +180,44 @@ body {
 .stagger > *:nth-child(3) { animation-delay: 120ms; }
 .stagger > *:nth-child(4) { animation-delay: 180ms; }
 .stagger > *:nth-child(5) { animation-delay: 240ms; }
+.stagger > *:nth-child(6) { animation-delay: 300ms; }
+.stagger > *:nth-child(7) { animation-delay: 360ms; }
+.stagger > *:nth-child(8) { animation-delay: 420ms; }
+
+/* ── Glass buttons ────────────────────────────────── */
+.btn-primary {
+  box-shadow: 0 4px 16px rgba(108,99,255,.3);
+}
+
+/* ── Skeleton loading ──────────────────────────────── */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+  border-radius: var(--radius-md);
+}
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.06), transparent);
+  animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* ── Pop-in animation ──────────────────────────────── */
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.pop-in { animation: popIn 0.3s var(--ease-spring) both; }
+
+/* ── Glow pulse para badges de destaque ────────────── */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(108,99,255,.35); }
+  50%      { box-shadow: 0 0 0 6px rgba(108,99,255,0); }
+}
+.glow-pulse { animation: glowPulse 2s infinite; }

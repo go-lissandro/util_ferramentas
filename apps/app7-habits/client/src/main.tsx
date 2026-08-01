@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
+import { DS, burstConfetti, countUp } from '../../../../shared/design-system';
+import '../../../../shared/design-system/tokens.css';
+import '../../../../shared/design-system/glass.css';
 
 // ── Types ──────────────────────────────────────────────────
 interface Habit {
@@ -15,11 +18,11 @@ interface Stats {
   weekChart: { day: string; date: string; done: number; total: number }[];
 }
 
-// ── Design tokens ──────────────────────────────────────────
+// ── Design tokens (alias para compatibilidade) ─────────────
 const C = {
-  bg: '#0a0a0f', sur: '#111118', sur2: '#1a1a24', brd: '#2a2a38', brd2: '#3a3a4e',
-  txt: '#e8e8f0', mut: '#8888a8', acc: '#6c63ff', ok: '#00d4aa',
-  err: '#ff4d6a', wrn: '#ffb347',
+  bg: DS.bg, sur: DS.surface, sur2: DS.surface2, brd: DS.border, brd2: DS.border2,
+  txt: DS.text, mut: DS.muted, acc: DS.accent, ok: DS.ok,
+  err: DS.err, wrn: DS.wrn,
 };
 
 const PRESET_ICONS = ['💧','🏃','📚','🧘','🥗','💊','🎯','🛏️','🚴','✍️','🎸','🧹','💪','🌿','😴','🍎','🙏','🎨','💻','🤸'];
@@ -49,8 +52,19 @@ function StreakBadge({ n, size = 'md' }: { n: number; size?: 'sm' | 'md' | 'lg' 
   if (n === 0) return null;
   const emoji = n >= 30 ? '🔥🔥🔥' : n >= 14 ? '🔥🔥' : '🔥';
   const fs = size === 'sm' ? '.68rem' : size === 'lg' ? '1rem' : '.78rem';
+  const fire = n >= 30; // efeito festa
+  const hot = n >= 7;   // borda flamejante
   return (
-    <span style={{ display:'inline-flex', alignItems:'center', gap:2, fontWeight:700, fontSize:fs, color:'#ff7043', background:'rgba(255,112,67,.12)', padding:'2px 8px', borderRadius:20, border:'1px solid rgba(255,112,67,.25)' }}>
+    <span className={fire ? 'ds-pop-in' : ''} style={{
+      display:'inline-flex', alignItems:'center', gap:2, fontWeight:700, fontSize:fs,
+      color:'#ff7043',
+      background: hot ? 'linear-gradient(135deg, rgba(255,112,67,.18), rgba(255,51,51,.12))' : 'rgba(255,112,67,.12)',
+      padding:'2px 8px', borderRadius:20,
+      border:`1px solid ${hot ? 'rgba(255,112,67,.45)' : 'rgba(255,112,67,.25)'}`,
+      boxShadow: hot ? `0 0 10px rgba(255,112,67,${fire ? 0.4 : 0.2})` : 'none',
+      animation: fire ? 'ds-fire-glow 1.2s ease-in-out infinite' : 'none',
+      transition:'all .3s',
+    }}>
       {emoji} {n}
     </span>
   );
@@ -95,6 +109,7 @@ function HabitCard({ habit, onToggle, onEdit, onDelete, loading }: {
   loading: boolean;
 }) {
   const [showMenu, setShowMenu] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -105,27 +120,46 @@ function HabitCard({ habit, onToggle, onEdit, onDelete, loading }: {
 
   const done = habit.completedToday;
 
+  // Confetti ao completar (não ao desmarcar)
+  function handleToggle() {
+    if (loading) return;
+    if (!done && cardRef.current) {
+      burstConfetti(cardRef.current, {
+        colors: [habit.color, DS.ok, DS.accent, '#fff'],
+        x: 30, y: 30,
+      });
+    }
+    onToggle(habit.id);
+  }
+
   return (
-    <div style={{
-      background: C.sur, border: `1px solid ${done ? habit.color + '55' : C.brd}`,
-      borderRadius:14, padding:'1.125rem', transition:'all .2s',
-      boxShadow: done ? `0 0 0 1px ${habit.color}33, inset 0 0 40px ${habit.color}08` : 'none',
+    <div ref={cardRef} style={{
       position:'relative',
+      background: done ? `linear-gradient(135deg, ${habit.color}18, transparent 45%), var(--ds-glass-bg)` : 'var(--ds-glass-bg)',
+      backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
+      border: `1px solid ${done ? habit.color + '66' : 'var(--ds-glass-border)'}`,
+      borderRadius:14, padding:'1.125rem',
+      transition:'all .3s var(--ds-ease-smooth)',
+      boxShadow: done ? `0 8px 32px rgba(0,0,0,.35), 0 0 0 1px ${habit.color}22, inset 0 0 40px ${habit.color}10` : 'var(--ds-glass-shadow)',
+      overflow:'visible',
     }}>
       <div style={{ display:'flex', alignItems:'flex-start', gap:'1rem' }}>
 
         {/* Check button */}
         <button
-          onClick={() => !loading && onToggle(habit.id)}
+          onClick={handleToggle}
           disabled={loading}
           title={done ? 'Desmarcar' : 'Marcar como feito hoje'}
           style={{
-            width:44, height:44, borderRadius:'50%', border:`2px solid ${done ? habit.color : C.brd2}`,
+            width:46, height:46, borderRadius:'50%',
+            border:`2px solid ${done ? habit.color : C.brd2}`,
             background: done ? habit.color : 'transparent',
             cursor: loading ? 'wait' : 'pointer',
             display:'flex', alignItems:'center', justifyContent:'center',
-            fontSize:'1.2rem', flexShrink:0, transition:'all .25s',
-            transform: done ? 'scale(1.05)' : 'scale(1)',
+            fontSize:'1.2rem', flexShrink:0,
+            transition:'all .3s var(--ds-ease-spring)',
+            transform: done ? 'scale(1.08)' : 'scale(1)',
+            boxShadow: done ? `0 0 16px ${habit.color}66` : 'none',
           }}
         >
           {done ? '✓' : habit.icon}
@@ -134,7 +168,7 @@ function HabitCard({ habit, onToggle, onEdit, onDelete, loading }: {
         {/* Content */}
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ display:'flex', alignItems:'center', gap:'.5rem', marginBottom:'.25rem', flexWrap:'wrap' }}>
-            <span style={{ fontWeight:600, fontSize:'1rem', color: done ? habit.color : C.txt }}>{habit.title}</span>
+            <span style={{ fontWeight:600, fontSize:'1rem', color: done ? habit.color : C.txt, transition:'color .2s' }}>{habit.title}</span>
             <StreakBadge n={habit.streak} />
           </div>
           {habit.description && (
@@ -148,11 +182,11 @@ function HabitCard({ habit, onToggle, onEdit, onDelete, loading }: {
 
         {/* Menu */}
         <div ref={menuRef} style={{ position:'relative' }}>
-          <button onClick={() => setShowMenu(v => !v)} style={{ background:'none', border:'none', cursor:'pointer', color:C.mut, padding:'.25rem .4rem', borderRadius:6, fontSize:'1rem' }}>
+          <button onClick={() => setShowMenu(v => !v)} style={{ background:'none', border:'none', cursor:'pointer', color:C.mut, padding:'.25rem .4rem', borderRadius:6, fontSize:'1rem', transition:'color .15s' }}>
             ···
           </button>
           {showMenu && (
-            <div style={{ position:'absolute', right:0, top:'100%', background:C.sur2, border:`1px solid ${C.brd2}`, borderRadius:10, overflow:'hidden', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,.4)' }}>
+            <div style={{ position:'absolute', right:0, top:'100%', background:'var(--ds-glass-bg-strong)', backdropFilter:'blur(16px)', border:`1px solid ${C.brd2}`, borderRadius:10, overflow:'hidden', zIndex:50, minWidth:140, boxShadow:'0 8px 24px rgba(0,0,0,.4)' }}>
               <button onClick={() => { onEdit(habit); setShowMenu(false); }}
                 style={{ width:'100%', padding:'.625rem 1rem', background:'none', border:'none', color:C.txt, cursor:'pointer', fontSize:'.85rem', textAlign:'left' as const }}>
                 ✏️ Editar
@@ -167,11 +201,13 @@ function HabitCard({ habit, onToggle, onEdit, onDelete, loading }: {
       </div>
 
       {/* Done overlay flash */}
-      {done && (
-        <div style={{ position:'absolute', top:10, right:44, fontSize:'.72rem', color:habit.color, fontWeight:600, opacity:.8 }}>
-          ✓ feito hoje
-        </div>
-      )}
+      <div style={{
+        position:'absolute', top:10, right:44, fontSize:'.72rem', color:habit.color, fontWeight:600,
+        opacity: done ? 1 : 0, transform: done ? 'translateX(0)' : 'translateX(6px)',
+        transition:'opacity .3s, transform .3s',
+      }}>
+        ✓ feito hoje
+      </div>
     </div>
   );
 }
@@ -200,10 +236,10 @@ function HabitModal({ habit, onSave, onClose }: {
 
   return (
     <div onClick={e => e.target === e.currentTarget && onClose()}
-      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.75)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:'1rem' }}>
-      <div style={{ background:C.sur, border:`1px solid ${C.brd}`, borderRadius:14, width:'100%', maxWidth:440, padding:'1.75rem' }}>
+      style={{ position:'fixed', inset:0, background:'rgba(0,0,0,.7)', backdropFilter:'blur(8px)', WebkitBackdropFilter:'blur(8px)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:200, padding:'1rem' }}>
+      <div className="glass-strong ds-spring-in" style={{ width:'100%', maxWidth:440, padding:'1.75rem' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1.25rem' }}>
-          <h2 style={{ fontWeight:700, fontSize:'1.05rem' }}>{habit?.id ? 'Editar hábito' : 'Novo hábito'}</h2>
+          <h2 style={{ fontWeight:700, fontSize:'1.05rem', color:'var(--ds-text)' }}>{habit?.id ? 'Editar hábito' : 'Novo hábito'}</h2>
           <button onClick={onClose} style={{ background:'none', border:'none', color:C.mut, cursor:'pointer', fontSize:'1.2rem' }}>×</button>
         </div>
 
@@ -268,20 +304,36 @@ function HabitModal({ habit, onSave, onClose }: {
 function StatsBar({ stats, total }: { stats: Stats; total: number }) {
   const pct = total > 0 ? Math.round((stats.doneToday / total) * 100) : 0;
   const allDone = stats.doneToday === total && total > 0;
+  const bestRef = useRef<HTMLDivElement>(null);
+  const totalRef = useRef<HTMLDivElement>(null);
+
+  // Contagem animada quando stats mudam
+  useEffect(() => {
+    if (bestRef.current) countUp(bestRef.current, stats.bestStreak, { suffix: ' 🔥' });
+    if (totalRef.current) countUp(totalRef.current, stats.totalCompletions);
+  }, [stats.bestStreak, stats.totalCompletions]);
 
   return (
-    <div style={{ background:C.sur, border:`1px solid ${C.brd}`, borderRadius:14, padding:'1.25rem', marginBottom:'1.25rem' }}>
+    <div style={{
+      background:'var(--ds-glass-bg)',
+      backdropFilter:'blur(16px)', WebkitBackdropFilter:'blur(16px)',
+      border:'1px solid var(--ds-glass-border)',
+      borderRadius:14, padding:'1.25rem', marginBottom:'1.25rem',
+      boxShadow:'var(--ds-glass-shadow)',
+    }}>
       <div style={{ display:'flex', gap:'1.5rem', flexWrap:'wrap' as const, marginBottom:'1rem' }}>
-        {[
-          { label:'Hoje', value:`${stats.doneToday}/${total}`, color:allDone?C.ok:C.acc },
-          { label:'Maior streak', value:`${stats.bestStreak}🔥`, color:'#ff7043' },
-          { label:'Total feitos', value:stats.totalCompletions.toString(), color:C.mut },
-        ].map(s => (
-          <div key={s.label} style={{ textAlign:'center' as const, flex:1, minWidth:70 }}>
-            <div style={{ fontSize:'1.375rem', fontWeight:700, color:s.color, lineHeight:1 }}>{s.value}</div>
-            <div style={{ fontSize:'.72rem', color:C.mut, marginTop:'.25rem', textTransform:'uppercase' as const, letterSpacing:'.04em' }}>{s.label}</div>
-          </div>
-        ))}
+        <div style={{ textAlign:'center' as const, flex:1, minWidth:70 }}>
+          <div className={allDone ? 'ds-pop-in' : ''} style={{ fontSize:'1.375rem', fontWeight:700, color:allDone?C.ok:C.acc, lineHeight:1, textShadow: allDone ? `0 0 16px ${C.ok}66` : 'none' }}>{stats.doneToday}/{total}</div>
+          <div style={{ fontSize:'.72rem', color:C.mut, marginTop:'.25rem', textTransform:'uppercase' as const, letterSpacing:'.04em' }}>Hoje</div>
+        </div>
+        <div style={{ textAlign:'center' as const, flex:1, minWidth:70 }}>
+          <div ref={bestRef} style={{ fontSize:'1.375rem', fontWeight:700, color:'#ff7043', lineHeight:1 }}>0</div>
+          <div style={{ fontSize:'.72rem', color:C.mut, marginTop:'.25rem', textTransform:'uppercase' as const, letterSpacing:'.04em' }}>Maior streak</div>
+        </div>
+        <div style={{ textAlign:'center' as const, flex:1, minWidth:70 }}>
+          <div ref={totalRef} style={{ fontSize:'1.375rem', fontWeight:700, color:C.mut, lineHeight:1 }}>0</div>
+          <div style={{ fontSize:'.72rem', color:C.mut, marginTop:'.25rem', textTransform:'uppercase' as const, letterSpacing:'.04em' }}>Total feitos</div>
+        </div>
       </div>
 
       {/* Progress bar */}
@@ -290,7 +342,7 @@ function StatsBar({ stats, total }: { stats: Stats; total: number }) {
           height:'100%', borderRadius:20,
           background: allDone ? `linear-gradient(90deg,${C.ok},#38ef7d)` : `linear-gradient(90deg,${C.acc},#a78bfa)`,
           width:`${pct}%`, transition:'width .5s ease',
-          boxShadow: allDone ? `0 0 8px ${C.ok}88` : 'none',
+          boxShadow: allDone ? `0 0 8px ${C.ok}88` : `0 0 8px ${C.acc}44`,
         }} />
       </div>
       <p style={{ textAlign:'center' as const, fontSize:'.75rem', color:C.mut, marginTop:'.375rem' }}>
@@ -368,28 +420,24 @@ function App() {
   return (
     <div style={{ minHeight:'100vh', background:C.bg, color:C.txt, fontFamily:'Inter,system-ui,sans-serif' }}>
       {/* Header */}
-      <div style={{ background:C.sur, borderBottom:`1px solid ${C.brd}`, padding:'.875rem 1.5rem', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:'.75rem' }}>
-          <div style={{ width:34, height:34, borderRadius:9, background:'linear-gradient(135deg,#6c63ff,#a78bfa)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1rem' }}>
-            🔥
-          </div>
-          <div>
-            <span style={{ fontWeight:700, fontSize:'.9rem' }}>Hábitos</span>
-            <span style={{ fontFamily:'monospace', fontSize:'.7rem', color:C.mut, marginLeft:6 }}>/app7</span>
-          </div>
+      <div className="ds-app-header">
+        <div className="ds-app-icon">🔥</div>
+        <div style={{ display:'flex', alignItems:'center', gap:'.5rem' }}>
+          <span className="ds-app-title">Hábitos</span>
+          <span className="ds-app-tag">/app7</span>
         </div>
-        <div style={{ display:'flex', alignItems:'center', gap:'.75rem' }}>
+        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:'.75rem' }}>
           {/* View toggle */}
-          <div style={{ display:'flex', background:C.sur2, border:`1px solid ${C.brd}`, borderRadius:8, overflow:'hidden' }}>
+          <div style={{ display:'flex', background:'var(--ds-surface-2)', border:'1px solid var(--ds-border)', borderRadius:8, overflow:'hidden', padding:2 }}>
             {(['today','stats'] as const).map(v => (
               <button key={v} onClick={() => setView(v)}
-                style={{ padding:'.35rem .875rem', border:'none', cursor:'pointer', fontSize:'.8rem', fontWeight:view===v?600:400, background:view===v?C.acc:'transparent', color:view===v?'#fff':C.mut, transition:'all .15s' }}>
+                style={{ padding:'.35rem .875rem', border:'none', cursor:'pointer', fontSize:'.8rem', fontWeight:view===v?600:400, background:view===v?'var(--ds-accent)':'transparent', color:view===v?'#fff':'var(--ds-muted)', borderRadius:6, transition:'all .2s var(--ds-ease-smooth)' }}>
                 {v === 'today' ? 'Hoje' : 'Progresso'}
               </button>
             ))}
           </div>
           <button onClick={() => { setEditHabit(undefined); setShowForm(true); }}
-            style={{ background:C.acc, border:'none', borderRadius:8, color:'#fff', padding:'.4rem 1rem', fontSize:'.85rem', fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
+            style={{ background:'var(--ds-accent)', border:'none', borderRadius:8, color:'#fff', padding:'.45rem 1rem', fontSize:'.85rem', fontWeight:600, cursor:'pointer', display:'flex', alignItems:'center', gap:4, boxShadow:'0 4px 12px rgba(108,99,255,.35)', transition:'all .2s' }}>
             + Novo
           </button>
         </div>
@@ -420,12 +468,19 @@ function App() {
 
             {/* Habits list */}
             {loading ? (
-              <div style={{ textAlign:'center' as const, padding:'3rem', color:C.mut }}>
-                <div style={{ fontSize:'2rem', marginBottom:'.75rem' }}>⏳</div>
-                Carregando hábitos...
+              <div className="ds-stagger" style={{ display:'flex', flexDirection:'column' as const, gap:'.875rem' }}>
+                {[1,2,3].map(i => (
+                  <div key={i} style={{ padding:'1.125rem', display:'flex', gap:'1rem', alignItems:'center' }}>
+                    <div className="skeleton" style={{ width:46, height:46, borderRadius:'50%', flexShrink:0 }} />
+                    <div style={{ flex:1 }}>
+                      <div className="skeleton" style={{ height:14, width:'55%', marginBottom:8 }} />
+                      <div className="skeleton" style={{ height:10, width:'80%' }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : habits.length === 0 ? (
-              <div style={{ textAlign:'center' as const, padding:'3rem 1.5rem', background:C.sur, borderRadius:14, border:`1px dashed ${C.brd2}` }}>
+              <div className="ds-fade-up" style={{ textAlign:'center' as const, padding:'3rem 1.5rem', background:'var(--ds-glass-bg)', backdropFilter:'blur(16px)', borderRadius:14, border:'1px dashed var(--ds-border-2)', boxShadow:'var(--ds-glass-shadow)' }}>
                 <div style={{ fontSize:'3rem', marginBottom:'1rem' }}>🌱</div>
                 <h2 style={{ fontSize:'1.1rem', marginBottom:'.625rem' }}>Comece o seu primeiro hábito</h2>
                 <p style={{ color:C.mut, fontSize:'.875rem', marginBottom:'1.5rem', lineHeight:1.6 }}>
@@ -434,17 +489,17 @@ function App() {
                 <div style={{ display:'flex', gap:'.625rem', justifyContent:'center', flexWrap:'wrap' as const, marginBottom:'1.5rem' }}>
                   {[['💧','Beber água'],['🏃','Exercitar'],['📚','Ler'],['🧘','Meditar'],['🛏️','Dormir cedo']].map(([icon,title]) => (
                     <button key={title} onClick={async () => { await apiFetch('/', { method:'POST', body: JSON.stringify({ title, icon, color:'#6c63ff' }) }); load(); }}
-                      style={{ padding:'.5rem 1rem', borderRadius:20, background:C.sur2, border:`1px solid ${C.brd}`, color:C.txt, cursor:'pointer', fontSize:'.85rem', display:'flex', alignItems:'center', gap:.4 }}>
+                      style={{ padding:'.5rem 1rem', borderRadius:20, background:'var(--ds-surface-2)', border:'1px solid var(--ds-border)', color:C.txt, cursor:'pointer', fontSize:'.85rem', display:'flex', alignItems:'center', gap:.4, transition:'all .2s' }}>
                       {icon} {title}
                     </button>
                   ))}
                 </div>
-                <button onClick={() => setShowForm(true)} style={{ background:C.acc, border:'none', borderRadius:10, color:'#fff', padding:'.75rem 1.5rem', fontWeight:600, cursor:'pointer' }}>
+                <button onClick={() => setShowForm(true)} style={{ background:'var(--ds-accent)', border:'none', borderRadius:10, color:'#fff', padding:'.75rem 1.5rem', fontWeight:600, cursor:'pointer', boxShadow:'0 4px 16px rgba(108,99,255,.4)' }}>
                   + Criar meu primeiro hábito
                 </button>
               </div>
             ) : (
-              <div style={{ display:'flex', flexDirection:'column' as const, gap:'.875rem' }}>
+              <div className="ds-stagger" style={{ display:'flex', flexDirection:'column' as const, gap:'.875rem' }}>
                 {/* Not done first, then done */}
                 {[...habits].sort((a,b) => Number(a.completedToday) - Number(b.completedToday)).map(h => (
                   <HabitCard key={h.id} habit={h}
@@ -458,26 +513,26 @@ function App() {
 
         {view === 'stats' && stats && (
           <>
-            <h1 style={{ fontSize:'1.5rem', fontWeight:700, marginBottom:'1.5rem' }}>Seu progresso</h1>
+            <h1 className="ds-fade-up" style={{ fontSize:'1.5rem', fontWeight:700, marginBottom:'1.5rem' }}>Seu progresso</h1>
 
             {/* Summary cards */}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.875rem', marginBottom:'1.5rem' }}>
+            <div className="ds-stagger" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.875rem', marginBottom:'1.5rem' }}>
               {[
                 { label:'Hábitos ativos', value:stats.totalHabits, icon:'📋', color:C.acc },
                 { label:'Concluídos hoje', value:stats.doneToday, icon:'✅', color:C.ok },
                 { label:'Total concluídos', value:stats.totalCompletions, icon:'🏆', color:'#ffb347' },
                 { label:'Melhor sequência', value:`${stats.bestStreak} dias`, icon:'🔥', color:'#ff7043' },
               ].map(s => (
-                <div key={s.label} style={{ background:C.sur, border:`1px solid ${C.brd}`, borderRadius:12, padding:'1.125rem' }}>
+                <div key={s.label} className="glass-card glass-card-hover" style={{ padding:'1.125rem' }}>
                   <div style={{ fontSize:'1.5rem', marginBottom:'.375rem' }}>{s.icon}</div>
-                  <div style={{ fontSize:'1.5rem', fontWeight:700, color:s.color, lineHeight:1 }}>{s.value}</div>
+                  <div style={{ fontSize:'1.5rem', fontWeight:700, color:s.color, lineHeight:1, textShadow: s.color === C.ok ? `0 0 20px ${C.ok}55` : 'none' }}>{s.value}</div>
                   <div style={{ fontSize:'.75rem', color:C.mut, marginTop:'.25rem' }}>{s.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Week chart */}
-            <div style={{ background:C.sur, border:`1px solid ${C.brd}`, borderRadius:14, padding:'1.375rem', marginBottom:'1.5rem' }}>
+            <div className="glass-card" style={{ padding:'1.375rem', marginBottom:'1.5rem' }}>
               <h3 style={{ fontSize:'.9rem', fontWeight:600, marginBottom:'1.125rem', color:C.mut, textTransform:'uppercase' as const, letterSpacing:'.05em' }}>Últimos 7 dias</h3>
               <div style={{ display:'flex', gap:'.5rem', alignItems:'flex-end', height:80 }}>
                 {stats.weekChart.map((d, i) => {
@@ -486,7 +541,7 @@ function App() {
                   return (
                     <div key={d.date} style={{ flex:1, display:'flex', flexDirection:'column' as const, alignItems:'center', gap:'.25rem' }}>
                       <div style={{ width:'100%', background:C.brd2, borderRadius:4, height:60, display:'flex', alignItems:'flex-end', overflow:'hidden' }}>
-                        <div style={{ width:'100%', height:`${Math.max(pct*100, pct>0?8:0)}%`, background: isToday ? `linear-gradient(180deg,${C.acc},#a78bfa)` : C.acc+'77', borderRadius:4, transition:'height .4s ease', boxShadow: isToday&&pct>0 ? `0 0 8px ${C.acc}66` : 'none' }} />
+                        <div style={{ width:'100%', height:`${Math.max(pct*100, pct>0?8:0)}%`, background: isToday ? `linear-gradient(180deg,${C.acc},#a78bfa)` : C.acc+'77', borderRadius:4, transition:'height .6s ease', boxShadow: isToday&&pct>0 ? `0 0 8px ${C.acc}66` : 'none' }} />
                       </div>
                       <span style={{ fontSize:'.68rem', color: isToday ? C.acc : C.mut, fontWeight: isToday ? 600 : 400 }}>{d.day}</span>
                     </div>
@@ -524,10 +579,14 @@ function App() {
 
       <style>{`
         *{box-sizing:border-box;margin:0;padding:0}
-        body{-webkit-font-smoothing:antialiased}
+        body{-webkit-font-smoothing:antialiased;font-family:'Inter',system-ui,sans-serif}
         input:focus{border-color:${C.acc}!important;outline:none;box-shadow:0 0 0 3px rgba(108,99,255,.2)}
         button:hover:not(:disabled){opacity:.88}
         @media(max-width:480px){h1{font-size:1.25rem!important}}
+        @keyframes ds-fire-glow{
+          0%,100%{box-shadow:0 0 8px rgba(255,112,67,.2)}
+          50%{box-shadow:0 0 18px rgba(255,112,67,.5)}
+        }
       `}</style>
     </div>
   );
