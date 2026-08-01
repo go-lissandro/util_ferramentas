@@ -31,7 +31,8 @@ header{background:rgba(17,17,24,.8);backdrop-filter:blur(12px);-webkit-backdrop-
 nav{display:flex;gap:.375rem;font-size:.82rem;flex-wrap:wrap}
 nav a{color:var(--mut);display:inline-flex;align-items:center;gap:.375rem;padding:.3rem .65rem;border-radius:8px;border:1px solid transparent;transition:all .2s var(--ease-smooth, cubic-bezier(.4,0,.2,1))}
 nav a:hover{color:var(--txt);background:rgba(108,99,255,.07);border-color:rgba(108,99,255,.2);text-decoration:none;transform:translateY(-1px)}
-.nav-ico{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+.nav-ico{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff}
+.nav-ico svg{display:block}
 .btn-sm{background:var(--acc);color:#fff;padding:.4rem 1rem;border-radius:7px;font-size:.85rem;font-weight:600;white-space:nowrap;box-shadow:0 4px 12px rgba(108,99,255,.3)}
 .btn-sm:hover{opacity:.88;text-decoration:none}
 main{padding:2.5rem 0 4rem}
@@ -56,7 +57,8 @@ li strong,p strong{color:var(--txt)}
 .card:hover{border-color:rgba(108,99,255,.2);box-shadow:0 12px 40px rgba(108,99,255,.12);transform:translateY(-2px)}
 .card h3{font-size:.9rem;margin:.375rem 0 .5rem;border:none;padding:0}
 .card p{font-size:.85rem;margin:0;line-height:1.6}
-.card .icon{font-size:1.5rem}
+.card .icon{display:flex;align-items:center;justify-content:flex-start;color:var(--acc);margin-bottom:.375rem}
+.card .icon svg{display:block}
 .breadcrumb{font-size:.78rem;color:var(--mut);margin-bottom:1.375rem;display:flex;align-items:center;gap:.375rem;flex-wrap:wrap}
 .breadcrumb a{color:var(--mut)}
 .breadcrumb span{color:var(--mut);opacity:.5}
@@ -85,7 +87,8 @@ code{font-family:'Fira Code',Consolas,monospace;font-size:.85em;background:var(-
 .btn-outline:hover{border-color:var(--acc);color:var(--txt);text-decoration:none;background:rgba(108,99,255,.06)}
 .stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1.75rem 0;padding:1.375rem;background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:12px;border:1px solid var(--glass-brd);box-shadow:var(--glass-shadow)}
 .stat{text-align:center;flex:1;min-width:80px}
-.stat strong{display:block;font-size:1.5rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat strong{display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.stat strong svg{color:var(--acc)}
 .stat span{font-size:.8rem;color:var(--mut)}
 .related{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--brd)}
 .related h2{font-size:1rem;border:none;padding:0;margin:0 0 1rem}
@@ -117,6 +120,64 @@ footer p{font-size:.78rem;color:var(--mut);opacity:.7}
 @media(max-width:640px){.hdr{gap:.5rem}.hero-cta{flex-direction:column}.stats{gap:1rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 `.trim();
+
+// ── Inline SVG icons (stroke, lucide-style) ────────────────
+// Emojis have inconsistent metrics across platforms/zoom levels and render
+// misaligned ("torto") inside flex containers. These SVGs render pixel-perfect
+// and match the AppIcon set used across the apps.
+const SVG_PATHS: Record<string, string> = {
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  converter: '<path d="M21 12a9 9 0 0 1-15.2 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15.2-6.7L21 8"/><polyline points="3 20 3 16 7 16"/><polyline points="21 4 21 8 17 8"/>',
+  qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v7M14 21h3"/>',
+  link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  link2: '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 0 1 0 10h-2"/><line x1="8" y1="12" x2="16" y2="12"/>',
+  flame: '<path d="M12 22c4.42 0 8-3.58 8-8 0-4.5-3.13-7.75-6.15-9.1C14.37 4.5 13 6.5 13 6.5s.9 2.5-.5 4.5c-1.2 1.7-2.5 2-2.5 2S10 10 8.5 8.5c-1.5 1.5-2.5 3-2.5 5.5a6 6 0 0 0 6 8z"/>',
+  finance: '<path d="M21 12H3"/><path d="M12 3v18"/><path d="M16 6h-3.5a2.5 2.5 0 0 0 0 5H11a3 3 0 0 1 0 6h3.5M16 21v-3"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  chart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  check: '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  pencil: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+  file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+  layers: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  video: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M10 9l5 3-5 3z"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  crown: '<path d="M2 19h20M2 19l-1-13 6 5 5-9 5 9 6-5-1 13z"/>',
+  text: '<path d="M4 7V4h16v3"/><line x1="12" y1="4" x2="12" y2="20"/><line x1="9" y1="20" x2="15" y2="20"/>',
+  wifi: '<path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/>',
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+  ruler: '<rect x="2" y="9" width="20" height="6" rx="2"/><path d="M6 11v-1M10 11v-1M14 11v-1M18 11v-1"/>',
+  compress: '<path d="M8 2v4a2 2 0 0 1-2 2H2"/><path d="M16 2v4a2 2 0 0 0 2 2h4"/><path d="M8 22v-4a2 2 0 0 0-2-2H2"/><path d="M16 22v-4a2 2 0 0 1 2-2h4"/>',
+  crop: '<path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/>',
+  pencil2: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  trendUp: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+  trendDown: '<polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/>',
+  bank: '<line x1="3" y1="21" x2="21" y2="21"/><polyline points="5 21 5 10"/><polyline points="9 21 9 10"/><polyline points="13 21 13 10"/><polyline points="17 21 17 10"/><path d="M21 10l-9-7-9 7z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>',
+  drop: '<path d="M12 22c4.42 0 8-3.58 8-8 0-4.5-3.13-7.75-6.15-9.1C14.37 4.5 13 6.5 13 6.5s.9 2.5-.5 4.5c-1.2 1.7-2.5 2-2.5 2S10 10 8.5 8.5c-1.5 1.5-2.5 3-2.5 5.5a6 6 0 0 0 6 8z"/>',
+  run: '<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="5.5" r="3.5"/><path d="M12.13 19.35l1-7.13a2 2 0 0 1 1.96-1.69l5.43-.03"/><path d="M9.5 8.5l4-3"/><path d="M6.5 6.5l-1.5 5.5 4 2 3 4"/>',
+  book: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+  moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  write: '<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/>',
+  bag: '<path d="M6 2h12l1.5 18a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/>',
+  mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>',
+  briefcase: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  box: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/>',
+  image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+  layers2: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  scale: '<rect x="2" y="3" width="20" height="18" rx="2"/><path d="M12 9a3 3 0 0 0 0 6M9 3l3 4 3-4"/>',
+};
+
+// returns inline SVG (stroke) sized to fit the container, tinted via currentColor
+function ico(name: string, size: number = 18): string {
+  const path = SVG_PATHS[name] || SVG_PATHS.link;
+  const isFilled = name === 'flame';
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${isFilled ? 'currentColor' : 'none'}" stroke="${isFilled ? 'none' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:middle;flex-shrink:0">${path}</svg>`;
+}
 
 // ── Page shell — optimized for Core Web Vitals ─────────────
 function page(opts: {
@@ -203,14 +264,14 @@ ${ADSENSE_ID ? `<script async src="https://pagead2.googlesyndication.com/pagead/
   <div class="wrap"><div class="hdr">
     <a href="/" class="logo" aria-label="${SITE_NAME} - Início"><em>Util</em> Ferramentas</a>
     <nav class="desktop" aria-label="Menu principal">
-      <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">⬇️</span>Vídeos</a>
-      <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">🔄</span>JSON↔Excel</a>
-      <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">📱</span>QR Code</a>
-      <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">🔗</span>Links</a>
-      <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">📄</span>Bio Link</a>
-      <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">🔥</span>Hábitos</a>
-      <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">💰</span>Finanças</a>
-      <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">ℹ️</span>Sobre</a>
+      <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">${ico('download', 12)}</span>Vídeos</a>
+      <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">${ico('converter', 12)}</span>JSON↔Excel</a>
+      <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">${ico('qr', 12)}</span>QR Code</a>
+      <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">${ico('link', 12)}</span>Links</a>
+      <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">${ico('link2', 12)}</span>Bio Link</a>
+      <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">${ico('flame', 12)}</span>Hábitos</a>
+      <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">${ico('finance', 12)}</span>Finanças</a>
+      <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">${ico('info', 12)}</span>Sobre</a>
     </nav>
     <div style="display:flex;align-items:center;gap:.5rem">
       <button class="nav-mobile-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
@@ -219,14 +280,14 @@ ${ADSENSE_ID ? `<script async src="https://pagead2.googlesyndication.com/pagead/
   </div></div>
 
   <nav class="nav-mobile" id="navMobile" aria-label="Menu móvel">
-    <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">⬇️</span>Vídeos</a>
-    <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">🔄</span>JSON↔Excel</a>
-    <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">📱</span>QR Code</a>
-    <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">🔗</span>Links</a>
-    <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">📄</span>Bio Link</a>
-    <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">🔥</span>Hábitos</a>
-    <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">💰</span>Finanças</a>
-    <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">ℹ️</span>Sobre</a>
+    <a href="/como-baixar-videos"><span class="nav-ico" style="background:linear-gradient(135deg,#ffb347,#ff7043)">${ico('download', 12)}</span>Vídeos</a>
+    <a href="/converter-json-excel"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7eb3,#ff6b6b)">${ico('converter', 12)}</span>JSON↔Excel</a>
+    <a href="/gerador-qr-code"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#a78bfa)">${ico('qr', 12)}</span>QR Code</a>
+    <a href="/encurtar-links"><span class="nav-ico" style="background:linear-gradient(135deg,#6c63ff,#00d4aa)">${ico('link', 12)}</span>Links</a>
+    <a href="/link-na-bio"><span class="nav-ico" style="background:linear-gradient(135deg,#4ecdc4,#38ef7d)">${ico('link2', 12)}</span>Bio Link</a>
+    <a href="/rastreador-de-habitos"><span class="nav-ico" style="background:linear-gradient(135deg,#ff7043,#ffb347)">${ico('flame', 12)}</span>Hábitos</a>
+    <a href="/calculadora-financeira"><span class="nav-ico" style="background:linear-gradient(135deg,#00d4aa,#38ef7d)">${ico('finance', 12)}</span>Finanças</a>
+    <a href="/sobre"><span class="nav-ico" style="background:linear-gradient(135deg,#3a3a4e,#2a2a38)">${ico('info', 12)}</span>Sobre</a>
   </nav>
 </header>
 
@@ -396,8 +457,8 @@ seoRouter.get('/', (_req, res) => {
 </div>
 
 <div class="hero-cta fade-up">
-  <a href="/app4" class="btn-primary" aria-label="Abrir ferramenta de download de vídeos">⬇️ Baixar vídeo grátis</a>
-  <a href="/app5" class="btn-outline" aria-label="Abrir conversor JSON para Excel">🔄 Converter JSON↔Excel</a>
+  <a href="/app4" class="btn-primary" aria-label="Abrir ferramenta de download de vídeos">${ico('download', 16)} Baixar vídeo grátis</a>
+  <a href="/app5" class="btn-outline" aria-label="Abrir conversor JSON para Excel">${ico('converter', 16)} Converter JSON↔Excel</a>
   <a href="/checkout.html" class="btn-outline">Ver plano Pro</a>
 </div>
 </section>
@@ -405,32 +466,32 @@ seoRouter.get('/', (_req, res) => {
 <h2>Ferramentas disponíveis</h2>
 <div class="cards stagger">
   <div class="card">
-    <div class="icon">⬇️</div>
+    <div class="icon">${ico('download', 24)}</div>
     <h3><a href="/como-baixar-videos">Baixar Vídeos Online</a></h3>
     <p>Salve vídeos do YouTube, Instagram, TikTok e outros 1000+ sites em MP4 ou MP3. <span class="tag">Grátis</span></p>
   </div>
   <div class="card">
-    <div class="icon">🎵</div>
+    <div class="icon">${ico('music', 24)}</div>
     <h3><a href="/converter-mp3">Converter Vídeo para MP3</a></h3>
     <p>Extraia o áudio de qualquer vídeo online e salve como MP3 em 192kbps. <span class="tag">Grátis</span></p>
   </div>
   <div class="card">
-    <div class="icon">🔄</div>
+    <div class="icon">${ico('converter', 24)}</div>
     <h3><a href="/converter-json-excel">Conversor JSON↔Excel</a></h3>
     <p>Transforme JSON em planilha Excel formatada ou converta Excel/CSV para JSON. <span class="tag">Grátis</span></p>
   </div>
   <div class="card">
-    <div class="icon">📱</div>
+    <div class="icon">${ico('qr', 24)}</div>
     <h3><a href="/gerador-qr-code">Gerador de QR Code</a></h3>
     <p>URL, PIX, Wi-Fi, contato e mais — download em PNG e SVG. <span class="tag">Grátis</span></p>
   </div>
   <div class="card">
-    <div class="icon">🔗</div>
+    <div class="icon">${ico('link', 24)}</div>
     <h3><a href="/encurtar-links">Encurtador de Links</a></h3>
     <p>Links curtos com analytics, QR code e data de expiração. <span class="tag purple">Pro</span></p>
   </div>
   <div class="card">
-    <div class="icon">🗃️</div>
+    <div class="icon">${ico('database', 24)}</div>
     <h3>Gerenciador de Dados</h3>
     <p>Crie estruturas dinâmicas para organizar qualquer tipo de informação. <span class="tag purple">Pro</span></p>
   </div>
@@ -504,10 +565,10 @@ seoRouter.get('/', (_req, res) => {
 <div class="related">
   <h2>Guias relacionados</h2>
   <div class="related-links">
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Como Baixar Vídeos</strong>Guia completo por plataforma</a>
-    <a href="/converter-mp3" class="related-link"><strong>🎵 Converter para MP3</strong>YouTube, Instagram e mais</a>
-    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor online gratuito</a>
-    <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Com analytics e QR Code</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Como Baixar Vídeos</strong>Guia completo por plataforma</a>
+    <a href="/converter-mp3" class="related-link"><strong>${ico('music', 14)} Converter para MP3</strong>YouTube, Instagram e mais</a>
+    <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor online gratuito</a>
+    <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Com analytics e QR Code</a>
   </div>
 </div>`;
 
@@ -671,16 +732,16 @@ seoRouter.get('/como-baixar-videos', (_req, res) => {
 </div>
 
 <div class="hero-cta">
-  <a href="/app4" class="btn-primary">⬇️ Baixar vídeo agora — grátis</a>
-  <a href="/converter-mp3" class="btn-outline">🎵 Converter para MP3</a>
+  <a href="/app4" class="btn-primary">${ico('download', 16)} Baixar vídeo agora — grátis</a>
+  <a href="/converter-mp3" class="btn-outline">${ico('music', 16)} Converter para MP3</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/converter-mp3" class="related-link"><strong>🎵 Converter para MP3</strong>Guia completo de extração de áudio</a>
-    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor online gratuito</a>
-    <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Com analytics em tempo real</a>
+    <a href="/converter-mp3" class="related-link"><strong>${ico('music', 14)} Converter para MP3</strong>Guia completo de extração de áudio</a>
+    <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor online gratuito</a>
+    <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Com analytics em tempo real</a>
     <a href="/" class="related-link"><strong>🏠 Todas as Ferramentas</strong>Ver tudo disponível</a>
   </div>
 </div>`;
@@ -825,16 +886,16 @@ seoRouter.get('/converter-mp3', (_req, res) => {
 </div>
 
 <div class="hero-cta">
-  <a href="/app4" class="btn-primary">🎵 Converter vídeo para MP3 agora</a>
+  <a href="/app4" class="btn-primary">${ico('music', 16)} Converter vídeo para MP3 agora</a>
   <a href="/como-baixar-videos" class="btn-outline">📖 Guia de download de vídeos</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>Guia completo por plataforma</a>
-    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor online gratuito</a>
-    <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Com analytics e QR code</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>Guia completo por plataforma</a>
+    <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor online gratuito</a>
+    <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Com analytics e QR code</a>
     <a href="/" class="related-link"><strong>🏠 Página Inicial</strong>Todas as ferramentas</a>
   </div>
 </div>`;
@@ -888,10 +949,10 @@ seoRouter.get('/encurtar-links', (_req, res) => {
 
 <h2>Para que serve e quem usa</h2>
 <div class="cards">
-  <div class="card"><div class="icon">📱</div><h3>Redes Sociais</h3><p>Links curtos cabem melhor em posts e bio do Instagram. Mais cliques, visual mais profissional.</p></div>
-  <div class="card"><div class="icon">📧</div><h3>E-mail Marketing</h3><p>Rastreie qual link foi clicado em cada campanha para medir resultados reais.</p></div>
-  <div class="card"><div class="icon">📄</div><h3>Materiais Impressos</h3><p>QR codes em panfletos, banners e embalagens — gerados automaticamente para cada link.</p></div>
-  <div class="card"><div class="icon">📊</div><h3>Comparar Canais</h3><p>Crie links diferentes por canal e veja qual Instagram, WhatsApp ou e-mail converte mais.</p></div>
+  <div class="card"><div class="icon">${ico('qr', 22)}</div><h3>Redes Sociais</h3><p>Links curtos cabem melhor em posts e bio do Instagram. Mais cliques, visual mais profissional.</p></div>
+  <div class="card"><div class="icon">${ico('mail', 22)}</div><h3>E-mail Marketing</h3><p>Rastreie qual link foi clicado em cada campanha para medir resultados reais.</p></div>
+  <div class="card"><div class="icon">${ico('file', 22)}</div><h3>Materiais Impressos</h3><p>QR codes em panfletos, banners e embalagens — gerados automaticamente para cada link.</p></div>
+  <div class="card"><div class="icon">${ico('chart', 22)}</div><h3>Comparar Canais</h3><p>Crie links diferentes por canal e veja qual Instagram, WhatsApp ou e-mail converte mais.</p></div>
 </div>
 
 <h2>Funcionalidades do encurtador no Util Ferramentas</h2>
@@ -933,17 +994,17 @@ seoRouter.get('/encurtar-links', (_req, res) => {
 </table>
 
 <div class="hero-cta">
-  <a href="/checkout.html" class="btn-primary">🔗 Assinar Plano Pro — R$29,90/mês</a>
+  <a href="/checkout.html" class="btn-primary">${ico('crown', 16)} Assinar Plano Pro — R$29,90/mês</a>
   <a href="/" class="btn-outline">Ver outras ferramentas</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>Guia completo</a>
-    <a href="/converter-mp3" class="related-link"><strong>🎵 Converter MP3</strong>Extrair áudio de vídeos</a>
-    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor gratuito</a>
-    <a href="/sobre" class="related-link"><strong>ℹ️ Sobre</strong>Conheça o Util Ferramentas</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>Guia completo</a>
+    <a href="/converter-mp3" class="related-link"><strong>${ico('music', 14)} Converter MP3</strong>Extrair áudio de vídeos</a>
+    <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor gratuito</a>
+    <a href="/sobre" class="related-link"><strong>${ico('info', 14)} Sobre</strong>Conheça o Util Ferramentas</a>
   </div>
 </div>`;
 
@@ -1091,16 +1152,16 @@ seoRouter.get('/converter-json-excel', (_req, res) => {
 </div>
 
 <div class="hero-cta">
-  <a href="/app5" class="btn-primary">🔄 Abrir Conversor JSON↔Excel</a>
-  <a href="/como-baixar-videos" class="btn-outline">⬇️ Baixar vídeos</a>
+  <a href="/app5" class="btn-primary">${ico('converter', 16)} Abrir Conversor JSON↔Excel</a>
+  <a href="/como-baixar-videos" class="btn-outline">${ico('download', 16)} Baixar vídeos</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube, Instagram, TikTok</a>
-    <a href="/converter-mp3" class="related-link"><strong>🎵 Converter MP3</strong>Extrair áudio online</a>
-    <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Com analytics</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>YouTube, Instagram, TikTok</a>
+    <a href="/converter-mp3" class="related-link"><strong>${ico('music', 14)} Converter MP3</strong>Extrair áudio online</a>
+    <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Com analytics</a>
     <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
   </div>
 </div>`;
@@ -1149,11 +1210,11 @@ seoRouter.get('/sobre', (_req, res) => {
 
 <h2>As ferramentas disponíveis</h2>
 <div class="cards">
-  <div class="card"><div class="icon">⬇️</div><h3><a href="/como-baixar-videos">Download de Vídeos</a></h3><p>YouTube, Instagram, TikTok e 1000+ sites. Grátis.</p></div>
-  <div class="card"><div class="icon">🎵</div><h3><a href="/converter-mp3">Extração de Áudio MP3</a></h3><p>Converta qualquer vídeo para MP3 em 192kbps. Grátis.</p></div>
-  <div class="card"><div class="icon">🔄</div><h3><a href="/converter-json-excel">Conversor JSON↔Excel</a></h3><p>JSON para Excel e Excel para JSON. Grátis.</p></div>
-  <div class="card"><div class="icon">🔗</div><h3><a href="/encurtar-links">Encurtador de Links</a></h3><p>Links rastreáveis com analytics e QR Code. Pro.</p></div>
-  <div class="card"><div class="icon">🗃️</div><h3>Gerenciador de Dados</h3><p>Estruturas dinâmicas sem código. Pro.</p></div>
+  <div class="card"><div class="icon">${ico('download', 22)}</div><h3><a href="/como-baixar-videos">Download de Vídeos</a></h3><p>YouTube, Instagram, TikTok e 1000+ sites. Grátis.</p></div>
+  <div class="card"><div class="icon">${ico('music', 22)}</div><h3><a href="/converter-mp3">Extração de Áudio MP3</a></h3><p>Converta qualquer vídeo para MP3 em 192kbps. Grátis.</p></div>
+  <div class="card"><div class="icon">${ico('converter', 22)}</div><h3><a href="/converter-json-excel">Conversor JSON↔Excel</a></h3><p>JSON para Excel e Excel para JSON. Grátis.</p></div>
+  <div class="card"><div class="icon">${ico('link', 22)}</div><h3><a href="/encurtar-links">Encurtador de Links</a></h3><p>Links rastreáveis com analytics e QR Code. Pro.</p></div>
+  <div class="card"><div class="icon">${ico('database', 22)}</div><h3>Gerenciador de Dados</h3><p>Estruturas dinâmicas sem código. Pro.</p></div>
 </div>
 
 <h2>Planos</h2>
@@ -1374,10 +1435,10 @@ seoRouter.get('/link-na-bio', (_req, res) => {
 
 <h2>Para que serve e quem usa</h2>
 <div class="cards">
-  <div class="card"><div class="icon">🛍️</div><h3>Lojistas</h3><p>Link para a loja, WhatsApp de vendas, catálogo e Instagram do negócio em uma só página.</p></div>
-  <div class="card"><div class="icon">🎤</div><h3>Criadores de Conteúdo</h3><p>YouTube, TikTok, Spotify, site de parcerias e contato — tudo centralizado.</p></div>
-  <div class="card"><div class="icon">💼</div><h3>Profissionais</h3><p>LinkedIn, portfólio, currículo online e e-mail de contato em uma URL só.</p></div>
-  <div class="card"><div class="icon">🎵</div><h3>Músicos e Artistas</h3><p>Streaming, loja de merch, agenda de shows e redes sociais em um link.</p></div>
+  <div class="card"><div class="icon">${ico('bag', 22)}</div><h3>Lojistas</h3><p>Link para a loja, WhatsApp de vendas, catálogo e Instagram do negócio em uma só página.</p></div>
+  <div class="card"><div class="icon">${ico('mic', 22)}</div><h3>Criadores de Conteúdo</h3><p>YouTube, TikTok, Spotify, site de parcerias e contato — tudo centralizado.</p></div>
+  <div class="card"><div class="icon">${ico('briefcase', 22)}</div><h3>Profissionais</h3><p>LinkedIn, portfólio, currículo online e e-mail de contato em uma URL só.</p></div>
+  <div class="card"><div class="icon">${ico('music', 22)}</div><h3>Músicos e Artistas</h3><p>Streaming, loja de merch, agenda de shows e redes sociais em um link.</p></div>
 </div>
 
 <h2>Como criar sua página de link na bio no Util Ferramentas</h2>
@@ -1446,16 +1507,16 @@ seoRouter.get('/link-na-bio', (_req, res) => {
 </div>
 
 <div class="hero-cta">
-  <a href="/app6" class="btn-primary">🔗 Criar minha página bio — grátis</a>
-  <a href="/encurtar-links" class="btn-outline">🔗 Encurtador de links</a>
+  <a href="/app6" class="btn-primary">${ico('link2', 16)} Criar minha página bio — grátis</a>
+  <a href="/encurtar-links" class="btn-outline">${ico('link', 16)} Encurtador de links</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Links rastreáveis com analytics</a>
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube, Instagram, TikTok</a>
-    <a href="/converter-mp3" class="related-link"><strong>🎵 Converter MP3</strong>Extrair áudio online</a>
+    <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Links rastreáveis com analytics</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>YouTube, Instagram, TikTok</a>
+    <a href="/converter-mp3" class="related-link"><strong>${ico('music', 14)} Converter MP3</strong>Extrair áudio online</a>
     <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
   </div>
 </div>`;
@@ -1524,7 +1585,7 @@ seoRouter.get('/rastreador-de-habitos', (_req, res) => {
 <p class="lead">Crie seus hábitos diários, marque o que fez hoje e acompanhe sua sequência de dias. A ferramenta mais simples para transformar pequenas ações em resultados duradouros.</p>
 
 <div class="stats">
-  <div class="stat"><strong>🔥</strong><span>streaks diários</span></div>
+  <div class="stat"><strong>${ico('flame', 24)}</strong><span>streaks diários</span></div>
   <div class="stat"><strong>21</strong><span>dias de histórico</span></div>
   <div class="stat"><strong>0</strong><span>custo</span></div>
 </div>
@@ -1547,12 +1608,12 @@ seoRouter.get('/rastreador-de-habitos', (_req, res) => {
 
 <h2>Quais hábitos vale a pena rastrear?</h2>
 <div class="cards">
-  <div class="card"><div class="icon">💧</div><h3>Hidratação</h3><p>Beber 2 litros de água por dia. Um dos hábitos com maior impacto na energia e concentração.</p></div>
-  <div class="card"><div class="icon">🏃</div><h3>Movimento</h3><p>30 minutos de exercício. Não precisa ser academia — caminhada conta.</p></div>
-  <div class="card"><div class="icon">📚</div><h3>Leitura</h3><p>10 páginas por dia. 10 páginas × 365 dias = ~12 livros por ano.</p></div>
-  <div class="card"><div class="icon">🧘</div><h3>Meditação</h3><p>5 minutos de respiração consciente. Reduz ansiedade e melhora o foco.</p></div>
-  <div class="card"><div class="icon">🛏️</div><h3>Sono</h3><p>Dormir antes da meia-noite. A consistência do horário importa mais que a quantidade.</p></div>
-  <div class="card"><div class="icon">✍️</div><h3>Escrita</h3><p>Um parágrafo por dia. Diário, ideias, reflexões — qualquer coisa.</p></div>
+  <div class="card"><div class="icon">${ico('drop', 22)}</div><h3>Hidratação</h3><p>Beber 2 litros de água por dia. Um dos hábitos com maior impacto na energia e concentração.</p></div>
+  <div class="card"><div class="icon">${ico('run', 22)}</div><h3>Movimento</h3><p>30 minutos de exercício. Não precisa ser academia — caminhada conta.</p></div>
+  <div class="card"><div class="icon">${ico('book', 22)}</div><h3>Leitura</h3><p>10 páginas por dia. 10 páginas × 365 dias = ~12 livros por ano.</p></div>
+  <div class="card"><div class="icon">${ico('moon', 22)}</div><h3>Meditação</h3><p>5 minutos de respiração consciente. Reduz ansiedade e melhora o foco.</p></div>
+  <div class="card"><div class="icon">${ico('moon', 22)}</div><h3>Sono</h3><p>Dormir antes da meia-noite. A consistência do horário importa mais que a quantidade.</p></div>
+  <div class="card"><div class="icon">${ico('write', 22)}</div><h3>Escrita</h3><p>Um parágrafo por dia. Diário, ideias, reflexões — qualquer coisa.</p></div>
 </div>
 
 <h2>A regra dos dois dias</h2>
@@ -1580,16 +1641,16 @@ seoRouter.get('/rastreador-de-habitos', (_req, res) => {
 </div>
 
 <div class="hero-cta">
-  <a href="/app7" class="btn-primary">🔥 Começar a rastrear hábitos</a>
+  <a href="/app7" class="btn-primary">${ico('flame', 16)} Começar a rastrear hábitos</a>
   <a href="/checkout.html" class="btn-outline">Ver planos</a>
 </div>
 
 <div class="related">
   <h2>Leia também</h2>
   <div class="related-links">
-    <a href="/link-na-bio" class="related-link"><strong>🔗 Link na Bio</strong>Página com seus links</a>
-    <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor gratuito</a>
-    <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube, Instagram</a>
+    <a href="/link-na-bio" class="related-link"><strong>${ico('link2', 14)} Link na Bio</strong>Página com seus links</a>
+    <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor gratuito</a>
+    <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>YouTube, Instagram</a>
     <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
   </div>
 </div>`;
@@ -1637,12 +1698,12 @@ seoRouter.get('/gerador-qr-code', (_req, res) => {
 
 <h2>Tipos de QR Code que você pode criar</h2>
 <div class="cards">
-  <div class="card"><div class="icon">🔗</div><h3>URL / Link</h3><p>Redireciona para qualquer site. O tipo mais comum — use em materiais impressos para enviar ao seu site.</p></div>
-  <div class="card"><div class="icon">💸</div><h3>PIX</h3><p>Pagamento PIX com sua chave e valor opcional. Perfeito para cobrança rápida ou em ponto de venda.</p></div>
-  <div class="card"><div class="icon">📶</div><h3>Wi-Fi</h3><p>Conecta automaticamente à rede sem digitar senha. Ideal para recepções, bares e espaços de trabalho.</p></div>
-  <div class="card"><div class="icon">👤</div><h3>Contato (vCard)</h3><p>Salva seus dados de contato direto na agenda do celular. Substitui o cartão de visita físico.</p></div>
-  <div class="card"><div class="icon">✉️</div><h3>E-mail</h3><p>Abre o app de email com destinatário, assunto e corpo preenchidos. Facilita contato imediato.</p></div>
-  <div class="card"><div class="icon">📝</div><h3>Texto livre</h3><p>Exibe qualquer texto ao escanear. Útil para instruções, senhas temporárias ou mensagens.</p></div>
+  <div class="card"><div class="icon">${ico('link', 22)}</div><h3>URL / Link</h3><p>Redireciona para qualquer site. O tipo mais comum — use em materiais impressos para enviar ao seu site.</p></div>
+  <div class="card"><div class="icon">${ico('finance', 22)}</div><h3>PIX</h3><p>Pagamento PIX com sua chave e valor opcional. Perfeito para cobrança rápida ou em ponto de venda.</p></div>
+  <div class="card"><div class="icon">${ico('wifi', 22)}</div><h3>Wi-Fi</h3><p>Conecta automaticamente à rede sem digitar senha. Ideal para recepções, bares e espaços de trabalho.</p></div>
+  <div class="card"><div class="icon">${ico('user', 22)}</div><h3>Contato (vCard)</h3><p>Salva seus dados de contato direto na agenda do celular. Substitui o cartão de visita físico.</p></div>
+  <div class="card"><div class="icon">${ico('mail', 22)}</div><h3>E-mail</h3><p>Abre o app de email com destinatário, assunto e corpo preenchidos. Facilita contato imediato.</p></div>
+  <div class="card"><div class="icon">${ico('text', 22)}</div><h3>Texto livre</h3><p>Exibe qualquer texto ao escanear. Útil para instruções, senhas temporárias ou mensagens.</p></div>
 </div>
 
 <h2>Como criar um QR Code</h2>
@@ -1675,12 +1736,12 @@ seoRouter.get('/gerador-qr-code', (_req, res) => {
   <div class="faq-item"><h3>Preciso de cadastro?</h3><p>Não. O gerador é 100% gratuito e não requer conta.</p></div>
 </div>
 
-<div class="hero-cta"><a href="/app8" class="btn-primary">📱 Gerar meu QR Code</a><a href="/encurtar-links" class="btn-outline">🔗 Encurtar link</a></div>
+<div class="hero-cta"><a href="/app8" class="btn-primary">${ico('qr', 16)} Gerar meu QR Code</a><a href="/encurtar-links" class="btn-outline">${ico('link', 16)} Encurtar link</a></div>
 
 <div class="related"><h2>Leia também</h2><div class="related-links">
-  <a href="/encurtar-links" class="related-link"><strong>🔗 Encurtar Links</strong>Links curtos com QR integrado</a>
-  <a href="/link-na-bio" class="related-link"><strong>📄 Link na Bio</strong>Página com seus links</a>
-  <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor de dados</a>
+  <a href="/encurtar-links" class="related-link"><strong>${ico('link', 14)} Encurtar Links</strong>Links curtos com QR integrado</a>
+  <a href="/link-na-bio" class="related-link"><strong>${ico('link2', 14)} Link na Bio</strong>Página com seus links</a>
+  <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor de dados</a>
   <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
 </div></div>`;
   res.send(page({ title:'Gerador de QR Code Online Grátis — URL, PIX, Wi-Fi, Contato', description:'Crie QR Codes de links, PIX, Wi-Fi e contatos online, grátis. Download PNG e SVG sem cadastro. Personalize cores e tamanho.', canonical:`${SITE_URL}/gerador-qr-code`, ogType:'article', schema, body }));
@@ -1715,12 +1776,12 @@ seoRouter.get('/editor-imagens', (_req, res) => {
 
 <h2>Ferramentas disponíveis</h2>
 <div class="cards">
-  <div class="card"><div class="icon">📐</div><h3>Redimensionar</h3><p>Altere largura e altura com opção de manter proporção. Atalhos: FHD (1920×1080), HD (1280×720).</p></div>
-  <div class="card"><div class="icon">🗜️</div><h3>Comprimir</h3><p>Reduza o tamanho do arquivo com controle de qualidade. Ideal para otimizar imagens para web.</p></div>
-  <div class="card"><div class="icon">🔄</div><h3>Converter formato</h3><p>Transforme JPG em PNG, PNG em WebP, WebP em JPG. WebP é 25-35% menor que JPG na mesma qualidade.</p></div>
-  <div class="card"><div class="icon">✂️</div><h3>Recortar</h3><p>Corte uma região específica da imagem com coordenadas exatas em pixels.</p></div>
-  <div class="card"><div class="icon">🔏</div><h3>Marca d'água</h3><p>Adicione texto personalizado em 5 posições com controle de opacidade.</p></div>
-  <div class="card"><div class="icon">⬛</div><h3>Preto e branco</h3><p>Converta para escala de cinza com algoritmo de luminosidade profissional.</p></div>
+  <div class="card"><div class="icon">${ico('ruler', 22)}</div><h3>Redimensionar</h3><p>Altere largura e altura com opção de manter proporção. Atalhos: FHD (1920×1080), HD (1280×720).</p></div>
+  <div class="card"><div class="icon">${ico('compress', 22)}</div><h3>Comprimir</h3><p>Reduza o tamanho do arquivo com controle de qualidade. Ideal para otimizar imagens para web.</p></div>
+  <div class="card"><div class="icon">${ico('converter', 22)}</div><h3>Converter formato</h3><p>Transforme JPG em PNG, PNG em WebP, WebP em JPG. WebP é 25-35% menor que JPG na mesma qualidade.</p></div>
+  <div class="card"><div class="icon">${ico('crop', 22)}</div><h3>Recortar</h3><p>Corte uma região específica da imagem com coordenadas exatas em pixels.</p></div>
+  <div class="card"><div class="icon">${ico('write', 22)}</div><h3>Marca d'água</h3><p>Adicione texto personalizado em 5 posições com controle de opacidade.</p></div>
+  <div class="card"><div class="icon">${ico('layers2', 22)}</div><h3>Preto e branco</h3><p>Converta para escala de cinza com algoritmo de luminosidade profissional.</p></div>
 </div>
 
 <h2>Como comprimir imagem para web</h2>
@@ -1758,12 +1819,12 @@ seoRouter.get('/editor-imagens', (_req, res) => {
   <div class="faq-item"><h3>A qualidade WebP é melhor que JPG?</h3><p>WebP usa compressão mais moderna e gera arquivos menores com qualidade equivalente. A 80% de qualidade, WebP produz arquivo 25-35% menor que JPG equivalente.</p></div>
 </div>
 
-<div class="hero-cta"><a href="/app9" class="btn-primary">🖼️ Editar imagem agora</a><a href="/converter-json-excel" class="btn-outline">🔄 Converter dados</a></div>
+<div class="hero-cta"><a href="/app9" class="btn-primary">${ico('image', 16)} Editar imagem agora</a><a href="/converter-json-excel" class="btn-outline">${ico('converter', 16)} Converter dados</a></div>
 
 <div class="related"><h2>Leia também</h2><div class="related-links">
-  <a href="/gerador-qr-code" class="related-link"><strong>📱 Gerador de QR Code</strong>QR de URL, PIX e Wi-Fi</a>
-  <a href="/como-baixar-videos" class="related-link"><strong>⬇️ Baixar Vídeos</strong>YouTube e Instagram</a>
-  <a href="/converter-json-excel" class="related-link"><strong>🔄 JSON para Excel</strong>Conversor de dados</a>
+  <a href="/gerador-qr-code" class="related-link"><strong>${ico('qr', 14)} Gerador de QR Code</strong>QR de URL, PIX e Wi-Fi</a>
+  <a href="/como-baixar-videos" class="related-link"><strong>${ico('download', 14)} Baixar Vídeos</strong>YouTube e Instagram</a>
+  <a href="/converter-json-excel" class="related-link"><strong>${ico('converter', 14)} JSON para Excel</strong>Conversor de dados</a>
   <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
 </div></div>`;
   res.send(page({ title:'Editor de Imagens Online Grátis — Comprimir, Redimensionar, Converter', description:'Edite imagens online sem enviar para servidor. Comprima, redimensione, converta JPG/PNG/WebP, adicione marca d\'água. Processamento 100% local e privado.', canonical:`${SITE_URL}/editor-imagens`, ogType:'article', schema, body }));
@@ -1798,12 +1859,12 @@ seoRouter.get('/calculadora-financeira', (_req, res) => {
 
 <h2>Simulações disponíveis</h2>
 <div class="cards">
-  <div class="card"><div class="icon">📈</div><h3>Juros Compostos</h3><p>Veja seu patrimônio crescer com aportes mensais. Gráfico comparando valor investido vs total acumulado.</p></div>
-  <div class="card"><div class="icon">🏦</div><h3>Simulador de Parcelas</h3><p>Calcule parcelas de empréstimos e financiamentos (tabela Price) com total de juros pago.</p></div>
-  <div class="card"><div class="icon">🏖️</div><h3>Aposentadoria</h3><p>Quanto poupar por mês para se aposentar com a renda desejada, usando a Regra dos 4%.</p></div>
-  <div class="card"><div class="icon">🛡️</div><h3>Reserva de Emergência</h3><p>Calcule sua meta com barra de progresso e tempo para completar.</p></div>
-  <div class="card"><div class="icon">🎯</div><h3>Meta de Poupança</h3><p>Em quanto tempo você atinge seu objetivo com aportes mensais e rentabilidade.</p></div>
-  <div class="card"><div class="icon">📉</div><h3>Impacto da Inflação</h3><p>Veja como R$1.000 de hoje valerão menos no futuro com tabela histórica.</p></div>
+  <div class="card"><div class="icon">${ico('trendUp', 22)}</div><h3>Juros Compostos</h3><p>Veja seu patrimônio crescer com aportes mensais. Gráfico comparando valor investido vs total acumulado.</p></div>
+  <div class="card"><div class="icon">${ico('bank', 22)}</div><h3>Simulador de Parcelas</h3><p>Calcule parcelas de empréstimos e financiamentos (tabela Price) com total de juros pago.</p></div>
+  <div class="card"><div class="icon">${ico('sun', 22)}</div><h3>Aposentadoria</h3><p>Quanto poupar por mês para se aposentar com a renda desejada, usando a Regra dos 4%.</p></div>
+  <div class="card"><div class="icon">${ico('shield', 22)}</div><h3>Reserva de Emergência</h3><p>Calcule sua meta com barra de progresso e tempo para completar.</p></div>
+  <div class="card"><div class="icon">${ico('target', 22)}</div><h3>Meta de Poupança</h3><p>Em quanto tempo você atinge seu objetivo com aportes mensais e rentabilidade.</p></div>
+  <div class="card"><div class="icon">${ico('trendDown', 22)}</div><h3>Impacto da Inflação</h3><p>Veja como R$1.000 de hoje valerão menos no futuro com tabela histórica.</p></div>
 </div>
 
 <h2>Juros compostos: o poder do tempo</h2>
@@ -1843,12 +1904,12 @@ seoRouter.get('/calculadora-financeira', (_req, res) => {
   <div class="faq-item"><h3>A calculadora substitui um consultor financeiro?</h3><p>Não. As simulações são educativas e ajudam a entender conceitos e cenários. Para decisões financeiras importantes, recomendamos consultar um planejador financeiro certificado (CFP).</p></div>
 </div>
 
-<div class="hero-cta"><a href="/app10" class="btn-primary">💰 Abrir Calculadora</a><a href="/rastreador-de-habitos" class="btn-outline">🔥 Rastreador de Hábitos</a></div>
+<div class="hero-cta"><a href="/app10" class="btn-primary">${ico('finance', 16)} Abrir Calculadora</a><a href="/rastreador-de-habitos" class="btn-outline">${ico('flame', 16)} Rastreador de Hábitos</a></div>
 
 <div class="related"><h2>Leia também</h2><div class="related-links">
-  <a href="/gerador-qr-code" class="related-link"><strong>📱 Gerador de QR Code</strong>URL, PIX e Wi-Fi</a>
-  <a href="/editor-imagens" class="related-link"><strong>🖼️ Editor de Imagens</strong>Comprimir e converter</a>
-  <a href="/rastreador-de-habitos" class="related-link"><strong>🔥 Hábitos</strong>Construa consistência</a>
+  <a href="/gerador-qr-code" class="related-link"><strong>${ico('qr', 14)} Gerador de QR Code</strong>URL, PIX e Wi-Fi</a>
+  <a href="/editor-imagens" class="related-link"><strong>${ico('image', 14)} Editor de Imagens</strong>Comprimir e converter</a>
+  <a href="/rastreador-de-habitos" class="related-link"><strong>${ico('flame', 14)} Hábitos</strong>Construa consistência</a>
   <a href="/" class="related-link"><strong>🏠 Início</strong>Todas as ferramentas</a>
 </div></div>`;
   res.send(page({ title:'Calculadora Financeira Online — Juros Compostos, Parcelas, Aposentadoria', description:'Calcule juros compostos, parcelas de empréstimo, aposentadoria pela Regra dos 4%, reserva de emergência e impacto da inflação. Grátis, privado, sem cadastro.', canonical:`${SITE_URL}/calculadora-financeira`, ogType:'article', schema, body }));
