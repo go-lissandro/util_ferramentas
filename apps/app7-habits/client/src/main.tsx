@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { DS, burstConfetti, countUp } from '../../../../shared/design-system';
 import '../../../../shared/design-system/tokens.css';
 import '../../../../shared/design-system/glass.css';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app7');
+const APP = getAppMeta('app7');
 
 // ── Types ──────────────────────────────────────────────────
 interface Habit {
@@ -421,7 +425,9 @@ function App() {
     <div style={{ minHeight:'100vh', background:C.bg, color:C.txt, fontFamily:'Inter,system-ui,sans-serif' }}>
       {/* Header */}
       <div className="ds-app-header">
-        <div className="ds-app-icon">🔥</div>
+        <div className="ds-app-icon" style={{ background: APP.gradient }}>
+          <AppIcon name="flame" size={16} color="#fff" />
+        </div>
         <div style={{ display:'flex', alignItems:'center', gap:'.5rem' }}>
           <span className="ds-app-title">Hábitos</span>
           <span className="ds-app-tag">/app7</span>
@@ -518,13 +524,13 @@ function App() {
             {/* Summary cards */}
             <div className="ds-stagger" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.875rem', marginBottom:'1.5rem' }}>
               {[
-                { label:'Hábitos ativos', value:stats.totalHabits, icon:'📋', color:C.acc },
-                { label:'Concluídos hoje', value:stats.doneToday, icon:'✅', color:C.ok },
-                { label:'Total concluídos', value:stats.totalCompletions, icon:'🏆', color:'#ffb347' },
-                { label:'Melhor sequência', value:`${stats.bestStreak} dias`, icon:'🔥', color:'#ff7043' },
+                { label:'Hábitos ativos', value:stats.totalHabits, icon:'layers' as IconName, color:C.acc },
+                { label:'Concluídos hoje', value:stats.doneToday, icon:'check' as IconName, color:C.ok },
+                { label:'Total concluídos', value:stats.totalCompletions, icon:'award' as IconName, color:'#ffb347' },
+                { label:'Melhor sequência', value:`${stats.bestStreak} dias`, icon:'flame' as IconName, color:'#ff7043' },
               ].map(s => (
                 <div key={s.label} className="glass-card glass-card-hover" style={{ padding:'1.125rem' }}>
-                  <div style={{ fontSize:'1.5rem', marginBottom:'.375rem' }}>{s.icon}</div>
+                  <div style={{ marginBottom:'.375rem' }}><AppIcon name={s.icon} size={24} color={s.color} /></div>
                   <div style={{ fontSize:'1.5rem', fontWeight:700, color:s.color, lineHeight:1, textShadow: s.color === C.ok ? `0 0 20px ${C.ok}55` : 'none' }}>{s.value}</div>
                   <div style={{ fontSize:'.75rem', color:C.mut, marginTop:'.25rem' }}>{s.label}</div>
                 </div>

@@ -30,6 +30,9 @@ export const DS = {
   ease: { spring: 'cubic-bezier(0.34,1.56,0.64,1)', smooth: 'cubic-bezier(0.4,0,0.2,1)' },
 } as const;
 
+// Re-export the shared icon system so apps can `import { AppIcon } from '@shared/design-system'`
+export * from './icons';
+
 // Tipo CSSProperties agnóstico (sem depender do React)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CSSProps = Record<string, any>;

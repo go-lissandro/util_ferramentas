@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
    DESIGN TOKENS — Util Ferramentas
-   Tema escuro unificado para todas as apps (App2–App10)
+   Enhanced token system with app-specific themes & SVG icons
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -51,4 +51,243 @@
   /* ── Tipografia ─────────────────────────────────────── */
   --ds-font: 'Inter', system-ui, -apple-system, sans-serif;
   --ds-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ── Icon sizes ─────────────────────────────────────── */
+  --ds-icon-xs:   12px;
+  --ds-icon-sm:   16px;
+  --ds-icon-md:   20px;
+  --ds-icon-lg:   24px;
+  --ds-icon-xl:   32px;
+  --ds-icon-2xl:  48px;
+  --ds-icon-3xl:  64px;
+
+  /* ── Spacing scale ──────────────────────────────────── */
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 20px;
+  --ds-space-6: 24px;
+  --ds-space-8: 32px;
+  --ds-space-10: 40px;
+  --ds-space-12: 48px;
+  --ds-space-16: 64px;
+
+  /* ── Type scale ─────────────────────────────────────── */
+  --ds-text-xs: 0.7rem;
+  --ds-text-sm: 0.8rem;
+  --ds-text-base: 0.875rem;
+  --ds-text-lg: 1rem;
+  --ds-text-xl: 1.125rem;
+  --ds-text-2xl: 1.25rem;
+  --ds-text-3xl: 1.5rem;
+  --ds-text-4xl: 2rem;
+  --ds-text-5xl: 3rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   APP-SPECIFIC THEMES
+   Each app has its own color identity
+   ═══════════════════════════════════════════════════════════ */
+
+/* App1 — Dashboard (Admin) */
+:root[data-app="app1"] {
+  --app-accent:        #6c63ff;
+  --app-accent-soft:   rgba(108, 99, 255, 0.12);
+  --app-accent-glow:   rgba(108, 99, 255, 0.35);
+  --app-gradient:      linear-gradient(135deg, #6c63ff, #a78bfa);
+  --app-icon:          'dashboard';
+  --app-illustration:  'dashboard-illustration';
+}
+
+/* App2 — URL Shortener */
+:root[data-app="app2"] {
+  --app-accent:        #6c63ff;
+  --app-accent-soft:   rgba(108, 99, 255, 0.12);
+  --app-accent-glow:   rgba(108, 99, 255, 0.35);
+  --app-gradient:      linear-gradient(135deg, #6c63ff, #a78bfa);
+  --app-icon:          'link';
+  --app-illustration:  'url-shortener-illustration';
+}
+
+/* App3 — Data Manager */
+:root[data-app="app3"] {
+  --app-accent:        #00d4aa;
+  --app-accent-soft:   rgba(0, 212, 170, 0.12);
+  --app-accent-glow:   rgba(0, 212, 170, 0.35);
+  --app-gradient:      linear-gradient(135deg, #00d4aa, #38ef7d);
+  --app-icon:          'database';
+  --app-illustration:  'datamanager-illustration';
+}
+
+/* App4 — Video Downloader */
+:root[data-app="app4"] {
+  --app-accent:        #ffb347;
+  --app-accent-soft:   rgba(255, 179, 71, 0.12);
+  --app-accent-glow:   rgba(255, 179, 71, 0.35);
+  --app-gradient:      linear-gradient(135deg, #ffb347, #ff7043);
+  --app-icon:          'download';
+  --app-illustration:  'videodownloader-illustration';
+}
+
+/* App5 — JSON ↔ Excel/CSV Converter */
+:root[data-app="app5"] {
+  --app-accent:        #ff7eb3;
+  --app-accent-soft:   rgba(255, 126, 179, 0.12);
+  --app-accent-glow:   rgba(255, 126, 179, 0.35);
+  --app-gradient:      linear-gradient(135deg, #ff7eb3, #ff6b9d);
+  --app-icon:          'refresh-cw';
+  --app-illustration:  'converter-illustration';
+}
+
+/* App6 — Bio Link */
+:root[data-app="app6"] {
+  --app-accent:        #6c63ff;
+  --app-accent-soft:   rgba(108, 99, 255, 0.12);
+  --app-accent-glow:   rgba(108, 99, 255, 0.35);
+  --app-gradient:      linear-gradient(135deg, #6c63ff, #a78bfa);
+  --app-icon:          'link-2';
+  --app-illustration:  'biolink-illustration';
+}
+
+/* App7 — Habits Tracker */
+:root[data-app="app7"] {
+  --app-accent:        #ff7043;
+  --app-accent-soft:   rgba(255, 112, 67, 0.12);
+  --app-accent-glow:   rgba(255, 112, 67, 0.35);
+  --app-gradient:      linear-gradient(135deg, #ff7043, #ffb347);
+  --app-icon:          'flame';
+  --app-illustration:  'habits-illustration';
+}
+
+/* App8 — QR Code Generator */
+:root[data-app="app8"] {
+  --app-accent:        #4ecdc4;
+  --app-accent-soft:   rgba(78, 205, 196, 0.12);
+  --app-accent-glow:   rgba(78, 205, 196, 0.35);
+  --app-gradient:      linear-gradient(135deg, #4ecdc4, #38ef7d);
+  --app-icon:          'qr-code';
+  --app-illustration:  'qrcode-illustration';
+}
+
+/* App9 — Image Tools */
+:root[data-app="app9"] {
+  --app-accent:        #a855f7;
+  --app-accent-soft:   rgba(168, 85, 247, 0.12);
+  --app-accent-glow:   rgba(168, 85, 247, 0.35);
+  --app-gradient:      linear-gradient(135deg, #a855f7, #c084fc);
+  --app-icon:          'image';
+  --app-illustration:  'imagetools-illustration';
+}
+
+/* App10 — Finance Calculator */
+:root[data-app="app10"] {
+  --app-accent:        #00d4aa;
+  --app-accent-soft:   rgba(0, 212, 170, 0.12);
+  --app-accent-glow:   rgba(0, 212, 170, 0.35);
+  --app-gradient:      linear-gradient(135deg, #00d4aa, #38ef7d);
+  --app-icon:          'dollar-sign';
+  --app-illustration:  'finance-illustration';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SVG ICON SYSTEM
+   Inline SVG definitions for consistent icons
+   ═══════════════════════════════════════════════════════════ */
+
+.ds-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--ds-icon-md, 20px);
+  height: var(--ds-icon-md, 20px);
+  color: currentColor;
+}
+
+.ds-icon-xs { width: var(--ds-icon-xs); height: var(--ds-icon-xs); }
+.ds-icon-sm { width: var(--ds-icon-sm); height: var(--ds-icon-sm); }
+.ds-icon-md { width: var(--ds-icon-md); height: var(--ds-icon-md); }
+.ds-icon-lg { width: var(--ds-icon-lg); height: var(--ds-icon-lg); }
+.ds-icon-xl { width: var(--ds-icon-xl); height: var(--ds-icon-xl); }
+.ds-icon-2xl { width: var(--ds-icon-2xl); height: var(--ds-icon-2xl); }
+.ds-icon-3xl { width: var(--ds-icon-3xl); height: var(--ds-icon-3xl); }
+
+/* Icon color variants */
+.ds-icon-accent { color: var(--app-accent, var(--ds-accent)); }
+.ds-icon-muted { color: var(--ds-muted); }
+.ds-icon-text { color: var(--ds-text); }
+.ds-icon-white { color: #fff; }
+.ds-icon-success { color: var(--ds-success); }
+.ds-icon-warning { color: var(--ds-warning); }
+.ds-icon-danger { color: var(--ds-danger); }
+
+/* Icon wrapper with background */
+.ds-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ds-radius-md);
+  background: var(--app-accent-soft, var(--ds-accent-dim));
+  color: var(--app-accent, var(--ds-accent));
+}
+
+.ds-icon-wrapper-sm { padding: var(--ds-space-1); }
+.ds-icon-wrapper-md { padding: var(--ds-space-2); }
+.ds-icon-wrapper-lg { padding: var(--ds-space-3); }
+.ds-icon-wrapper-xl { padding: var(--ds-space-4); }
+
+/* App illustration containers */
+.ds-app-illustration {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--app-accent-soft);
+  border-radius: var(--ds-radius-xl);
+  border: 1px solid var(--app-accent-soft);
+  overflow: hidden;
+}
+
+/* Hero illustration (larger) */
+.ds-hero-illustration {
+  width: 100%;
+  max-width: 560px;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--app-accent-soft);
+  border-radius: var(--ds-radius-xl);
+  border: 1px solid var(--app-accent-soft);
+  box-shadow: var(--ds-glass-shadow);
+}
+
+/* Empty state illustration */
+.ds-empty-illustration {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--ds-space-4);
+  background: var(--app-accent-soft);
+  border-radius: 50%;
+  border: 1px solid var(--app-accent-soft);
+  color: var(--app-accent);
+}
+
+/* Feature illustration (small) */
+.ds-feature-illustration {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--app-accent-soft);
+  border-radius: var(--ds-radius-lg);
+  color: var(--app-accent);
+  flex-shrink: 0;
 }

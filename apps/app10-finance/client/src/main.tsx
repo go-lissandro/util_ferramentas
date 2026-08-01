@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { DS } from '../../../../shared/design-system';
 import '../../../../shared/design-system/tokens.css';
 import '../../../../shared/design-system/glass.css';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app10');
+const APP = getAppMeta('app10');
 
 const C = {
   bg: '#0a0a0f', sur: '#111118', sur2: '#1a1a24', brd: '#2a2a38', brd2: '#3a3a4e',
@@ -11,13 +15,13 @@ const C = {
 
 type Calc = 'compound' | 'loan' | 'retirement' | 'emergency' | 'savings_goal' | 'inflation';
 
-const CALCS: { key: Calc; icon: string; label: string; desc: string }[] = [
-  { key: 'compound',    icon: '📈', label: 'Juros Compostos',     desc: 'Veja seu dinheiro crescer' },
-  { key: 'loan',        icon: '🏦', label: 'Simulador de Parcela', desc: 'Empréstimos e financiamentos' },
-  { key: 'retirement',  icon: '🏖️', label: 'Aposentadoria',       desc: 'Quanto poupar por mês' },
-  { key: 'emergency',   icon: '🛡️', label: 'Reserva de Emergência', desc: 'Quanto você precisa' },
-  { key: 'savings_goal',icon: '🎯', label: 'Meta de Poupança',     desc: 'Prazo para atingir um objetivo' },
-  { key: 'inflation',   icon: '📉', label: 'Impacto da Inflação',  desc: 'Poder de compra ao longo do tempo' },
+const CALCS: { key: Calc; icon: IconName; label: string; desc: string }[] = [
+  { key: 'compound',    icon: 'trendUp',    label: 'Juros Compostos',     desc: 'Veja seu dinheiro crescer' },
+  { key: 'loan',        icon: 'bank',       label: 'Simulador de Parcela', desc: 'Empréstimos e financiamentos' },
+  { key: 'retirement',  icon: 'sun',        label: 'Aposentadoria',       desc: 'Quanto poupar por mês' },
+  { key: 'emergency',   icon: 'shield',     label: 'Reserva de Emergência', desc: 'Quanto você precisa' },
+  { key: 'savings_goal',icon: 'target',     label: 'Meta de Poupança',     desc: 'Prazo para atingir um objetivo' },
+  { key: 'inflation',   icon: 'trendDown',  label: 'Impacto da Inflação',  desc: 'Poder de compra ao longo do tempo' },
 ];
 
 const fmt = (v: number, prefix = 'R$') =>
@@ -380,7 +384,9 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter,system-ui,sans-serif' }}>
       <div className="ds-app-header" style={{ padding: '.875rem 1.5rem' }}>
-        <div className="ds-app-icon" style={{ fontSize: '1rem', background: 'linear-gradient(135deg,#00d4aa,#38ef7d)' }}>💰</div>
+        <div className="ds-app-icon" style={{ background: APP.gradient }}>
+          <AppIcon name="finance" size={16} color="#fff" />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
           <span className="ds-app-title">Calculadora Financeira</span>
           <span className="ds-app-tag">/app10</span>
@@ -395,7 +401,7 @@ function App() {
           {CALCS.map(c => (
             <button key={c.key} onClick={() => setCalc(c.key)}
               style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '.625rem', padding: '.625rem .75rem', borderRadius: 8, border: 'none', cursor: 'pointer', marginBottom: '.25rem', background: calc === c.key ? 'rgba(0,212,170,.12)' : 'transparent', color: calc === c.key ? C.ok : C.txt, textAlign: 'left' as const, transition: 'all .2s var(--ds-ease-smooth)', borderLeft: calc === c.key ? `3px solid ${C.ok}` : '3px solid transparent' }}>
-              <span style={{ fontSize: '1.05rem' }}>{c.icon}</span>
+              <AppIcon name={c.icon} size={18} color={calc === c.key ? C.ok : C.mut} />
               <div>
                 <div style={{ fontWeight: calc === c.key ? 600 : 400, fontSize: '.85rem' }}>{c.label}</div>
                 <div style={{ fontSize: '.7rem', color: C.mut }}>{c.desc}</div>
@@ -407,7 +413,9 @@ function App() {
         {/* Calculator */}
         <div className="glass-card" style={{ padding: '1.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: `1px solid ${C.brd}` }}>
-            <span style={{ fontSize: '1.5rem' }}>{CALCS.find(c => c.key === calc)?.icon}</span>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: APP.accentSoft, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <AppIcon name={CALCS.find(c => c.key === calc)!.icon} size={20} color={C.ok} />
+            </div>
             <div>
               <h1 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{CALCS.find(c => c.key === calc)?.label}</h1>
               <p style={{ fontSize: '.8rem', color: C.mut }}>{CALCS.find(c => c.key === calc)?.desc}</p>

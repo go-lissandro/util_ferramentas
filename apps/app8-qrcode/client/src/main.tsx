@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app8');
+const APP = getAppMeta('app8');
 
 // ── QR Code generation using canvas (no external lib needed) ──
 // We use the qrcode API via a CDN script tag for reliability
@@ -31,14 +35,14 @@ interface QRConfig {
   fgColor?: string; bgColor?: string; size?: number; errorLevel?: string;
 }
 
-const TYPES: { key: QRType; label: string; icon: string }[] = [
-  { key: 'url',   label: 'URL / Link',  icon: '🔗' },
-  { key: 'text',  label: 'Texto livre', icon: '📝' },
-  { key: 'pix',   label: 'PIX',         icon: '💸' },
-  { key: 'wifi',  label: 'Wi-Fi',       icon: '📶' },
-  { key: 'email', label: 'E-mail',      icon: '✉️' },
-  { key: 'tel',   label: 'Telefone',    icon: '📞' },
-  { key: 'vcard', label: 'Contato',     icon: '👤' },
+const TYPES: { key: QRType; label: string; icon: IconName }[] = [
+  { key: 'url',   label: 'URL / Link',  icon: 'link' },
+  { key: 'text',  label: 'Texto livre', icon: 'text' },
+  { key: 'pix',   label: 'PIX',         icon: 'finance' },
+  { key: 'wifi',  label: 'Wi-Fi',       icon: 'wifi' },
+  { key: 'email', label: 'E-mail',      icon: 'mail' },
+  { key: 'tel',   label: 'Telefone',    icon: 'phone' },
+  { key: 'vcard', label: 'Contato',     icon: 'user' },
 ];
 
 function buildQRContent(cfg: QRConfig): string {
@@ -203,7 +207,9 @@ function App() {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter,system-ui,sans-serif' }}>
       {/* Header */}
       <div style={{ background: C.sur, borderBottom: `1px solid ${C.brd}`, padding: '.875rem 1.5rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: 'linear-gradient(135deg,#6c63ff,#00d4aa)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem' }}>📱</div>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: APP.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AppIcon name="qr" size={16} color="#fff" />
+        </div>
         <div>
           <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Gerador de QR Code</span>
           <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: C.mut, marginLeft: 6 }}>/app8</span>
@@ -221,7 +227,9 @@ function App() {
               {TYPES.map(t => (
                 <button key={t.key} onClick={() => set({ type: t.key })}
                   style={{ padding: '.5rem .25rem', borderRadius: 8, border: `1px solid ${cfg.type === t.key ? C.acc : C.brd}`, background: cfg.type === t.key ? 'rgba(108,99,255,.12)' : C.sur2, color: cfg.type === t.key ? C.acc : C.mut, cursor: 'pointer', fontSize: '.72rem', fontWeight: cfg.type === t.key ? 600 : 400, textAlign: 'center' as const }}>
-                  <div style={{ fontSize: '1.1rem', marginBottom: '.2rem' }}>{t.icon}</div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '.2rem' }}>
+                    <AppIcon name={t.icon} size={16} color={cfg.type === t.key ? C.acc : C.mut} />
+                  </div>
                   {t.label}
                 </button>
               ))}
@@ -328,7 +336,7 @@ function App() {
                 <img src={qrSrc} alt="QR Code" width={180} height={180} style={{ display: 'block', borderRadius: 4, animation: 'fadeIn 0.3s ease' }} />
               ) : (
                 <div style={{ width: 180, height: 180, display: 'flex', flexDirection: 'column' as const, alignItems: 'center', justifyContent: 'center', color: C.mut, fontSize: '.8rem', gap: '.5rem' }}>
-                  <span style={{ fontSize: '2rem' }}>📱</span>
+                  <AppIcon name="qr" size={40} color={C.mut} />
                   <span>Preencha os dados</span>
                 </div>
               )}
@@ -360,7 +368,7 @@ function App() {
               try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(()=>setCopied(false),2000); } catch { /* */ }
             }} disabled={!qrSrc}
               style={{ width: '100%', padding: '.625rem', borderRadius: 9, border: `1px solid ${C.brd}`, background: 'transparent', color: C.mut, cursor: qrSrc ? 'pointer' : 'not-allowed', fontSize: '.82rem', opacity: qrSrc ? 1 : .5 }}>
-              {copied ? '✓ Link copiado!' : '🔗 Copiar link da imagem'}
+              {copied ? '✓ Link copiado!' : 'Copiar link da imagem'}
             </button>
           </div>
 

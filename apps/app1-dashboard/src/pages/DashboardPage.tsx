@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/authStore';
 import { usersApi } from '../services/api';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
+import { AppIcon, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
 
 interface Stats {
   users: number;
@@ -41,13 +42,16 @@ function StatCard({ icon: Icon, label, value, sub, color, href }: {
   return href ? <Link to={href} style={{ textDecoration: 'none', display: 'block' }}>{inner}</Link> : inner;
 }
 
-const APP_META: Record<string, { icon: string; color: string }> = {
-  app2: { icon: '🔗', color: '#6c63ff' },
-  app3: { icon: '🗃️', color: '#00d4aa' },
-  app4: { icon: '⬇️', color: '#ffb347' },
-  app5: { icon: '🔄', color: '#ff7eb3' },
-  app6: { icon: '📄', color: '#4ecdc4' },
-};
+const QUICK_ACTIONS: { label: string; sub: string; path: string; icon: IconName; color: string }[] = [
+  { label: 'Baixar um vídeo', sub: 'YouTube, TikTok, Instagram...', path: '/app4', icon: 'download', color: '#ffb347' },
+  { label: 'Converter JSON para Excel', sub: 'Transformar dados em planilha', path: '/app5', icon: 'converter', color: '#ff7eb3' },
+  { label: 'Criar página bio', sub: 'Link na bio para o Instagram', path: '/app6', icon: 'link2', color: '#4ecdc4' },
+  { label: 'Rastrear hábitos', sub: 'Marcar hábitos do dia', path: '/app7', icon: 'flame', color: '#ff7043' },
+  { label: 'Gerar QR Code', sub: 'URL, PIX, Wi-Fi, Contato', path: '/app8', icon: 'qr', color: '#4ecdc4' },
+  { label: 'Editar imagem', sub: 'Comprimir, redimensionar, converter', path: '/app9', icon: 'image', color: '#a855f7' },
+  { label: 'Calculadora Financeira', sub: 'Juros, parcelas, aposentadoria', path: '/app10', icon: 'finance', color: '#00d4aa' },
+  { label: 'Encurtar um link', sub: 'Com QR code e analytics', path: '/app2', icon: 'link', color: '#6c63ff' },
+];
 
 export function DashboardPage() {
   const { user, tenant } = useAuthStore();
@@ -152,19 +156,12 @@ export function DashboardPage() {
         <div className="card" style={{ padding: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1.25rem' }}>Ações rápidas</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '.625rem' }}>
-            {[
-              { label: 'Baixar um vídeo', sub: 'YouTube, TikTok, Instagram...', path: '/app4', icon: '⬇️' },
-              { label: 'Converter JSON para Excel', sub: 'Transformar dados em planilha', path: '/app5', icon: '🔄' },
-              { label: 'Criar página bio', sub: 'Link na bio para o Instagram', path: '/app6', icon: '📄' },
-              { label: 'Rastrear hábitos', sub: 'Marcar hábitos do dia', path: '/app7', icon: '🔥' },
-              { label: 'Gerar QR Code', sub: 'URL, PIX, Wi-Fi, Contato', path: '/app8', icon: '📱' },
-              { label: 'Editar imagem', sub: 'Comprimir, redimensionar, converter', path: '/app9', icon: '🖼️' },
-              { label: 'Calculadora Financeira', sub: 'Juros, parcelas, aposentadoria', path: '/app10', icon: '💰' },
-              { label: 'Encurtar um link', sub: 'Com QR code e analytics', path: '/app2', icon: '🔗' },
-            ].map(item => (
+            {QUICK_ACTIONS.map(item => (
               <a key={item.path} href={item.path} style={{ textDecoration: 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem', borderRadius: 9, background: 'rgba(26,26,36,.6)', backdropFilter: 'blur(8px)', border: '1px solid var(--glass-border, rgba(255,255,255,.06))', cursor: 'pointer', transition: 'border-color .2s, transform .2s, background .2s' }}>
-                  <span style={{ fontSize: '1.25rem', width: 32, textAlign: 'center' }}>{item.icon}</span>
+                  <div style={{ width: 32, height: 32, borderRadius: 8, background: `${item.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <AppIcon name={item.icon} size={16} color={item.color} />
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: '.875rem', fontWeight: 500 }}>{item.label}</p>
                     <p style={{ fontSize: '.75rem', color: 'var(--color-text-muted)' }}>{item.sub}</p>
@@ -187,11 +184,13 @@ export function DashboardPage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: '.75rem' }}>
           {Array.isArray(appsData) && appsData.filter((a: { key: string }) => a.key !== 'app1').map((app: { key: string; description: string; path: string; hasAccess: boolean }) => {
-            const meta = APP_META[app.key] || { icon: '📦', color: '#8888a8' };
+            const meta = getAppMeta(app.key);
             return (
               <a key={app.key} href={app.hasAccess ? app.path : '/checkout.html'} style={{ textDecoration: 'none' }}>
                 <div style={{ padding: '1rem', borderRadius: 10, background: 'rgba(26,26,36,.6)', backdropFilter: 'blur(8px)', border: `1px solid ${app.hasAccess ? 'var(--glass-border, rgba(255,255,255,.06))' : 'transparent'}`, opacity: app.hasAccess ? 1 : 0.55, cursor: 'pointer', textAlign: 'center', transition: 'border-color .2s, transform .2s, box-shadow .2s' }}>
-                  <div style={{ fontSize: '1.5rem', marginBottom: '.375rem' }}>{meta.icon}</div>
+                  <div style={{ width: 40, height: 40, margin: '0 auto .5rem', borderRadius: 10, background: meta.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 12px ${meta.accentSoft}` }}>
+                    <AppIcon name={meta.icon} size={18} color="#fff" />
+                  </div>
                   <p style={{ fontSize: '.78rem', fontWeight: 500, lineHeight: 1.3 }}>{app.description}</p>
                   <p style={{ fontSize: '.68rem', color: 'var(--color-text-muted)', marginTop: '.25rem' }}>
                     {app.hasAccess ? app.path : '🔒 Pro'}

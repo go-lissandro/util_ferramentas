@@ -1,5 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app9');
+const APP = getAppMeta('app9');
 
 const C = {
   bg: '#0a0a0f', sur: '#111118', sur2: '#1a1a24', brd: '#2a2a38', brd2: '#3a3a4e',
@@ -12,13 +16,13 @@ type Format = 'image/jpeg' | 'image/png' | 'image/webp';
 interface ImageInfo { width: number; height: number; size: number; name: string; type: string; }
 interface ProcessResult { blob: Blob; width: number; height: number; name: string; }
 
-const TOOLS: { key: Tool; icon: string; label: string; desc: string }[] = [
-  { key: 'resize',    icon: '📐', label: 'Redimensionar', desc: 'Altere largura e altura' },
-  { key: 'compress',  icon: '🗜️', label: 'Comprimir',     desc: 'Reduza o tamanho do arquivo' },
-  { key: 'convert',   icon: '🔄', label: 'Converter',     desc: 'JPG, PNG, WebP' },
-  { key: 'crop',      icon: '✂️', label: 'Recortar',      desc: 'Corte a imagem' },
-  { key: 'watermark', icon: '🔏', label: 'Marca d\'água', desc: 'Adicione texto' },
-  { key: 'grayscale', icon: '⬛', label: 'Preto e branco', desc: 'Converta para grayscale' },
+const TOOLS: { key: Tool; icon: IconName; label: string; desc: string }[] = [
+  { key: 'resize',    icon: 'ruler',     label: 'Redimensionar', desc: 'Altere largura e altura' },
+  { key: 'compress',  icon: 'compress',  label: 'Comprimir',     desc: 'Reduza o tamanho do arquivo' },
+  { key: 'convert',   icon: 'converter', label: 'Converter',     desc: 'JPG, PNG, WebP' },
+  { key: 'crop',      icon: 'crop',      label: 'Recortar',      desc: 'Corte a imagem' },
+  { key: 'watermark', icon: 'pencil',    label: 'Marca d\'água', desc: 'Adicione texto' },
+  { key: 'grayscale', icon: 'layers',    label: 'Preto e branco', desc: 'Converta para grayscale' },
 ];
 
 const inp = (extra?: React.CSSProperties): React.CSSProperties => ({
@@ -185,7 +189,9 @@ function App() {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter,system-ui,sans-serif' }}>
       {/* Header */}
       <div style={{ background: C.sur, borderBottom: `1px solid ${C.brd}`, padding: '.875rem 1.5rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: 'linear-gradient(135deg,#ff7eb3,#ff6b6b)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>🖼️</div>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: APP.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AppIcon name="image" size={16} color="#fff" />
+        </div>
         <div>
           <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Editor de Imagens</span>
           <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: C.mut, marginLeft: 6 }}>/app9</span>
@@ -202,7 +208,7 @@ function App() {
             {TOOLS.map(t => (
               <button key={t.key} onClick={() => { setTool(t.key); setResult(null); }}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '.625rem', padding: '.625rem .75rem', borderRadius: 8, border: 'none', cursor: 'pointer', marginBottom: '.25rem', background: tool === t.key ? 'rgba(108,99,255,.12)' : 'transparent', color: tool === t.key ? C.acc : C.txt, textAlign: 'left' as const }}>
-                <span style={{ fontSize: '1.05rem', width: 22, textAlign: 'center' as const }}>{t.icon}</span>
+                <AppIcon name={t.icon} size={18} color={tool === t.key ? C.acc : C.mut} />
                 <div>
                   <div style={{ fontWeight: tool === t.key ? 600 : 400, fontSize: '.875rem' }}>{t.label}</div>
                   <div style={{ fontSize: '.72rem', color: C.mut }}>{t.desc}</div>
@@ -216,10 +222,10 @@ function App() {
             <div style={{ background: C.sur, border: `1px solid ${C.brd}`, borderRadius: 12, padding: '1rem' }}>
               <p style={{ fontSize: '.72rem', color: C.mut, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: '.625rem' }}>Imagem original</p>
               <div style={{ fontSize: '.82rem', color: C.mut, lineHeight: 2 }}>
-                <div>📁 <span style={{ color: C.txt }}>{imgInfo.name.slice(0, 20)}</span></div>
-                <div>📐 <span style={{ color: C.txt }}>{imgInfo.width} × {imgInfo.height}px</span></div>
-                <div>💾 <span style={{ color: C.txt }}>{formatSize(imgInfo.size)}</span></div>
-                <div>🖼️ <span style={{ color: C.txt }}>{imgInfo.type.split('/')[1].toUpperCase()}</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}><AppIcon name="file" size={13} color={C.mut} /> <span style={{ color: C.txt }}>{imgInfo.name.slice(0, 20)}</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}><AppIcon name="ruler" size={13} color={C.mut} /> <span style={{ color: C.txt }}>{imgInfo.width} × {imgInfo.height}px</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}><AppIcon name="database" size={13} color={C.mut} /> <span style={{ color: C.txt }}>{formatSize(imgInfo.size)}</span></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}><AppIcon name="image" size={13} color={C.mut} /> <span style={{ color: C.txt }}>{imgInfo.type.split('/')[1].toUpperCase()}</span></div>
               </div>
             </div>
           )}
@@ -234,7 +240,7 @@ function App() {
               onDrop={e => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) loadFile(f); }}
               onClick={() => fileRef.current?.click()}
               style={{ border: `2px dashed ${dragging ? C.acc : C.brd2}`, borderRadius: 14, padding: '4rem 2rem', textAlign: 'center' as const, cursor: 'pointer', transition: 'border-color .2s', background: dragging ? 'rgba(108,99,255,.04)' : 'transparent' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🖼️</div>
+              <AppIcon name="image" size={56} color={C.mut} style={{ marginBottom: '1rem' }} />
               <p style={{ fontWeight: 600, marginBottom: '.5rem' }}>Arraste uma imagem ou clique para selecionar</p>
               <p style={{ fontSize: '.85rem', color: C.mut }}>JPG, PNG, WebP, GIF — até 30 MB</p>
               <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (f) loadFile(f); }} />
@@ -266,7 +272,7 @@ function App() {
               {/* Tool options */}
               <div style={{ background: C.sur, border: `1px solid ${C.brd}`, borderRadius: 12, padding: '1.25rem', marginBottom: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem', marginBottom: '1rem' }}>
-                  <span style={{ fontSize: '1.2rem' }}>{TOOLS.find(t => t.key === tool)?.icon}</span>
+                  <AppIcon name={TOOLS.find(t => t.key === tool)!.icon} size={18} color={C.acc} />
                   <span style={{ fontWeight: 600 }}>{TOOLS.find(t => t.key === tool)?.label}</span>
                 </div>
 

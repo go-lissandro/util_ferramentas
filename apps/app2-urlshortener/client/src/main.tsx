@@ -7,6 +7,12 @@ import { formatDistanceToNow } from 'date-fns';
 import { DS, burstConfetti, glassCard } from '../../../../shared/design-system';
 import '../../../../shared/design-system/tokens.css';
 import '../../../../shared/design-system/glass.css';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app2');
+const APP = getAppMeta('app2');
+
+setAppTheme('app2');
 
 const api = axios.create({ baseURL: '/api/app2' });
 
@@ -212,7 +218,7 @@ function URLShortener() {
       <header className="ds-app-header" style={{ padding: '1rem 2rem', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div className="ds-app-icon" style={{ width: 34, height: 34 }}>
-            <Link2 size={16} color="#fff" />
+            <AppIcon name="link" size={16} color="#fff" />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             <span className="ds-app-title">URL Shortener</span>
@@ -228,12 +234,14 @@ function URLShortener() {
         {/* Stats bar */}
         <div className="ds-stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
           {[
-            { label: 'Total Links', value: total, icon: '🔗', color: DS.accent },
-            { label: 'Total Clicks', value: links.reduce((s, l) => s + l.click_count, 0).toLocaleString(), icon: '👆', color: DS.ok },
-            { label: 'Active Links', value: links.filter(l => l.is_active).length, icon: '✅', color: '#ffb347' },
+            { label: 'Total Links', value: total, icon: 'link' as IconName, color: DS.accent },
+            { label: 'Total Clicks', value: links.reduce((s, l) => s + l.click_count, 0).toLocaleString(), icon: 'mouse' as IconName, color: DS.ok },
+            { label: 'Active Links', value: links.filter(l => l.is_active).length, icon: 'check' as IconName, color: '#ffb347' },
           ].map(({ label, value, icon, color }) => (
             <div key={label} className="glass-card glass-card-hover" style={{ padding: '1.25rem', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: '-12px', right: '-8px', fontSize: '2.5rem', opacity: 0.08, transform: 'rotate(-10deg)' }}>{icon}</div>
+              <div style={{ position: 'absolute', top: '-12px', right: '-8px', opacity: 0.08, transform: 'rotate(-10deg)' }}>
+                <AppIcon name={icon} size={44} color={color} />
+              </div>
               <p style={{ fontSize: '0.75rem', color: '#8888a8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.375rem' }}>{label}</p>
               <p style={{ fontSize: '1.75rem', fontWeight: 700, color, textShadow: color === DS.ok ? `0 0 24px ${color}44` : 'none' }}>{value}</p>
             </div>

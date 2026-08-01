@@ -3,19 +3,7 @@ import { ExternalLink, Lock, CheckCircle2, Zap } from 'lucide-react';
 import { usersApi } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { Link } from 'react-router-dom';
-
-const APP_ICONS: Record<string, string> = {
-  app1: '🎛️',
-  app2: '🔗',
-  app3: '🗃️',
-  app4: '⬇️',
-  app5: '🔄',
-  app6: '🔗',
-  app7: '🔥',
-  app8: '📱',
-  app9: '🖼️',
-  app10: '💰',
-};
+import { AppIcon, getAppMeta, type AppMeta } from '../../../../shared/design-system/icons';
 
 const APP_DESCRIPTIONS: Record<string, { tagline: string; features: string[] }> = {
   app1: {
@@ -70,7 +58,8 @@ export function AppsPage() {
       ) : (
         <div className="stagger" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.25rem' }}>
           {Array.isArray(apps) && apps.map((app: { key: string; description: string; path: string; hasAccess: boolean }) => {
-            const meta = APP_DESCRIPTIONS[app.key] || { tagline: app.description, features: [] };
+            const meta: AppMeta = getAppMeta(app.key);
+            const desc = APP_DESCRIPTIONS[app.key] || { tagline: app.description, features: [] };
             const isLocked = !app.hasAccess;
 
             return (
@@ -80,11 +69,11 @@ export function AppsPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <div style={{
                       width: 44, height: 44, borderRadius: 12,
-                      background: 'var(--color-surface-2)',
+                      background: meta.gradient,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '1.25rem', border: '1px solid var(--color-border)',
+                      boxShadow: `0 4px 14px ${meta.accentSoft}`,
                     }}>
-                      {APP_ICONS[app.key] || '📦'}
+                      <AppIcon name={meta.icon} size={20} color="#fff" />
                     </div>
                     <div>
                       <p style={{ fontWeight: 600, fontSize: '0.9rem' }}>{app.description}</p>
@@ -99,12 +88,12 @@ export function AppsPage() {
                 </div>
 
                 <p style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '1rem', lineHeight: 1.6 }}>
-                  {meta.tagline}
+                  {desc.tagline}
                 </p>
 
                 {/* Features */}
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.25rem', flex: 1 }}>
-                  {meta.features.map((f) => (
+                  {desc.features.map((f) => (
                     <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: '0.375rem' }}>
                       <CheckCircle2 size={12} color="var(--color-accent-2)" />
                       {f}

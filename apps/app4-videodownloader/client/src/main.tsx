@@ -1,6 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Download, Link2, Loader2, AlertCircle, CheckCircle2, Film, Music, ChevronDown, X, Clock, User, RefreshCw, Settings, Upload, AlertTriangle, Lock } from 'lucide-react';
+import { AppIcon, setAppTheme, getAppMeta } from '../../../../shared/design-system/icons';
+
+setAppTheme('app4');
+const APP = getAppMeta('app4');
 
 interface VideoFormat { id: string; label: string; ext: string; resolution: string; filesize_fmt: string; is_audio_only: boolean; }
 interface VideoInfo { title: string; thumbnail: string; duration_fmt: string; uploader: string; extractor: string; formats: VideoFormat[]; }
@@ -75,8 +79,8 @@ function App() {
     <div style={s({ minHeight:'100vh', background:C.bg, color:C.txt, fontFamily:'Inter,system-ui,sans-serif' })}>
       {/* Header */}
       <div style={s({ background:C.sur, borderBottom:`1px solid ${C.brd}`, padding:'.875rem 2rem', display:'flex', alignItems:'center', gap:'.75rem' })}>
-        <div style={s({ width:34, height:34, borderRadius:9, background:`linear-gradient(135deg,${C.acc},${C.ok})`, display:'flex', alignItems:'center', justifyContent:'center' })}>
-          <Download size={16} color="#fff"/>
+        <div style={s({ width:34, height:34, borderRadius:9, background: APP.gradient, display:'flex', alignItems:'center', justifyContent:'center', boxShadow: `0 4px 12px ${APP.accentSoft}` })}>
+          <AppIcon name="download" size={16} color="#fff" />
         </div>
         <span style={s({ fontWeight:700, fontSize:'.9rem' })}>Video Downloader</span>
         <span style={s({ fontFamily:'monospace', fontSize:'.7rem', color:C.mut, marginLeft:4 })}>/app4</span>
@@ -122,8 +126,8 @@ function App() {
             </button>
           </div>
           <button onClick={async()=>{try{const t=await navigator.clipboard.readText();if(t.startsWith('http'))setUrl(t);}catch{}}}
-            style={s({ background:'none', border:'none', color:C.acc, fontSize:'.78rem', cursor:'pointer', padding:0 })}>
-            📋 Colar da área de transferência
+            style={s({ background:'none', border:'none', color:C.acc, fontSize:'.78rem', cursor:'pointer', padding:0, display:'flex', alignItems:'center', gap:'.3rem' })}>
+            <AppIcon name="copy" size={12} color={C.acc} /> Colar da área de transferência
           </button>
         </div>
 

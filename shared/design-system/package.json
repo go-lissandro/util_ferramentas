@@ -6,6 +6,7 @@
   "main": "index.ts",
   "exports": {
     ".": "./index.ts",
+    "./icons": "./icons.tsx",
     "./tokens.css": "./tokens.css",
     "./glass.css": "./glass.css"
   }

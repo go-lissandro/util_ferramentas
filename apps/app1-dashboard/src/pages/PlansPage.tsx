@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Lock, Unlock } from 'lucide-react';
 import { api } from '../services/api';
+import { AppIcon, getAppMeta } from '../../../../shared/design-system/icons';
 
-const APP_META: Record<string, { name: string; icon: string; path: string }> = {
-  app2: { name: 'Encurtador de Links', icon: '🔗', path: '/app2' },
-  app3: { name: 'Gerenciador de Dados', icon: '🗃️', path: '/app3' },
-  app4: { name: 'Video Downloader', icon: '⬇️', path: '/app4' },
-  app5: { name: 'Conversor JSON↔Excel', icon: '🔄', path: '/app5' },
-  app6: { name: 'Bio Link', icon: '🔗', path: '/app6' },
-  app7: { name: 'Rastreador de Hábitos', icon: '🔥', path: '/app7' },
-  app8:  { name: 'Gerador de QR Code',    icon: '📱', path: '/app8' },
-  app9:  { name: 'Editor de Imagens',     icon: '🖼️', path: '/app9' },
-  app10: { name: 'Calculadora Financeira', icon: '💰', path: '/app10' },
+const APP_KEYS = ['app2', 'app3', 'app4', 'app5', 'app6', 'app7', 'app8', 'app9', 'app10'];
+
+const APP_META: Record<string, { name: string; path: string }> = {
+  app2: { name: 'Encurtador de Links', path: '/app2' },
+  app3: { name: 'Gerenciador de Dados', path: '/app3' },
+  app4: { name: 'Video Downloader', path: '/app4' },
+  app5: { name: 'Conversor JSON↔Excel', path: '/app5' },
+  app6: { name: 'Bio Link', path: '/app6' },
+  app7: { name: 'Rastreador de Hábitos', path: '/app7' },
+  app8: { name: 'Gerador de QR Code', path: '/app8' },
+  app9: { name: 'Editor de Imagens', path: '/app9' },
+  app10: { name: 'Calculadora Financeira', path: '/app10' },
 };
 
 const PLANS = ['free', 'pro'];
@@ -73,7 +76,9 @@ export function PlansPage() {
                   return (
                     <div key={appKey} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '.625rem .875rem', background: hasAccess ? 'rgba(0,212,170,.05)' : '#1a1a24', borderRadius: 9, border: `1px solid ${hasAccess ? 'rgba(0,212,170,.2)' : '#2a2a38'}` }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-                        <span>{meta.icon}</span>
+                        <div style={{ width: 26, height: 26, borderRadius: 7, background: getAppMeta(appKey).gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, opacity: hasAccess ? 1 : 0.4 }}>
+                          <AppIcon name={getAppMeta(appKey).icon} size={14} color="#fff" />
+                        </div>
                         <span style={{ fontSize: '.85rem', color: hasAccess ? '#e8e8f0' : '#8888a8' }}>{meta.name}</span>
                       </div>
                       <button

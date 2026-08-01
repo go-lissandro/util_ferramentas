@@ -1,5 +1,8 @@
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Database, LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
+import { AppIcon, getAppMeta } from '../../../../shared/design-system/icons';
+
+const APP = getAppMeta('app3');
 import { DashboardPage } from './pages/DashboardPage';
 import { SchemaPage }    from './pages/SchemaPage';
 import { RecordsPage }   from './pages/RecordsPage';
@@ -16,8 +19,8 @@ function Sidebar() {
     }}>
       <div style={{ padding: '0 1.25rem', marginBottom: '1.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.625rem' }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, var(--accent), var(--success))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Database size={16} color="#fff" />
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: APP.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 12px ${APP.accentSoft}` }}>
+            <AppIcon name="database" size={16} color="#fff" />
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: '.875rem', lineHeight: 1.2 }}>Dados</div>

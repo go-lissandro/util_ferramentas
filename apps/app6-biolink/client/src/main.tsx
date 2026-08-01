@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client';
 import { DS, glassCard } from '../../../../shared/design-system';
 import '../../../../shared/design-system/tokens.css';
 import '../../../../shared/design-system/glass.css';
+import { AppIcon, setAppTheme, getAppMeta } from '../../../../shared/design-system/icons';
+
+setAppTheme('app6');
+const APP = getAppMeta('app6');
 
 // ── Types ──────────────────────────────────────────────────
 interface BioLink { id: string; title: string; url: string; icon: string; type: string; is_active: boolean; click_count: number; order_index: number; }
@@ -401,7 +405,9 @@ function App() {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Header */}
       <div className="ds-app-header" style={{ padding: '.875rem 2rem' }}>
-        <div className="ds-app-icon" style={{ fontSize: '1.1rem' }}>🔗</div>
+        <div className="ds-app-icon" style={{ background: APP.gradient }}>
+          <AppIcon name="link2" size={16} color="#fff" />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
           <span className="ds-app-title">Bio Link</span>
           <span className="ds-app-tag">/app6</span>
@@ -448,7 +454,9 @@ function App() {
           <p style={{ color: C.mut }}>Carregando...</p>
         ) : pages.length === 0 && !showCreate ? (
           <div className="glass-card ds-fade-up" style={{ padding: '3rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔗</div>
+            <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+              <AppIcon name="link2" size={48} color={C.acc} />
+            </div>
             <h2 style={{ fontWeight: 600, marginBottom: '.5rem' }}>Crie sua primeira página Bio Link</h2>
             <p style={{ color: C.mut, marginBottom: '1.5rem', maxWidth: 400, margin: '0 auto .875rem' }}>Uma página com todos seus links importantes para compartilhar na bio do Instagram e TikTok.</p>
             <button style={{ ...btn(C.acc), boxShadow: '0 4px 16px rgba(108,99,255,.4)' }} onClick={() => setShowCreate(true)}>+ Criar página grátis</button>

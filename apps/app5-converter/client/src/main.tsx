@@ -1,5 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
+import { AppIcon, setAppTheme, getAppMeta, type IconName } from '../../../../shared/design-system/icons';
+
+setAppTheme('app5');
+const APP = getAppMeta('app5');
 
 // ── Types ──────────────────────────────────────────────────
 type Mode = 'json-to-excel' | 'json-to-csv' | 'excel-to-json' | 'csv-to-json';
@@ -28,11 +32,11 @@ const SAMPLE_JSON = JSON.stringify([
   { id: 3, nome: 'Carol', email: 'carol@email.com', ativo: true, cadastro: '2024-05-10', saldo: 3200.75 },
 ], null, 2);
 
-const MODES: { key: Mode; label: string; icon: string; desc: string; from: string; to: string }[] = [
-  { key: 'json-to-excel', label: 'JSON → Excel', icon: '📊', desc: 'Converte JSON em planilha .xlsx', from: 'JSON', to: 'XLSX' },
-  { key: 'json-to-csv',   label: 'JSON → CSV',   icon: '📄', desc: 'Converte JSON em arquivo .csv',  from: 'JSON', to: 'CSV' },
-  { key: 'excel-to-json', label: 'Excel → JSON', icon: '{}',  desc: 'Lê planilha .xlsx e gera JSON', from: 'XLSX', to: 'JSON' },
-  { key: 'csv-to-json',   label: 'CSV → JSON',   icon: '[ ]', desc: 'Lê .csv e gera JSON',          from: 'CSV',  to: 'JSON' },
+const MODES: { key: Mode; label: string; icon: IconName; desc: string; from: string; to: string }[] = [
+  { key: 'json-to-excel', label: 'JSON → Excel', icon: 'chart',     desc: 'Converte JSON em planilha .xlsx', from: 'JSON', to: 'XLSX' },
+  { key: 'json-to-csv',   label: 'JSON → CSV',   icon: 'file',      desc: 'Converte JSON em arquivo .csv',  from: 'JSON', to: 'CSV' },
+  { key: 'excel-to-json', label: 'Excel → JSON', icon: 'database',  desc: 'Lê planilha .xlsx e gera JSON', from: 'XLSX', to: 'JSON' },
+  { key: 'csv-to-json',   label: 'CSV → JSON',   icon: 'layers',    desc: 'Lê .csv e gera JSON',          from: 'CSV',  to: 'JSON' },
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -167,7 +171,9 @@ function App() {
     <div style={{ minHeight: '100vh', background: C.bg, color: C.txt, fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Header */}
       <div style={{ background: C.sur, borderBottom: `1px solid ${C.brd}`, padding: '.875rem 2rem', display: 'flex', alignItems: 'center', gap: '.75rem' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 9, background: `linear-gradient(135deg,${C.acc},${C.ok})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>🔄</div>
+        <div style={{ width: 34, height: 34, borderRadius: 9, background: APP.gradient, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <AppIcon name="converter" size={16} color="#fff" />
+        </div>
         <span style={{ fontWeight: 700, fontSize: '.9rem' }}>Conversor JSON ↔ Excel/CSV</span>
         <span style={{ fontFamily: 'monospace', fontSize: '.7rem', color: C.mut, marginLeft: 4 }}>/app5</span>
       </div>
@@ -182,7 +188,7 @@ function App() {
             {MODES.map(m => (
               <button key={m.key} onClick={() => { setMode(m.key); setPreview(null); setTab('input'); setError(''); setFile(null); }}
                 style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '.75rem', padding: '.75rem .875rem', borderRadius: 9, border: 'none', cursor: 'pointer', marginBottom: '.375rem', background: mode === m.key ? `rgba(108,99,255,.15)` : 'transparent', color: mode === m.key ? C.acc : C.txt, textAlign: 'left' }}>
-                <span style={{ fontSize: '1rem', width: 24, textAlign: 'center' }}>{m.icon}</span>
+                <AppIcon name={m.icon} size={18} color={mode === m.key ? C.acc : C.mut} />
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '.85rem' }}>{m.label}</div>
                   <div style={{ fontSize: '.72rem', color: C.mut }}>{m.desc}</div>
@@ -265,7 +271,9 @@ function App() {
                     style={{ border: `2px dashed ${file ? C.ok : C.brd2}`, borderRadius: 12, padding: '3rem 2rem', textAlign: 'center', cursor: 'pointer', transition: 'border-color .2s', background: file ? 'rgba(0,212,170,.04)' : 'transparent' }}
                     onDragOver={e => e.preventDefault()}
                     onDrop={e => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) { setFile(f); setPreview(null); } }}>
-                    <div style={{ fontSize: '2.5rem', marginBottom: '.75rem' }}>{file ? '✅' : '📁'}</div>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '.75rem', display: 'flex', justifyContent: 'center' }}>
+                      <AppIcon name={file ? 'check' : 'file'} size={40} color={file ? C.ok : C.mut} />
+                    </div>
                     {file
                       ? <><p style={{ fontWeight: 600 }}>{file.name}</p><p style={{ fontSize: '.8rem', color: C.mut }}>{(file.size / 1024).toFixed(1)} KB</p></>
                       : <><p style={{ fontWeight: 500, marginBottom: '.375rem' }}>Arraste ou clique para selecionar</p><p style={{ fontSize: '.8rem', color: C.mut }}>Máximo 20 MB</p></>
